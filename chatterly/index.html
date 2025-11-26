@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatterly - All-in-One Chat for MacOS</title>
+    <meta name="description"
+        content="Chatterly brings all your messages from Facebook, Instagram, WhatsApp, LinkedIn, X, Slack, and more into one beautiful MacOS app.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="#" class="logo">
+                <img src="logo.png" alt="Chatterly Logo">
+                <span>Chatterly</span>
+            </a>
+            <div class="nav-links">
+                <a href="#donations">Donations</a>
+                <a href="#download" class="btn btn-primary" data-modal-target="modal-download">Download</a>
+            </div>
+            <div class="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="fade-in-up">All Your Chats.<br>One Masterpiece.</h1>
+                <p class="fade-in-up delay-1">Stop switching browser tabs. Chatterly unifies multiple chat applications into a single, powerful All-in-One chat app.</p>
+
+            </div>
+            <div class="hero-image fade-in-up delay-3">
+                <img src="hero_new.jpg" alt="Chatterly App Interface Mockup">
+                <div class="glow-effect"></div>
+            </div>
+        </div>
+    </header>
+
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-icon"><i class="fas fa-download"></i></div>
+                    <h3>Download</h3>
+                    <p>Hit the Download button up top to grab the latest macOS or Windows build.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-icon"><i class="fas fa-link"></i></div>
+                    <h3>Connect</h3>
+                    <p>Link your favorite chat networks securely. We support 8+ platforms.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-icon"><i class="fas fa-comments"></i></div>
+                    <h3>Chat</h3>
+                    <p>Start chatting from one unified inbox. No more tab switching.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="platforms" class="platforms">
+        <div class="container">
+            <h2 class="section-title">Connects With "almost" Everything</h2>
+            <div class="platform-grid">
+                <div class="platform-item"><i class="fab fa-facebook-messenger"></i><span>Messenger</span></div>
+                <div class="platform-item"><i class="fab fa-instagram"></i><span>Instagram</span></div>
+                <div class="platform-item"><i class="fab fa-whatsapp"></i><span>WhatsApp</span></div>
+                <div class="platform-item"><i class="fab fa-linkedin"></i><span>LinkedIn</span></div>
+                <div class="platform-item"><i class="fa-brands fa-x-twitter"></i><span>X</span></div>
+                <div class="platform-item"><i class="fab fa-slack"></i><span>Slack</span></div>
+                <div class="platform-item"><i class="fab fa-discord"></i><span>Discord</span></div>
+                <div class="platform-item"><i class="fab fa-telegram"></i><span>Telegram</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Why Chatterly?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="icon-box"><i class="fas fa-layer-group"></i></div>
+                    <h3>Unified Inbox</h3>
+                    <p>See all your messages in one place. Filter by app or view them all together in a unified
+                        timeline.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon-box"><i class="fas fa-atom"></i></div>
+                    <h3>Powerful Integrations</h3>
+                    <p>Works seamlessly with all your messaging apps so everything stays in sync in one place.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon-box"><i class="fas fa-shield-alt"></i></div>
+                    <h3>Privacy First</h3>
+                    <p>Your messages stay on your device. Chatterly acts as a secure bridge and never stores your data.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+    <section id="donations" class="donations">
+        <div class="container">
+            <div class="donations-header">
+                <p class="eyebrow">Fuel the Indie Builder</p>
+                <h2 class="section-title">Donations keep the lights on</h2>
+                <p>Chatterly is a nights-and-weekends passion project. If it saves you time or tabs, consider tossing a
+                    few coins in the digital guitar case so we can keep polishing pixels.</p>
+            </div>
+            <div class="donation-grid">
+                <div class="donation-card">
+                    <div class="donation-amount">$1</div>
+                    <h3>Tip Jar</h3>
+                    <p>Every single dollar tells us the app is worth keeping alive.</p>
+                    <button class="btn btn-secondary open-donation-modal" type="button" data-amount="$1"
+                        data-stripe-link="https://buy.stripe.com/test_coffee_fund"
+                        data-paypal-link="https://www.paypal.com/donate?hosted_button_id=COFFEE123"
+                        data-apple-link="https://buy.stripe.com/test_coffee_fund?method=applepay"
+                        data-google-link="https://buy.stripe.com/test_coffee_fund?method=googlepay"
+                        data-card-link="https://buy.stripe.com/test_coffee_fund?method=card">
+                        Donate
+                    </button>
+                </div>
+                <div class="donation-card featured">
+                    <div class="donation-amount">$10</div>
+                    <h3>Keep Servers Awake</h3>
+                    <p>Help pay for the Mac mini in the closet that runs our build pipeline.</p>
+                    <button class="btn btn-secondary open-donation-modal" type="button" data-amount="$10"
+                        data-stripe-link="https://buy.stripe.com/test_server_boost"
+                        data-paypal-link="https://www.paypal.com/donate?hosted_button_id=SERVER123"
+                        data-apple-link="https://buy.stripe.com/test_server_boost?method=applepay"
+                        data-google-link="https://buy.stripe.com/test_server_boost?method=googlepay"
+                        data-card-link="https://buy.stripe.com/test_server_boost?method=card">
+                        Donate
+                    </button>
+                </div>
+                <div class="donation-card">
+                    <div class="donation-amount">$100</div>
+                    <h3>Pay It Forward</h3>
+                    <p>Underwrite new features, snacks, and sanity for future releases.</p>
+                    <button class="btn btn-secondary open-donation-modal" type="button" data-amount="$100"
+                        data-stripe-link="https://buy.stripe.com/test_custom_amount"
+                        data-paypal-link="https://www.paypal.com/donate?hosted_button_id=CUSTOM123"
+                        data-apple-link="https://buy.stripe.com/test_custom_amount?method=applepay"
+                        data-google-link="https://buy.stripe.com/test_custom_amount?method=googlepay"
+                        data-card-link="https://buy.stripe.com/test_custom_amount?method=card">
+                        Donate
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <section class="faq">
+        <div class="container">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Is Chatterly free?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>I need a dollar, dollar, a dollar is what I need..<br>
+                            And if I share with you my work, would you share your dollar with me?</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Is my data secure?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely. Chatterly processes all your messages locally on your device. We never store or
+                            transmit your chat data to our servers.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Which platforms do you support?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We currently support WhatsApp, Messenger, Instagram, LinkedIn, X (Twitter), Slack, Discord,
+                            Telegram, and more coming soon.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Does it work on Windows or Mac?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely—macOS is production-ready today, and Windows is available via an open beta for early adopters. Use the Download button above to grab whichever installer fits your setup.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">Chatterly</div>
+                <div class="footer-links">
+                    <a href="#" data-modal-target="modal-privacy">Privacy Policy</a>
+                    <a href="#" data-modal-target="modal-terms">Terms of Service</a>
+                    <a href="#" data-modal-target="modal-support">Support</a>
+                </div>
+                <div class="social-links">
+                    <a href="https://github.com/johannvalur" target="_blank" rel="noopener">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2025 Chatterly Inc. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="modal-overlay"></div>
+
+    <div class="modal" id="modal-privacy">
+        <div class="modal-header">
+            <h3>Privacy Policy</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-content">
+            <h4>1. Data Collection</h4>
+            <p>We do not collect, store, or transmit your chat messages, contact lists, or media files. All processing
+                of your personal communication data happens locally on your device.</p>
+
+            <h4>2. Account Information</h4>
+            <p>When you purchase Chatterly, we collect your email address and payment information through our secure
+                payment processor. We do not store credit card details.</p>
+
+            <h4>3. Third-Party Services</h4>
+            <p>Chatterly acts as a unified interface for third-party services (e.g., WhatsApp, Slack). Your interactions
+                with these services are governed by their respective privacy policies.</p>
+
+            <h4>4. Analytics</h4>
+            <p>We may collect anonymous, aggregated usage data (e.g., app crashes, feature usage) to improve the
+                application. You can opt-out of this in the settings.</p>
+        </div>
+    </div>
+
+    <div class="modal" id="modal-donation">
+        <div class="modal-header">
+            <h3>Choose a payment method</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-content donation-modal-content">
+            <p>You picked <strong data-donation-amount>$5</strong>. Support us via any option below:</p>
+            <div class="payment-grid">
+                <a class="payment-option" href="#" target="_blank" rel="noopener" data-payment-provider="stripe"
+                    data-default-href="https://buy.stripe.com/test_custom_amount">
+                    <i class="fab fa-stripe"></i>
+                    <div>
+                        <strong>Stripe</strong>
+                        <span>Cards, ACH, and more</span>
+                    </div>
+                </a>
+                <a class="payment-option" href="#" target="_blank" rel="noopener" data-payment-provider="paypal"
+                    data-default-href="https://www.paypal.com/donate?hosted_button_id=CUSTOM123">
+                    <i class="fab fa-paypal"></i>
+                    <div>
+                        <strong>PayPal</strong>
+                        <span>Use your PayPal balance</span>
+                    </div>
+                </a>
+                <a class="payment-option" href="#" target="_blank" rel="noopener" data-payment-provider="apple"
+                    data-default-href="https://buy.stripe.com/test_custom_amount?method=applepay">
+                    <i class="fab fa-apple"></i>
+                    <div>
+                        <strong>Apple&nbsp;Pay</strong>
+                        <span>Instant on Apple devices</span>
+                    </div>
+                </a>
+                <a class="payment-option" href="#" target="_blank" rel="noopener" data-payment-provider="google"
+                    data-default-href="https://buy.stripe.com/test_custom_amount?method=googlepay">
+                    <i class="fab fa-google"></i>
+                    <div>
+                        <strong>Google&nbsp;Pay</strong>
+                        <span>Fast checkout on Android</span>
+                    </div>
+                </a>
+                <a class="payment-option" href="#" target="_blank" rel="noopener" data-payment-provider="card"
+                    data-default-href="https://buy.stripe.com/test_custom_amount?method=card">
+                    <i class="far fa-credit-card"></i>
+                    <div>
+                        <strong>Credit Card</strong>
+                        <span>Visa, Mastercard, Amex</span>
+                    </div>
+                </a>
+            </div>
+            <p class="payment-note">Need another method? Email <a href="mailto:support@chatterly.app">support@chatterly.app</a>.</p>
+        </div>
+    </div>
+
+    <div class="modal" id="modal-download">
+        <div class="modal-header">
+            <h3>Choose your build</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-content download-modal-content">
+            <p>Pick the installer that matches your desktop. We ship native-feeling builds for both OSes.</p>
+            <div class="download-grid">
+                <a class="download-card" href="https://example.com/chatterly-mac.dmg" target="_blank" rel="noopener">
+                    <div class="download-icon"><i class="fab fa-apple"></i></div>
+                    <div>
+                        <strong>macOS</strong>
+                        <span>Universal build · v1.0.0</span>
+                    </div>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <a class="download-card" href="https://example.com/chatterly-win.exe" target="_blank" rel="noopener">
+                    <div class="download-icon"><i class="fab fa-windows"></i></div>
+                    <div>
+                        <strong>Windows</strong>
+                        <span>Win64 installer · v1.0.0</span>
+                    </div>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <p class="download-note">Need Linux or a nightly build? Email <a href="mailto:support@chatterly.app">support@chatterly.app</a>.</p>
+        </div>
+    </div>
+
+    <div class="modal" id="modal-terms">
+        <div class="modal-header">
+            <h3>Terms of Service</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-content">
+            <h4>1. Acceptance of Terms</h4>
+            <p>By downloading or using Chatterly, you agree to be bound by these Terms of Service.</p>
+
+            <h4>2. License</h4>
+            <p>Chatterly grants you a revocable, non-exclusive, non-transferable, limited license to download, install,
+                and use the Application strictly in accordance with the terms of this Agreement.</p>
+
+            <h4>3. User Conduct</h4>
+            <p>You agree not to use the Application for any unlawful purpose or in any way that interrupts, damages, or
+                impairs the service.</p>
+
+            <h4>4. Disclaimer</h4>
+            <p>The Application is provided "AS IS" and "AS AVAILABLE". We disclaim all warranties, express or implied.
+                We are not responsible for the availability or content of third-party messaging platforms connected
+                through Chatterly.</p>
+        </div>
+    </div>
+
+    <div class="modal" id="modal-support">
+        <div class="modal-header">
+            <h3>Support</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-content">
+            <h4>Welcome to Support! (Sort of)</h4>
+            <p>Having trouble? That's unfortunate. We believe in you though! <i class="fas fa-hand-fist"></i></p>
+
+            <h4>Email Support</h4>
+            <p>Feel free to send us an email at <a href="mailto:support@chatterly.app">support@chatterly.app</a>.
+                It goes directly to <code>/dev/null</code>, but hey, sometimes just writing it out helps!
+                Response time: ∞ hours (give or take).</p>
+
+            <h4>Live Chat</h4>
+            <p>Our "live chat" is actually just a mirror. But talking to yourself can be surprisingly therapeutic!
+                Available 24/7 in your bathroom. <i class="fas fa-mirror"></i></p>
+
+            <h4>Community Support</h4>
+            <p>Join our <a href="#">Discord server</a>! (Just kidding, we don't have one.)
+                But you could start your own support group! We believe in your leadership potential.</p>
+
+            <h4>Self-Help Resources</h4>
+            <p>Have you tried turning it off and on again? That's basically our entire knowledge base.
+                You're welcome! <i class="fas fa-party-horn"></i></p>
+
+            <h4>Donations</h4>
+            <p>Want to support our "support" team? (It's just one person eating ramen.)
+                Send your donations to <code>1BitcoinPlz</code> or just buy yourself a coffee instead.
+                You deserve it more than we do! <i class="fas fa-coffee"></i></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

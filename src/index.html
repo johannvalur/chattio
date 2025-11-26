@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Chatterly</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="sidebar">
+            <div class="sidebar-main">
+                <button class="tablinks" data-platform="welcome" onclick="openTab(event, 'welcome')" title="Home">
+                    <img class="tab-icon" src="../public/transparent.png" alt="Home" />
+                </button>
+                <button class="tablinks" data-platform="messenger" onclick="openTab(event, 'messenger')" title="Messenger">
+                    <img class="tab-icon" src="../public/icons/messenger.png" alt="Messenger" />
+                </button>
+                <button class="tablinks" data-platform="whatsapp" onclick="openTab(event, 'whatsapp')" title="WhatsApp">
+                    <img class="tab-icon" src="../public/icons/whatsapp.png" alt="WhatsApp" />
+                </button>
+                <button class="tablinks" data-platform="instagram" onclick="openTab(event, 'instagram')" title="Instagram">
+                    <img class="tab-icon" src="../public/icons/instagram.png" alt="Instagram" />
+                </button>
+                <button class="tablinks" data-platform="linkedin" onclick="openTab(event, 'linkedin')" title="LinkedIn">
+                    <img class="tab-icon" src="../public/icons/linkedin.png" alt="LinkedIn" />
+                </button>
+                <button class="tablinks" data-platform="x" onclick="openTab(event, 'x')" title="X (Twitter)">
+                    <img class="tab-icon" src="../public/icons/x.png" alt="X" />
+                </button>
+                <button class="tablinks" data-platform="slack" onclick="openTab(event, 'slack')" title="Slack">
+                    <img class="tab-icon" src="../public/icons/slack.png" alt="Slack" />
+                </button>
+                <button class="tablinks" data-platform="telegram" onclick="openTab(event, 'telegram')" title="Telegram">
+                    <img class="tab-icon" src="../public/icons/telegram.png" alt="Telegram" />
+                </button>
+                <button class="tablinks" data-platform="discord" onclick="openTab(event, 'discord')" title="Discord">
+                    <img class="tab-icon" src="../public/icons/discord.png" alt="Discord" />
+                </button>
+            </div>
+            <div class="sidebar-bottom">
+                <button class="tablinks" data-platform="settings" onclick="openTab(event, 'settings')" title="Settings">
+                    <span class="tab-icon">⚙</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div id="welcome" class="tabcontent" style="display:none">
+                <div class="welcome-container">
+                    <div class="welcome-shell">
+
+                        <div class="welcome-logo">
+                            <img src="../public/transparent.png" alt="Chatterly Logo" class="welcome-logo-icon" />
+                        </div>
+                        <img src="../public/chatterly_transparent.png" alt="Chatterly" class="welcome-brand-name" />
+                        <h1 class="welcome-title">
+                            <span class="welcome-title-line">All Your Chats.</span>
+                            <span class="welcome-title-line welcome-title-second">One Masterpiece.</span>
+                        </h1>
+                        <p class="welcome-subtitle">Stop switching tabs. Chatterly unifies Facebook, Instagram, WhatsApp, LinkedIn, X, Slack, and more into a single, powerful MacOS app.</p>
+
+                        <div class="welcome-features">
+                            <div class="welcome-feature">
+                                <div class="welcome-feature-icon">⚡</div>
+                                <span>Fast & Lightweight</span>
+                            </div>
+                            <div class="welcome-feature">
+                                <div class="welcome-feature-icon">🔒</div>
+                                <span>Privacy First</span>
+                            </div>
+                            <div class="welcome-feature">
+                                <div class="welcome-feature-icon">🎨</div>
+                                <span>Beautiful Design</span>
+                            </div>
+                        </div>
+
+                        <div class="welcome-summary">
+                            <p class="welcome-summary-label">Connect with 8 platforms</p>
+                            <div class="welcome-pills">
+                                <div class="welcome-pill">
+                                    <img src="../public/icons/messenger.png" alt="Messenger" class="welcome-pill-icon" />
+                                    <span>Messenger</span>
+                                </div>
+                                <div class="welcome-pill">
+                                    <img src="../public/icons/whatsapp.png" alt="WhatsApp" class="welcome-pill-icon" />
+                                    <span>WhatsApp</span>
+                                </div>
+                                <div class="welcome-pill">
+                                    <img src="../public/icons/instagram.png" alt="Instagram" class="welcome-pill-icon" />
+                                    <span>Instagram</span>
+                                </div>
+                                <div class="welcome-pill">
+                                    <img src="../public/icons/linkedin.png" alt="LinkedIn" class="welcome-pill-icon" />
+                                    <span>LinkedIn</span>
+                                </div>
+                                <div class="welcome-pill">
+                                    <img src="../public/icons/x.png" alt="X" class="welcome-pill-icon" />
+                                    <span>X</span>
+                                </div>
+                                <div class="welcome-pill">
+                                    <img src="../public/icons/slack.png" alt="Slack" class="welcome-pill-icon" />
+                                    <span>Slack</span>
+                                </div>
+                                <div class="welcome-pill">
+                                    <img src="../public/icons/discord.png" alt="Discord" class="welcome-pill-icon" />
+                                    <span>Discord</span>
+                                </div>
+                                <div class="welcome-pill">
+                                    <img src="../public/icons/telegram.png" alt="Telegram" class="welcome-pill-icon" />
+                                    <span>Telegram</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="messenger" class="tabcontent" style="display:none">
+                <webview id="messenger-webview" src="https://www.messenger.com/" style="width:100%; height:100vh;"></webview>
+            </div>
+
+            <div id="whatsapp" class="tabcontent">
+                <webview id="whatsapp-webview" src="https://web.whatsapp.com/" useragent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" style="width:100%; height:100vh;"></webview>
+            </div>
+
+            <div id="instagram" class="tabcontent">
+                <webview id="instagram-webview" src="https://www.instagram.com/direct/inbox/" style="width:100%; height:100vh;"></webview>
+            </div>
+
+            <div id="linkedin" class="tabcontent">
+                <webview id="linkedin-webview" src="https://www.linkedin.com/messaging/" style="width:100%; height:100vh;"></webview>
+            </div>
+
+            <div id="x" class="tabcontent">
+                <webview id="x-webview" src="https://x.com/messages" style="width:100%; height:100vh;"></webview>
+            </div>
+
+            <div id="slack" class="tabcontent">
+                <webview id="slack-webview" src="https://app.slack.com/client" useragent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" style="width:100%; height:100vh;"></webview>
+            </div>
+
+            <div id="telegram" class="tabcontent">
+                <webview id="telegram-webview" src="https://web.telegram.org" style="width:100%; height:100vh;"></webview>
+            </div>
+
+            <div id="discord" class="tabcontent">
+                <webview id="discord-webview" src="https://discord.com/app" style="width:100%; height:100vh;"></webview>
+            </div>
+
+            <div id="settings" class="tabcontent">
+                <div class="settings-container">
+                    <div class="settings-sidebar">
+                        <button class="settings-tab active" data-settings-tab="donate" onclick="openSettingsTab('donate')">Donate</button>
+                        <button class="settings-tab" data-settings-tab="appearance" onclick="openSettingsTab('appearance')">Appearance</button>
+                        <button class="settings-tab" data-settings-tab="notifications" onclick="openSettingsTab('notifications')">Apps & Notifications</button>
+                        <button class="settings-tab" data-settings-tab="privacy" onclick="openSettingsTab('privacy')">Privacy &amp; Security</button>
+                        <button class="settings-tab" data-settings-tab="about" onclick="openSettingsTab('about')">About</button>
+                    </div>
+                    <div class="settings-content">
+                        <div id="settings-donate" class="settings-panel" style="display:block">
+                            <div class="settings-header">
+                                <h1>Support Chatterly</h1>
+                                <p class="settings-subtitle">Your support helps improve Chatterly and add new features. Every contribution makes a difference in making unified messaging better for everyone.</p>
+                            </div>
+                            <div class="settings-card-grid">
+                                <div class="settings-card">
+                                    <div class="settings-card-icon">☕</div>
+                                    <h2>Buy me a coffee</h2>
+                                    <p>Show your appreciation with a small, one-time contribution. Perfect for saying thanks and supporting future updates.</p>
+                                    <button class="settings-primary-button">Open donation page</button>
+                                </div>
+                                <div class="settings-card">
+                                    <div class="settings-card-icon">❤️</div>
+                                    <h2>Monthly supporter</h2>
+                                    <p>Become a monthly supporter and help ensure Chatterly continues to evolve with regular updates and new features.</p>
+                                    <button class="settings-secondary-button">View plans</button>
+                                </div>
+                            </div>
+                            <div class="settings-info-box">
+                                <p><strong>Why support Chatterly?</strong> Your contributions help us maintain the app, add new platforms, improve performance, and ensure Chatterly stays free and accessible for everyone.</p>
+                            </div>
+                        </div>
+
+                        <div id="settings-appearance" class="settings-panel">
+                            <div class="settings-header">
+                                <h1>Appearance</h1>
+                                <p class="settings-subtitle">Customize how Chatterly looks and feels to match your preferences and workflow.</p>
+                            </div>
+                            <div class="settings-section">
+                                <h2>Theme</h2>
+                                <p class="settings-section-description">Choose a color scheme that works best for you. System default will automatically match your macOS appearance settings.</p>
+                                <div class="settings-row">
+                                    <div class="settings-label-group">
+                                        <label class="settings-label">Color scheme</label>
+                                        <span class="settings-label-hint">Select your preferred theme</span>
+                                    </div>
+                                    <div class="settings-toggle-group">
+                                        <button class="settings-chip settings-chip-active">System default</button>
+                                        <button class="settings-chip">Light</button>
+                                        <button class="settings-chip">Dark</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="settings-section">
+                                <h2>Sidebar</h2>
+                                <p class="settings-section-description">Adjust the spacing and size of sidebar elements for a more comfortable or compact view.</p>
+                                <div class="settings-row">
+                                    <div class="settings-label-group">
+                                        <label class="settings-label">Sidebar density</label>
+                                        <span class="settings-label-hint">Control spacing between icons</span>
+                                    </div>
+                                    <div class="settings-toggle-group">
+                                        <button class="settings-chip settings-chip-active">Comfortable</button>
+                                        <button class="settings-chip">Compact</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="settings-notifications" class="settings-panel">
+                            <div class="settings-header">
+                                <h1>Apps & Notifications</h1>
+                                <p class="settings-subtitle">Manage which apps appear in your sidebar and control how and when you're notified about new messages and updates.</p>
+                            </div>
+                            <div class="settings-section">
+                                <h2>Global Settings</h2>
+                                <p class="settings-section-description">These settings apply to all services and control system-wide notification behavior.</p>
+                                <div class="settings-row">
+                                    <div class="settings-label-group">
+                                        <label class="settings-label">Desktop notifications</label>
+                                        <span class="settings-label-hint">Show native macOS notifications for new messages</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="settings-row">
+                                    <div class="settings-label-group">
+                                        <label class="settings-label">Badge dock icon</label>
+                                        <span class="settings-label-hint">Display unread count on the app icon in the dock</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="settings-section">
+                                <h2>Apps & Services</h2>
+                                <p class="settings-section-description">Enable or disable apps in the sidebar and control notifications for each messaging service. You can also drag and drop apps in the sidebar to rearrange them.</p>
+                                <div class="settings-service-list">
+                                    <div class="settings-service-item">
+                                        <div class="settings-service-header">
+                                            <div class="settings-label-group">
+                                                <label class="settings-label">Messenger</label>
+                                                <span class="settings-label-hint">Facebook Messenger</span>
+                                            </div>
+                                        </div>
+                                        <div class="settings-service-toggles">
+                                            <div class="settings-row">
+                                                <div class="settings-label-group">
+                                                    <label class="settings-label-small">Show in sidebar</label>
+                                                </div>
+                                                <label class="switch">
+                                                    <input type="checkbox" data-app="messenger" data-toggle="app" checked>
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </div>
+                                            <div class="settings-row">
+                                                <div class="settings-label-group">
+                                                    <label class="settings-label-small">Notifications</label>
+                                                </div>
+                                                <label class="switch">
+                                                    <input type="checkbox" data-app="messenger" data-toggle="notifications" checked>
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="settings-service-item">
+                                        <div class="settings-service-header">
+                                            <div class="settings-label-group">
+                                                <label class="settings-label">WhatsApp</label>
+                                                <span class="settings-label-hint">WhatsApp Web</span>
+                                            </div>
+                                        </div>
+                                        <div class="settings-service-toggles">
+                                            <div class="settings-row">
+                                                <div class="settings-label-group">
+                                                    <label class="settings-label-small">Show in sidebar</label>
+                                                </div>
+                                                <label class="switch">
+                                                    <input type="checkbox" data-app="whatsapp" data-toggle="app" checked>
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </div>
+                                            <div class="settings-row">
+                                                <div class="settings-label-group">
+                                                    <label class="settings-label-small">Notifications</label>
+                                                </div>
+                                                <label class="switch">
+                                                    <input type="checkbox" data-app="whatsapp" data-toggle="notifications" checked>
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="settings-service-item">
+                                        <div class="settings-service-header">
+                                            <div class="settings-label-group">
+                                                <label class="settings-label">Instagram</label>
+                                                <span class="settings-label-hint">Instagram Direct</span>
+                                            </div>
+                                        </div>
+                                        <div class="settings-service-toggles">
+                                            <div class="settings-row">
+                                                <div class="settings-label-group">
+                                                    <label class="settings-label-small">Show in sidebar</label>
+                                                </div>
+                                                <label class="switch">
+                                                    <input type="checkbox" data-app="instagram" data-toggle="app" checked>
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </div>
+                                            <div class="settings-row">
+                                                <div class="settings-label-group">
+                                                    <label class="settings-label-small">Notifications</label>
+                                                </div>
+                                                <label class="switch">
+                                                    <input type="checkbox" data-app="instagram" data-toggle="notifications" checked>
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="settings-service-item">
+                                        <div class="settings-service-header">
+                                            <div class="settings-label-group">
+                                                <label class="settings-label">LinkedIn</label>
+                                                <span class="settings-label-hint">LinkedIn messaging</span>
+                                            </div>
+                                        </div>
+                                        <div class="settings-service-toggles">
+                                            <div class="settings-row">
+                                                <div class="settings-label-group">
+                                                    <label class="settings-label-small">Show in sidebar</label>
+                                                </div>
+                                                <label class="switch">
+                                                    <input type="checkbox" data-app="linkedin" data-toggle="app" checked>
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </div>
+                                            <div class="settings-row">
+                                                <div class="settings-label-group">
+                                                    <label class="settings-label-small">Notifications</label>
+                                                </div>
+                                                <label class="switch">
+                                                    <input type="checkbox" data-app="linkedin" data-toggle="notifications" checked>
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="settings-service-item">
+                                        <div class="settings-service-header">
+                                            <div class="settings-label-group">
+                                                <label class="settings-label">X (Twitter)</label>
+                                                <span class="settings-label-hint">X direct messages</span>
+                                            </div>
+                                        </div>
+                                        <div class="settings-service-toggles">
+                                            <div class="settings-row">
+                                                <div class="settings-label-group">
+                                                    <label class="settings-label-small">Show in sidebar</label>
+                                                </div>
+                                                <label class="switch">
+                                                    <input type="checkbox" data-app="x" data-toggle="app" checked>
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </div>
+                                            <div class="settings-row">
+                                                <div class="settings-label-group">
+                                                    <label class="settings-label-small">Notifications</label>
+                                                </div>
+                                                <label class="switch">
+                                                    <input type="checkbox" data-app="x" data-toggle="notifications" checked>
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="settings-service-item">
+                                        <div class="settings-service-header">
+                                            <div class="settings-label-group">
+                                                <label class="settings-label">Slack</label>
+                                                <span class="settings-label-hint">Slack workspace</span>
+                                            </div>
+                                        </div>
+                                        <div class="settings-service-toggles">
+                                            <div class="settings-row">
+                                                <div class="settings-label-group">
+                                                    <label class="settings-label-small">Show in sidebar</label>
+                                                </div>
+                                                <label class="switch">
+                                                    <input type="checkbox" data-app="slack" data-toggle="app" checked>
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </div>
+                                            <div class="settings-row">
+                                                <div class="settings-label-group">
+                                                    <label class="settings-label-small">Notifications</label>
+                                                </div>
+                                                <label class="switch">
+                                                    <input type="checkbox" data-app="slack" data-toggle="notifications" checked>
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="settings-service-item">
+                                        <div class="settings-service-header">
+                                            <div class="settings-label-group">
+                                                <label class="settings-label">Telegram</label>
+                                                <span class="settings-label-hint">Telegram messages</span>
+                                            </div>
+                                        </div>
+                                        <div class="settings-service-toggles">
+                                            <div class="settings-row">
+                                                <div class="settings-label-group">
+                                                    <label class="settings-label-small">Show in sidebar</label>
+                                                </div>
+                                                <label class="switch">
+                                                    <input type="checkbox" data-app="telegram" data-toggle="app" checked>
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </div>
+                                            <div class="settings-row">
+                                                <div class="settings-label-group">
+                                                    <label class="settings-label-small">Notifications</label>
+                                                </div>
+                                                <label class="switch">
+                                                    <input type="checkbox" data-app="telegram" data-toggle="notifications" checked>
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="settings-service-item">
+                                        <div class="settings-service-header">
+                                            <div class="settings-label-group">
+                                                <label class="settings-label">Discord</label>
+                                                <span class="settings-label-hint">Discord direct messages</span>
+                                            </div>
+                                        </div>
+                                        <div class="settings-service-toggles">
+                                            <div class="settings-row">
+                                                <div class="settings-label-group">
+                                                    <label class="settings-label-small">Show in sidebar</label>
+                                                </div>
+                                                <label class="switch">
+                                                    <input type="checkbox" data-app="discord" data-toggle="app" checked>
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </div>
+                                            <div class="settings-row">
+                                                <div class="settings-label-group">
+                                                    <label class="settings-label-small">Notifications</label>
+                                                </div>
+                                                <label class="switch">
+                                                    <input type="checkbox" data-app="discord" data-toggle="notifications" checked>
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="settings-privacy" class="settings-panel">
+                            <div class="settings-header">
+                                <h1>Privacy &amp; Security</h1>
+                                <p class="settings-subtitle">Your privacy is our priority. Learn how Chatterly protects your data and respects your security.</p>
+                            </div>
+                            <div class="settings-section">
+                                <h2>Data Handling</h2>
+                                <p class="settings-section-description">Chatterly is designed with privacy in mind. Here's how we handle your data:</p>
+                                <div class="settings-privacy-list">
+                                    <div class="settings-privacy-item">
+                                        <div class="settings-privacy-icon">🔒</div>
+                                        <div class="settings-privacy-content">
+                                            <h3>Direct Web Integration</h3>
+                                            <p>Chatterly embeds the official web apps directly in a webview. We don't intercept or modify your communications.</p>
+                                        </div>
+                                    </div>
+                                    <div class="settings-privacy-item">
+                                        <div class="settings-privacy-icon">🔑</div>
+                                        <div class="settings-privacy-content">
+                                            <h3>No Credential Storage</h3>
+                                            <p>Your login credentials are handled entirely by each service. Chatterly never stores your passwords or authentication tokens.</p>
+                                        </div>
+                                    </div>
+                                    <div class="settings-privacy-item">
+                                        <div class="settings-privacy-icon">🚫</div>
+                                        <div class="settings-privacy-content">
+                                            <h3>No Message Storage</h3>
+                                            <p>Messages are never stored or transmitted through a custom server. All communication goes directly to the service providers.</p>
+                                        </div>
+                                    </div>
+                                    <div class="settings-privacy-item">
+                                        <div class="settings-privacy-icon">🏠</div>
+                                        <div class="settings-privacy-content">
+                                            <h3>Local Only</h3>
+                                            <p>All app data and preferences are stored locally on your device. Nothing is synced to external servers.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="settings-section">
+                                <h2>Telemetry &amp; Analytics</h2>
+                                <p class="settings-section-description">Help us improve Chatterly by sharing anonymous usage data. You can opt out at any time.</p>
+                                <div class="settings-row">
+                                    <div class="settings-label-group">
+                                        <label class="settings-label">Anonymous usage analytics</label>
+                                        <span class="settings-label-hint">Help improve Chatterly by sharing usage statistics</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="settings-info-box">
+                                    <p><strong>What we collect:</strong> Basic usage events like app launches, feature usage, and error reports. <strong>What we never collect:</strong> Message content, personal information, login credentials, or any data that could identify you.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="settings-about" class="settings-panel">
+                            <div class="about-header">
+                                <h1 class="about-title">About Chatterly</h1>
+                                <p class="about-subtitle">Unified messenger for your favorite services.</p>
+                            </div>
+
+                            <div class="about-app-info">
+                                <h2 class="about-section-title">App information</h2>
+                                <div class="about-info-list">
+                                    <div class="about-info-item">
+                                        <span class="about-info-label">Name:</span>
+                                        <span class="about-info-value">Chatterly</span>
+                                    </div>
+                                    <div class="about-info-item">
+                                        <span class="about-info-label">Version:</span>
+                                        <span class="about-info-value">1.0.0</span>
+                                    </div>
+                                    <div class="about-info-item">
+                                        <span class="about-info-label">Platform:</span>
+                                        <span class="about-info-value">macOS (Electron)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="about-credits">
+                                <h2 class="about-section-title">Credits</h2>
+                                <p class="about-credits-text">Built by bringing together the official web apps for Messenger, WhatsApp, Instagram, Linkedin, X, Slack, Telegram, and Discord into one clean interface.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

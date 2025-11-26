@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hero Composite</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: transparent;
+        }
+
+        .composite-container {
+            position: relative;
+            width: 1000px;
+            /* Adjust based on actual image size */
+        }
+
+        .imac-frame {
+            width: 100%;
+            display: block;
+            z-index: 2;
+            position: relative;
+            pointer-events: none;
+            /* Let clicks pass through if needed */
+        }
+
+        .app-screenshot {
+            position: absolute;
+            top: 5.5%;
+            left: 5.5%;
+            width: 89%;
+            height: 66%;
+            /* Adjusted to cover more screen area */
+            z-index: 1;
+            object-fit: cover;
+            border-radius: 12px;
+            /* Match iMac screen corners */
+            /* If there's perspective, we might need transform: perspective(...) rotateX(...) etc. */
+            /* But the user said "fill it", implying a direct fit if it's front-facing. */
+            /* If the iMac image is angled, I'll need to use transform: matrix3d(...) or similar. */
+            /* Based on "new imac computer png", it's often slightly angled or straight. */
+            /* I'll assume straight for now and adjust. */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="composite-container">
+        <!-- iMac Frame -->
+        <img src="/Users/johannvs/.gemini/antigravity/brain/ae3a0f4e-a5ca-413c-8c20-4c9695cc9d12/uploaded_image_0_1763934805398.png"
+            class="imac-frame" alt="iMac Frame">
+
+        <!-- App Screenshot -->
+        <img src="/Users/johannvs/.gemini/antigravity/brain/ae3a0f4e-a5ca-413c-8c20-4c9695cc9d12/uploaded_image_1_1763934805398.png"
+            class="app-screenshot" alt="App Screenshot">
+    </div>
+</body>
+
+</html>
