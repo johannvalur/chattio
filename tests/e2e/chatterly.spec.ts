@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Chatterly marketing site', () => {
+test.describe('Chattio marketing site', () => {
 	test('renders hero section', async ({ page }) => {
 		await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
 		const hero = page.locator('.hero');

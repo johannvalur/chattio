@@ -1,7 +1,7 @@
 {
   "name": "chatterly",
   "version": "1.0.0",
-  "description": "Chatterly - all-in-one messaging client for Mac",
+  "description": "Chattio - all-in-one messaging client for Mac",
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
@@ -39,7 +39,7 @@
   },
   "build": {
     "appId": "com.unified.messenger",
-    "productName": "Chatterly",
+    "productName": "Chattio",
     "directories": {
       "output": "dist"
     },
@@ -63,7 +63,7 @@
       "icon": "public/icons/icon.ico"
     },
     "dmg": {
-      "title": "Chatterly",
+      "title": "Chattio",
       "icon": "public/icons/icon.icns",
       "background": "public/background.png",
       "window": {

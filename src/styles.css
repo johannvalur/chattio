@@ -688,16 +688,38 @@ body:not(.theme-dark) .welcome-logo-icon {
 }
 
 .welcome-brand-name {
-	height: 100px;
-	width: auto;
-	object-fit: contain;
-	margin-top: 4px;
-	margin-bottom: 0;
+	font-size: 72px;
+	font-weight: 800;
+	font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+	background: linear-gradient(135deg, #007AFF 0%, #5AC8FA 50%, #AF52DE 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	margin-top: 8px;
+	margin-bottom: 8px;
 	opacity: 0;
 	animation: welcome-fade-in-scale 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;
-	filter: drop-shadow(0 8px 32px rgba(0, 122, 255, 0.25));
-	transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 	position: relative;
+	display: inline-block;
+	letter-spacing: -0.03em;
+	line-height: 1;
+	text-align: center;
+}
+
+.welcome-brand-name::before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) scale(1.1);
+	width: 110%;
+	height: 110%;
+	background: linear-gradient(135deg, rgba(0, 122, 255, 0.08) 0%, rgba(90, 200, 250, 0.08) 50%, rgba(175, 82, 222, 0.08) 100%);
+	border-radius: 20px;
+	opacity: 1;
+	z-index: -1;
+	filter: blur(20px);
+	pointer-events: none;
 }
 
 @keyframes welcome-fade-in-scale {
@@ -711,10 +733,6 @@ body:not(.theme-dark) .welcome-logo-icon {
 	}
 }
 
-.welcome-brand-name:hover {
-	transform: scale(1.08);
-	filter: drop-shadow(0 12px 40px rgba(0, 122, 255, 0.4));
-}
 
 .welcome-title {
 	font-size: 40px;
@@ -1034,6 +1052,18 @@ body.theme-dark .welcome-pill:hover {
 	box-shadow: 0 8px 28px rgba(0, 122, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 	background: linear-gradient(135deg, #1f1f1f 0%, #1a1a2a 100%);
 }
+
+body.theme-dark .welcome-brand-name {
+	background: linear-gradient(135deg, #5AC8FA 0%, #007AFF 50%, #AF52DE 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+body.theme-dark .welcome-brand-name::before {
+	background: linear-gradient(135deg, rgba(90, 200, 250, 0.1) 0%, rgba(0, 122, 255, 0.1) 50%, rgba(175, 82, 222, 0.1) 100%);
+}
+
 
 .settings-card-grid {
 	display: flex;
