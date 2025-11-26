@@ -44,6 +44,7 @@ function openTab(evt, platform) {
         tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
 
+
     document.getElementById(platform).style.display = "block";
     evt.currentTarget.className += " active";
 
@@ -225,10 +226,9 @@ const appState = {
         slack: { enabled: true, notifications: true },
         telegram: { enabled: true, notifications: true },
         discord: { enabled: true, notifications: true },
-        imessage: { enabled: true, notifications: true },
         teams: { enabled: true, notifications: true }
     },
-    order: ['messenger', 'whatsapp', 'instagram', 'linkedin', 'x', 'slack', 'telegram', 'discord', 'imessage', 'teams']
+    order: ['messenger', 'whatsapp', 'instagram', 'linkedin', 'x', 'slack', 'telegram', 'discord', 'teams']
 };
 
 // Load app state from localStorage

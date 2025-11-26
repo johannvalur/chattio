@@ -39,9 +39,6 @@
                 <button class="tablinks" data-platform="discord" onclick="openTab(event, 'discord')" title="Discord">
                     <img class="tab-icon" src="../public/icons/discord.png" alt="Discord" />
                 </button>
-                <button class="tablinks" data-platform="imessage" onclick="openTab(event, 'imessage')" title="iMessage">
-                    <img class="tab-icon" src="../public/icons/imessage.png" alt="iMessage" />
-                </button>
                 <button class="tablinks" data-platform="teams" onclick="openTab(event, 'teams')" title="Microsoft Teams">
                     <img class="tab-icon" src="../public/icons/teams.png" alt="Teams" />
                 </button>
@@ -66,7 +63,7 @@
                             <span class="welcome-title-line">All Your Chats.</span>
                             <span class="welcome-title-line welcome-title-second">One Masterpiece.</span>
                         </h1>
-                        <p class="welcome-subtitle">Stop switching tabs. Chattio unifies Facebook, Instagram, WhatsApp, LinkedIn, X, Slack, Teams, iMessage, and more into a single, powerful MacOS app.</p>
+                        <p class="welcome-subtitle">Stop switching tabs. Chattio unifies Facebook, Instagram, WhatsApp, LinkedIn, X, Slack, Teams, and more into a single, powerful MacOS app.</p>
 
                         <div class="welcome-features">
                             <div class="welcome-feature">
@@ -84,7 +81,7 @@
                         </div>
 
                         <div class="welcome-summary">
-                            <p class="welcome-summary-label">Connect with 10 platforms</p>
+                            <p class="welcome-summary-label">Connect with 9 platforms</p>
                             <div class="welcome-pills">
                                 <div class="welcome-pill">
                                     <img src="../public/icons/messenger.png" alt="Messenger" class="welcome-pill-icon" />
@@ -117,10 +114,6 @@
                                 <div class="welcome-pill">
                                     <img src="../public/icons/telegram.png" alt="Telegram" class="welcome-pill-icon" />
                                     <span>Telegram</span>
-                                </div>
-                                <div class="welcome-pill">
-                                    <img src="../public/icons/imessage.png" alt="iMessage" class="welcome-pill-icon" />
-                                    <span>iMessage</span>
                                 </div>
                                 <div class="welcome-pill">
                                     <img src="../public/icons/teams.png" alt="Teams" class="welcome-pill-icon" />
@@ -162,16 +155,6 @@
 
             <div id="discord" class="tabcontent">
                 <webview id="discord-webview" src="https://discord.com/app" style="width:100%; height:100vh;"></webview>
-            </div>
-
-            <div id="imessage" class="tabcontent" style="display:none">
-                <div style="display: flex; align-items: center; justify-content: center; height: 100vh; flex-direction: column; padding: 40px; text-align: center;">
-                    <h2 style="font-size: 24px; margin-bottom: 16px; color: #0a0a0a;">iMessage Integration</h2>
-                    <p style="font-size: 16px; color: #666; max-width: 500px; line-height: 1.6;">
-                        iMessage is a native macOS service that requires system-level integration. 
-                        This feature is coming soon and will allow you to access your iMessage conversations directly within Chattio.
-                    </p>
-                </div>
             </div>
 
             <div id="teams" class="tabcontent" style="display:none">
@@ -508,34 +491,6 @@
                                     <div class="settings-service-item">
                                         <div class="settings-service-header">
                                             <div class="settings-label-group">
-                                                <label class="settings-label">iMessage</label>
-                                                <span class="settings-label-hint">Apple iMessage</span>
-                                            </div>
-                                        </div>
-                                        <div class="settings-service-toggles">
-                                            <div class="settings-row">
-                                                <div class="settings-label-group">
-                                                    <label class="settings-label-small">Show in sidebar</label>
-                                                </div>
-                                                <label class="switch">
-                                                    <input type="checkbox" data-app="imessage" data-toggle="app" checked>
-                                                    <span class="slider"></span>
-                                                </label>
-                                            </div>
-                                            <div class="settings-row">
-                                                <div class="settings-label-group">
-                                                    <label class="settings-label-small">Notifications</label>
-                                                </div>
-                                                <label class="switch">
-                                                    <input type="checkbox" data-app="imessage" data-toggle="notifications" checked>
-                                                    <span class="slider"></span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="settings-service-item">
-                                        <div class="settings-service-header">
-                                            <div class="settings-label-group">
                                                 <label class="settings-label">Microsoft Teams</label>
                                                 <span class="settings-label-hint">Teams messaging</span>
                                             </div>
@@ -649,7 +604,7 @@
 
                             <div class="about-credits">
                                 <h2 class="about-section-title">Credits</h2>
-                                <p class="about-credits-text">Built by bringing together the official web apps for Messenger, WhatsApp, Instagram, Linkedin, X, Slack, Telegram, Discord, Teams, and iMessage into one clean interface.</p>
+                                <p class="about-credits-text">Built by bringing together the official web apps for Messenger, WhatsApp, Instagram, Linkedin, X, Slack, Telegram, Discord, and Teams into one clean interface.</p>
                             </div>
                         </div>
                     </div>
