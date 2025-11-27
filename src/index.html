@@ -63,7 +63,7 @@
                             <span class="welcome-title-line">All Your Chats.</span>
                             <span class="welcome-title-line welcome-title-second">One Masterpiece.</span>
                         </h1>
-                        <p class="welcome-subtitle">Stop switching tabs. Chattio unifies Facebook, Instagram, WhatsApp, LinkedIn, X, Slack, Teams, and more into a single, powerful MacOS app.</p>
+                        <p class="welcome-subtitle">Stop switching tabs. Chattio unifies Facebook, Instagram, WhatsApp, LinkedIn, X, Slack, Teams, and more into a single powerful app.</p>
 
                         <div class="welcome-features">
                             <div class="welcome-feature">
@@ -129,31 +129,31 @@
                 <webview id="messenger-webview" src="https://www.messenger.com/" style="width:100%; height:100vh;"></webview>
             </div>
 
-            <div id="whatsapp" class="tabcontent">
+            <div id="whatsapp" class="tabcontent" style="display:none">
                 <webview id="whatsapp-webview" src="https://web.whatsapp.com/" useragent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" style="width:100%; height:100vh;"></webview>
             </div>
 
-            <div id="instagram" class="tabcontent">
+            <div id="instagram" class="tabcontent" style="display:none">
                 <webview id="instagram-webview" src="https://www.instagram.com/direct/inbox/" style="width:100%; height:100vh;"></webview>
             </div>
 
-            <div id="linkedin" class="tabcontent">
+            <div id="linkedin" class="tabcontent" style="display:none">
                 <webview id="linkedin-webview" src="https://www.linkedin.com/messaging/" style="width:100%; height:100vh;"></webview>
             </div>
 
-            <div id="x" class="tabcontent">
+            <div id="x" class="tabcontent" style="display:none">
                 <webview id="x-webview" src="https://x.com/messages" style="width:100%; height:100vh;"></webview>
             </div>
 
-            <div id="slack" class="tabcontent">
+            <div id="slack" class="tabcontent" style="display:none">
                 <webview id="slack-webview" src="https://app.slack.com/client" useragent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" style="width:100%; height:100vh;"></webview>
             </div>
 
-            <div id="telegram" class="tabcontent">
+            <div id="telegram" class="tabcontent" style="display:none">
                 <webview id="telegram-webview" src="https://web.telegram.org" style="width:100%; height:100vh;"></webview>
             </div>
 
-            <div id="discord" class="tabcontent">
+            <div id="discord" class="tabcontent" style="display:none">
                 <webview id="discord-webview" src="https://discord.com/app" style="width:100%; height:100vh;"></webview>
             </div>
 
@@ -209,9 +209,9 @@
                                         <span class="settings-label-hint">Select your preferred theme</span>
                                     </div>
                                     <div class="settings-toggle-group">
-                                        <button class="settings-chip settings-chip-active">System default</button>
-                                        <button class="settings-chip">Light</button>
-                                        <button class="settings-chip">Dark</button>
+                                        <button class="settings-chip settings-chip-active" data-theme="system">System default</button>
+                                        <button class="settings-chip" data-theme="light">Light</button>
+                                        <button class="settings-chip" data-theme="dark">Dark</button>
                                     </div>
                                 </div>
                             </div>
@@ -224,8 +224,8 @@
                                         <span class="settings-label-hint">Control spacing between icons</span>
                                     </div>
                                     <div class="settings-toggle-group">
-                                        <button class="settings-chip settings-chip-active">Comfortable</button>
-                                        <button class="settings-chip">Compact</button>
+                                        <button class="settings-chip settings-chip-active" data-density="comfortable">Comfortable</button>
+                                        <button class="settings-chip" data-density="compact">Compact</button>
                                     </div>
                                 </div>
                             </div>
@@ -245,7 +245,7 @@
                                         <span class="settings-label-hint">Show native macOS notifications for new messages</span>
                                     </div>
                                     <label class="switch">
-                                        <input type="checkbox" checked>
+                                        <input type="checkbox" id="global-notifications-toggle" data-setting="globalNotifications" checked>
                                         <span class="slider"></span>
                                     </label>
                                 </div>
@@ -255,7 +255,7 @@
                                         <span class="settings-label-hint">Display unread count on the app icon in the dock</span>
                                     </div>
                                     <label class="switch">
-                                        <input type="checkbox" checked>
+                                        <input type="checkbox" id="badge-dock-icon-toggle" data-setting="badgeDockIcon" checked>
                                         <span class="slider"></span>
                                     </label>
                                 </div>
