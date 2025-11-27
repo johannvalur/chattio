@@ -7,24 +7,21 @@ const {
 	applySidebarState
 } = require('./lib/sidebarManager');
 
+const PLATFORM_KEYS = Object.keys(PLATFORMS);
+
 const UNREAD_STORAGE_KEY = 'chatterly-unread-state';
 
 // Extended unread state for all platforms (stores counts)
-const unreadState = {
-	messenger: 0,
-	whatsapp: 0,
-	instagram: 0,
-	linkedin: 0,
-	x: 0,
-	slack: 0,
-	telegram: 0,
-	discord: 0,
-	teams: 0
-};
+const unreadState = PLATFORM_KEYS.reduce((state, platform) => {
+	state[platform] = 0;
+	return state;
+}, {});
 
 function updateUnreadSummary() {
 	try {
-		const unreadEntries = Object.entries(unreadState).filter(([_, count]) => count > 0);
+		const unreadEntries = Object.entries(unreadState).filter(
+			([platform, count]) => count > 0 && isNotificationsEnabled(platform)
+		);
 		const hasUnreadServices = unreadEntries.length;
 		const totalMessages = unreadEntries.reduce((sum, [_, count]) => sum + count, 0);
 		
@@ -32,13 +29,15 @@ function updateUnreadSummary() {
 		if (appState.settings.badgeDockIcon) {
 			ipcRenderer.send('unread-summary', {
 				...unreadState,
-				totalUnreadServices: hasUnreadServices
+				totalUnreadServices: hasUnreadServices,
+				totalMessages: totalMessages
 			});
 		} else {
 			// Clear badge if disabled
 			ipcRenderer.send('unread-summary', {
 				...unreadState,
-				totalUnreadServices: 0
+				totalUnreadServices: 0,
+				totalMessages: 0
 			});
 		}
 		
@@ -150,8 +149,9 @@ function setTabUnread(platform, count, options = {}) {
 	const unreadCount = Math.max(0, Number(count) || 0);
 	unreadState[platform] = unreadCount;
 	const tabButton = document.querySelector(`.tablinks[data-platform="${platform}"]`);
+	const notificationsEnabled = isNotificationsEnabled(platform);
 	if (tabButton) {
-		if (unreadCount > 0) {
+		if (notificationsEnabled && unreadCount > 0) {
 			tabButton.classList.add('has-unread');
 			const displayCount = unreadCount > 99 ? '99+' : String(unreadCount);
 			tabButton.setAttribute('data-unread-count', displayCount);
@@ -213,6 +213,93 @@ function openExternalLink(url) {
 		shell.openExternal(url);
 	} catch (error) {
 		logger.error('Failed to open external link:', url, error);
+	}
+}
+
+function createPlatformButton(platform, config) {
+	const button = document.createElement('button');
+	button.className = 'tablinks';
+	button.setAttribute('data-platform', platform);
+	button.setAttribute('title', config.name);
+	button.addEventListener('click', (event) => openTab(event, platform));
+
+	const icon = document.createElement('img');
+	icon.className = 'tab-icon';
+	icon.src = `../public/icons/${config.icon}`;
+	icon.alt = config.name;
+	button.appendChild(icon);
+
+	return button;
+}
+
+function renderSidebarButtons() {
+	try {
+		const sidebarMain = document.querySelector('.sidebar-main');
+		if (!sidebarMain) {
+			logger.warn('Sidebar main not found while rendering buttons');
+			return;
+		}
+
+		const existing = sidebarMain.querySelectorAll('.tablinks[data-platform]:not([data-platform="welcome"])');
+		existing.forEach(btn => btn.remove());
+
+		const fragment = document.createDocumentFragment();
+		PLATFORM_KEYS.forEach(platform => {
+			const config = PLATFORMS[platform];
+			if (!config) return;
+			fragment.appendChild(createPlatformButton(platform, config));
+		});
+		sidebarMain.appendChild(fragment);
+	} catch (error) {
+		logger.error('Failed to render sidebar buttons', error);
+	}
+}
+
+function createPlatformTab(platform, config) {
+	const tab = document.createElement('div');
+	tab.id = platform;
+	tab.className = 'tabcontent';
+	tab.style.display = 'none';
+
+	const webview = document.createElement('webview');
+	webview.id = `${platform}-webview`;
+	webview.src = config.url;
+	webview.style.width = '100%';
+	webview.style.height = '100vh';
+	if (config.needsUserAgent) {
+		webview.setAttribute('useragent', CHROME_USER_AGENT);
+	}
+
+	tab.appendChild(webview);
+	return tab;
+}
+
+function renderPlatformTabs() {
+	try {
+		const mainContent = document.querySelector('.main-content');
+		const settingsTab = document.getElementById('settings');
+		if (!mainContent || !settingsTab) {
+			logger.warn('Main content or settings tab missing while rendering platform tabs');
+			return;
+		}
+
+		PLATFORM_KEYS.forEach(platform => {
+			const existing = document.getElementById(platform);
+			if (existing) {
+				existing.remove();
+			}
+		});
+
+		const fragment = document.createDocumentFragment();
+		PLATFORM_KEYS.forEach(platform => {
+			const config = PLATFORMS[platform];
+			if (!config) return;
+			fragment.appendChild(createPlatformTab(platform, config));
+		});
+
+		mainContent.insertBefore(fragment, settingsTab);
+	} catch (error) {
+		logger.error('Failed to render platform tabs', error);
 	}
 }
 
@@ -471,27 +558,33 @@ function setupKeyboardShortcuts() {
 }
 
 // App state management
+function buildDefaultAppsState() {
+	return PLATFORM_KEYS.reduce((acc, platform) => {
+		acc[platform] = { enabled: true, notifications: true };
+		return acc;
+	}, {});
+}
+
 const appState = {
-	apps: {
-		messenger: { enabled: true, notifications: true },
-		whatsapp: { enabled: true, notifications: true },
-		instagram: { enabled: true, notifications: true },
-		linkedin: { enabled: true, notifications: true },
-		x: { enabled: true, notifications: true },
-		slack: { enabled: true, notifications: true },
-		telegram: { enabled: true, notifications: true },
-		discord: { enabled: true, notifications: true },
-		teams: { enabled: true, notifications: true }
-	},
-	order: ['messenger', 'whatsapp', 'instagram', 'linkedin', 'x', 'slack', 'telegram', 'discord', 'teams'],
+	apps: buildDefaultAppsState(),
+	order: [...PLATFORM_KEYS],
 	settings: {
 		globalNotifications: true,
 		badgeDockIcon: true,
-		sidebarDensity: 'comfortable' // 'comfortable' or 'compact'
+		sidebarDensity: 'comfortable', // 'comfortable' or 'compact'
+		telemetry: false
 	}
 };
 
 const defaultAppStateSnapshot = JSON.parse(JSON.stringify(appState));
+
+function isNotificationsEnabled(platform) {
+	const appEntry = appState.apps[platform];
+	if (!appEntry) {
+		return false;
+	}
+	return appEntry.enabled !== false && appEntry.notifications !== false;
+}
 
 // Load app state from localStorage
 function loadAppState() {
@@ -570,6 +663,16 @@ function setupGlobalSettings() {
 				logger.log(`Badge dock icon ${e.target.checked ? 'enabled' : 'disabled'}`);
 				// Update badge immediately
 				updateUnreadSummary();
+			});
+		}
+
+		const telemetryToggle = document.getElementById('telemetry-toggle');
+		if (telemetryToggle) {
+			telemetryToggle.checked = appState.settings.telemetry;
+			telemetryToggle.addEventListener('change', (e) => {
+				appState.settings.telemetry = e.target.checked;
+				saveAppState();
+				logger.log(`Telemetry ${e.target.checked ? 'enabled' : 'disabled'}`);
 			});
 		}
 		
@@ -701,6 +804,8 @@ function setupAppToggles() {
 			} else if (toggleType === 'notifications') {
 				appState.apps[app].notifications = e.target.checked;
 				logger.log(`Notifications for ${app} ${e.target.checked ? 'enabled' : 'disabled'}`);
+				setTabUnread(app, unreadState[app], { silent: true, skipPersist: true });
+				updateUnreadSummary();
 			}
 			saveAppState();
 		});
@@ -873,6 +978,9 @@ function resetAppStateForTests() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+	renderSidebarButtons();
+	renderPlatformTabs();
+
 	// Initialize button references first
 	initializeButtonRefs();
 	

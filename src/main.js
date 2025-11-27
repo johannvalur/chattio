@@ -50,7 +50,7 @@ function createWindow() {
       contextIsolation: false,
       webviewTag: true
     },
-    icon: path.join(__dirname, '../public/icon.png')
+    icon: path.join(__dirname, '../public/transparent.png')
   }
   
   // Restore position if saved
@@ -91,8 +91,8 @@ app.whenReady().then(() => {
   createWindow()
   ipcMain.on('unread-summary', (event, summary) => {
     if (process.platform === 'darwin' && app.dock) {
-      const count = summary && typeof summary.totalUnreadServices === 'number'
-        ? summary.totalUnreadServices
+      const count = summary && typeof summary.totalMessages === 'number'
+        ? summary.totalMessages
         : 0
       app.dock.setBadge(count > 0 ? String(count) : '')
     }
