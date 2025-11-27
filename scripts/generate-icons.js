@@ -3,7 +3,37 @@ const fs = require('fs');
 const path = require('path');
 
 const ICONUTIL = '/usr/bin/iconutil';
-const CONVERT = '/usr/local/bin/convert';
+
+function resolveConvertBinary() {
+  if (process.env.CONVERT_BIN) {
+    return process.env.CONVERT_BIN;
+  }
+
+  const candidates = [
+    '/opt/homebrew/bin/convert', // Apple Silicon Homebrew
+    '/usr/local/bin/convert', // Intel Homebrew
+    'convert'
+  ];
+
+  for (const candidate of candidates) {
+    try {
+      if (candidate.includes('/')) {
+        fs.accessSync(candidate, fs.constants.X_OK);
+        return candidate;
+      }
+      execSync(`command -v ${candidate} >/dev/null 2>&1`);
+      return candidate;
+    } catch {
+      // try next candidate
+    }
+  }
+
+  throw new Error(
+    'Unable to locate ImageMagick "convert" binary. Set CONVERT_BIN to override.'
+  );
+}
+
+const CONVERT = resolveConvertBinary();
 const PUBLIC_DIR = path.join(__dirname, '../public');
 const ICONSET_DIR = path.join(PUBLIC_DIR, 'icon.iconset');
 

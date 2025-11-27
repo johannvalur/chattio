@@ -44,11 +44,42 @@ describe('renderer state management', () => {
 		);
 	});
 
+	test('per-app notification toggle removes platform from unread summary', () => {
+		testables.appState.apps.messenger.notifications = false;
+		testables.unreadState.messenger = 4;
+
+		testables.updateUnreadSummary();
+
+		expect(ipcRenderer.send).toHaveBeenCalledWith(
+			'unread-summary',
+			expect.objectContaining({ totalUnreadServices: 0 })
+		);
+	});
+
+	test('setTabUnread clears badge when notifications disabled', () => {
+		document.body.innerHTML = `
+			<button class="tablinks" data-platform="messenger"></button>
+		`;
+
+		const button = document.querySelector('.tablinks[data-platform="messenger"]');
+
+		testables.setTabUnread('messenger', 7, { silent: true });
+		expect(button.classList.contains('has-unread')).toBe(true);
+		expect(button.getAttribute('data-unread-count')).toBe('7');
+
+		testables.appState.apps.messenger.notifications = false;
+		testables.setTabUnread('messenger', 7, { silent: true, skipPersist: true });
+
+		expect(button.classList.contains('has-unread')).toBe(false);
+		expect(button.hasAttribute('data-unread-count')).toBe(false);
+	});
+
 	test('global toggles persist to localStorage and density chips update sidebar', () => {
 		document.body.innerHTML = `
 			<div class="sidebar sidebar-comfortable"></div>
 			<input type="checkbox" id="global-notifications-toggle">
 			<input type="checkbox" id="badge-dock-icon-toggle">
+			<input type="checkbox" id="telemetry-toggle">
 			<div>
 				<button class="settings-chip" data-density="comfortable">Comfortable</button>
 				<button class="settings-chip" data-density="compact">Compact</button>
@@ -83,6 +114,14 @@ describe('renderer state management', () => {
 		expect(testables.appState.settings.badgeDockIcon).toBe(false);
 		savedState = JSON.parse(window.localStorage.getItem('chatterly-app-state'));
 		expect(savedState.settings.badgeDockIcon).toBe(false);
+
+		const telemetryToggle = document.getElementById('telemetry-toggle');
+		telemetryToggle.checked = true;
+		telemetryToggle.dispatchEvent(new Event('change'));
+
+		expect(testables.appState.settings.telemetry).toBe(true);
+		savedState = JSON.parse(window.localStorage.getItem('chatterly-app-state'));
+		expect(savedState.settings.telemetry).toBe(true);
 
 		const compactChip = document.querySelector('.settings-chip[data-density="compact"]');
 		compactChip.click();

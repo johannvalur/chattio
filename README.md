@@ -56,6 +56,16 @@ npm test
 
 Unit and integration suites run under Jest + jsdom. End-to-end tests use Playwright and exercise the marketing site located in `chatterly/`.
 
+### Test runner shim
+
+macOS Ventura/Sonoma mark npm-installed packages with a provenance attribute that prevents Node from reading certain files (notably `@jest/test-sequencer`). To keep the default Jest behavior without mutating `node_modules`, every Jest command is executed via `scripts/register-test-sequencer.js`. If you invoke Jest manually, pass `-r ./scripts/register-test-sequencer.js` or run through the provided npm scripts to avoid `Cannot find module '@jest/test-sequencer'`.
+
+### Playwright web server
+
+The Playwright config starts a thin static server (`scripts/serve-chatterly.js`) that binds explicitly to `127.0.0.1`. This avoids the `uv_interface_addresses` errors that `http-server` triggers in sandboxed environments. If you need a different port or root, pass them to the script (e.g. `node scripts/serve-chatterly.js 5000 chatterly`).
+
+> **Note:** Some CI sandboxes block binding to loopback addresses entirely and will surface `EPERM: listen 127.0.0.1`. In that case run the e2e suite on a workstation or self-hosted runner with network permissions.
+
 ## Deployment
 
 GitHub Actions (`.github/workflows/ci.yml`) runs the full test matrix on every push/pull request. Successful pushes to `main` automatically publish the static `chatterly/` bundle to GitHub Pages.
@@ -80,6 +90,25 @@ npm run dist:mac
 npm run dist:win
 ```
 This produces a signed (unsigned by default) `exe`/NSIS installer under `dist/`.
+
+After any successful `dist:*` run, publish the binaries to the marketing site so the download buttons stay fresh:
+
+```bash
+npm run sync:downloads
+```
+
+This copies the latest `.dmg`, `.zip`, and `.exe` artifacts from `dist/` into `chatterly/downloads/`.
+
+### macOS code signing & notarization
+
+The repository ships unsigned macOS builds by default. To distribute outside of Gatekeeper warnings:
+
+1. Install an Apple Developer “Developer ID Application” certificate in your keychain.
+2. Export the certificate password to `CSC_KEY_PASSWORD` (or configure `CSC_LINK`).
+3. Re-run `npm run dist:mac`.
+4. Notarize the resulting `.dmg/.zip` via `xcrun notarytool` or enable `APPLE_ID`, `APPLE_ID_PASSWORD`, and `APPLE_TEAM_ID` environment variables so `electron-builder` can notarize automatically.
+
+Without those steps Electron Builder will emit “skipped macOS application code signing” and the binaries will be flagged as untrusted.
 
 ## Downloads
 

@@ -15,33 +15,6 @@
                 <button class="tablinks" data-platform="welcome" onclick="openTab(event, 'welcome')" title="Home">
                     <img class="tab-icon" src="../public/transparent.png" alt="Home" />
                 </button>
-                <button class="tablinks" data-platform="messenger" onclick="openTab(event, 'messenger')" title="Messenger">
-                    <img class="tab-icon" src="../public/icons/messenger.png" alt="Messenger" />
-                </button>
-                <button class="tablinks" data-platform="whatsapp" onclick="openTab(event, 'whatsapp')" title="WhatsApp">
-                    <img class="tab-icon" src="../public/icons/whatsapp.png" alt="WhatsApp" />
-                </button>
-                <button class="tablinks" data-platform="instagram" onclick="openTab(event, 'instagram')" title="Instagram">
-                    <img class="tab-icon" src="../public/icons/instagram.png" alt="Instagram" />
-                </button>
-                <button class="tablinks" data-platform="linkedin" onclick="openTab(event, 'linkedin')" title="LinkedIn">
-                    <img class="tab-icon" src="../public/icons/linkedin.png" alt="LinkedIn" />
-                </button>
-                <button class="tablinks" data-platform="x" onclick="openTab(event, 'x')" title="X (Twitter)">
-                    <img class="tab-icon" src="../public/icons/x.png" alt="X" />
-                </button>
-                <button class="tablinks" data-platform="slack" onclick="openTab(event, 'slack')" title="Slack">
-                    <img class="tab-icon" src="../public/icons/slack.png" alt="Slack" />
-                </button>
-                <button class="tablinks" data-platform="telegram" onclick="openTab(event, 'telegram')" title="Telegram">
-                    <img class="tab-icon" src="../public/icons/telegram.png" alt="Telegram" />
-                </button>
-                <button class="tablinks" data-platform="discord" onclick="openTab(event, 'discord')" title="Discord">
-                    <img class="tab-icon" src="../public/icons/discord.png" alt="Discord" />
-                </button>
-                <button class="tablinks" data-platform="teams" onclick="openTab(event, 'teams')" title="Microsoft Teams">
-                    <img class="tab-icon" src="../public/icons/teams.png" alt="Teams" />
-                </button>
             </div>
             <div class="sidebar-bottom">
                 <button class="tablinks" data-platform="settings" onclick="openTab(event, 'settings')" title="Settings">
@@ -123,42 +96,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div id="messenger" class="tabcontent" style="display:none">
-                <webview id="messenger-webview" src="https://www.messenger.com/" style="width:100%; height:100vh;"></webview>
-            </div>
-
-            <div id="whatsapp" class="tabcontent" style="display:none">
-                <webview id="whatsapp-webview" src="https://web.whatsapp.com/" useragent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" style="width:100%; height:100vh;"></webview>
-            </div>
-
-            <div id="instagram" class="tabcontent" style="display:none">
-                <webview id="instagram-webview" src="https://www.instagram.com/direct/inbox/" style="width:100%; height:100vh;"></webview>
-            </div>
-
-            <div id="linkedin" class="tabcontent" style="display:none">
-                <webview id="linkedin-webview" src="https://www.linkedin.com/messaging/" style="width:100%; height:100vh;"></webview>
-            </div>
-
-            <div id="x" class="tabcontent" style="display:none">
-                <webview id="x-webview" src="https://x.com/messages" style="width:100%; height:100vh;"></webview>
-            </div>
-
-            <div id="slack" class="tabcontent" style="display:none">
-                <webview id="slack-webview" src="https://app.slack.com/client" useragent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" style="width:100%; height:100vh;"></webview>
-            </div>
-
-            <div id="telegram" class="tabcontent" style="display:none">
-                <webview id="telegram-webview" src="https://web.telegram.org" style="width:100%; height:100vh;"></webview>
-            </div>
-
-            <div id="discord" class="tabcontent" style="display:none">
-                <webview id="discord-webview" src="https://discord.com/app" style="width:100%; height:100vh;"></webview>
-            </div>
-
-            <div id="teams" class="tabcontent" style="display:none">
-                <webview id="teams-webview" src="https://teams.microsoft.com/" useragent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" style="width:100%; height:100vh;"></webview>
             </div>
 
             <div id="settings" class="tabcontent">
@@ -568,7 +505,7 @@
                                         <span class="settings-label-hint">Help improve Chattio by sharing usage statistics</span>
                                     </div>
                                     <label class="switch">
-                                        <input type="checkbox">
+                                        <input type="checkbox" id="telemetry-toggle">
                                         <span class="slider"></span>
                                     </label>
                                 </div>

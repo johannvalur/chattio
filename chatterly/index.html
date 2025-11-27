@@ -327,24 +327,32 @@
         <div class="modal-content download-modal-content">
             <p>Pick the installer that matches your desktop. We ship native-feeling builds for both OSes.</p>
             <div class="download-grid">
-                <a class="download-card" href="https://example.com/chatterly-mac.dmg" target="_blank" rel="noopener">
+                <a class="download-card" href="./downloads/Chatterly.exe" target="_blank" rel="noopener">
+                    <div class="download-icon"><i class="fab fa-windows"></i></div>
+                    <div>
+                        <strong>Windows</strong>
+                        <span>Signed Win64 installer · v1.0.0</span>
+                    </div>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <a class="download-card" href="./downloads/Chattio-mac-arm64.dmg" target="_blank" rel="noopener">
                     <div class="download-icon"><i class="fab fa-apple"></i></div>
                     <div>
-                        <strong>macOS</strong>
+                        <strong>macOS DMG</strong>
                         <span>Universal build · v1.0.0</span>
                     </div>
                     <i class="fas fa-arrow-right"></i>
                 </a>
-                <a class="download-card" href="https://example.com/chatterly-win.exe" target="_blank" rel="noopener">
-                    <div class="download-icon"><i class="fab fa-windows"></i></div>
+                <a class="download-card" href="./downloads/Chattio-mac-arm64.zip" target="_blank" rel="noopener">
+                    <div class="download-icon"><i class="fas fa-code"></i></div>
                     <div>
-                        <strong>Windows</strong>
-                        <span>Win64 installer · v1.0.0</span>
+                        <strong>macOS Zip</strong>
+                        <span>Unpacked app bundle</span>
                     </div>
                     <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
-            <p class="download-note">Need Linux or a nightly build? Email <a href="mailto:support@chatterly.app">support@chatterly.app</a>.</p>
+            <p class="download-note">Need Linux packages or help with a custom build? Email <a href="mailto:support@chatterly.app">support@chatterly.app</a>. After building locally run <code>npm run sync:downloads</code> to refresh these links.</p>
         </div>
     </div>
 

@@ -10,7 +10,7 @@ export default defineConfig({
 		baseURL: 'http://127.0.0.1:4173'
 	},
 	webServer: {
-		command: 'npx http-server chatterly -p 4173 -c-1',
+		command: 'node ./scripts/serve-chatterly.js 4173 chatterly',
 		port: 4173,
 		reuseExistingServer: !process.env.CI,
 		timeout: 60 * 1000
