@@ -39,8 +39,46 @@ jobs:
           path: playwright-report
           if-no-files-found: ignore
 
-  deploy:
+  build-win:
     needs: test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm install
+      - run: npm run dist:win
+      - run: npm run sync:downloads
+      - name: Upload Windows downloads
+        uses: actions/upload-artifact@v4
+        with:
+          name: downloads-win
+          path: chatterly/downloads
+
+  build-mac:
+    needs: test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm install
+      - run: npm run dist:mac
+      - run: npm run sync:downloads
+      - name: Upload macOS downloads
+        uses: actions/upload-artifact@v4
+        with:
+          name: downloads-mac
+          path: chatterly/downloads
+
+  deploy:
+    needs: [build-win, build-mac]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     permissions:
       contents: read
@@ -52,16 +90,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Download Windows artifacts
+        uses: actions/download-artifact@v4
         with:
-          node-version: 20
-          cache: npm
-      - run: npm install
-      - run: npm run dist:mac
-      - run: npm run dist:win
-      - run: npm run sync:downloads
-      - name: List static assets
-        run: ls -R chatterly/downloads
+          name: downloads-win
+          path: downloads/win
+      - name: Download macOS artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: downloads-mac
+          path: downloads/mac
+      - name: Prepare downloads directory
+        run: |
+          rm -rf chatterly/downloads
+          mkdir -p chatterly/downloads
+          cp -R downloads/win/* chatterly/downloads/ || true
+          cp -R downloads/mac/* chatterly/downloads/ || true
+          ls -R chatterly/downloads
       - uses: actions/configure-pages@v4
         with:
           enablement: true
