@@ -1,7 +1,15 @@
 const { app, BrowserWindow, ipcMain, Menu, dialog, shell } = require('electron')
-const { autoUpdater } = require('electron-updater')
 const path = require('path')
 const fs = require('fs')
+
+// Safely require electron-updater
+let autoUpdater
+try {
+  autoUpdater = require('electron-updater').autoUpdater
+} catch (error) {
+  console.error('Failed to load electron-updater:', error)
+  autoUpdater = null
+}
 
 let mainWindow
 const windowStateFile = path.join(app.getPath('userData'), 'window-state.json')
@@ -204,6 +212,11 @@ function buildMenu() {
 }
 
 function initializeAutoUpdates() {
+  if (!autoUpdater) {
+    console.warn('Auto-updater not available, skipping initialization.')
+    return
+  }
+
   if (isDev) {
     console.info('Skipping auto-updates in development mode.')
     return
@@ -299,6 +312,17 @@ function scheduleAutomaticUpdateChecks() {
 }
 
 function requestUpdateCheck(isManual) {
+  if (!autoUpdater) {
+    if (isManual) {
+      dialog.showMessageBox(getDialogParent(), {
+        type: 'error',
+        title: 'Update unavailable',
+        message: 'Auto-updater is not available in this build.'
+      })
+    }
+    return
+  }
+
   if (isDev) {
     if (isManual) {
       dialog.showMessageBox(getDialogParent(), {
