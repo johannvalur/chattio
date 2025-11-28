@@ -96,7 +96,12 @@
     "files": [
       "src/**/*",
       "public/**/*"
-    ]
+    ],
+    "publish": {
+      "provider": "github",
+      "owner": "johannvalur",
+      "repo": "chattio"
+    }
   },
   "dependencies": {
     "electron-updater": "^6.1.8"
