@@ -42,6 +42,18 @@ A unified messaging application for Mac that combines multiple messaging platfor
 npm start
 ```
 
+### Automatic updates
+
+Chattio now ships with an auto-updater powered by `electron-updater`. Packaged builds periodically poll the latest GitHub Release for new binaries and prompt the user to download/install the update. You can also trigger a manual check from the **Chattio ▸ Check for Updates…** (macOS) or **File ▸ Check for Updates…** (Windows) menu item.
+
+To publish an update feed:
+
+1. Set `GH_TOKEN` (a GitHub Personal Access Token with `repo` scope).
+2. Run `npm run dist:mac -- --publish always` (or the equivalent `dist:win` command).
+3. Attach the generated artifacts to the release GitHub creates. Electron Builder will also upload the `latest-*.yml` metadata so the auto-updater can discover the new version.
+
+Development builds skip auto-update checks entirely.
+
 ## Testing
 
 ```bash
