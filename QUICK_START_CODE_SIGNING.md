@@ -80,10 +80,14 @@ codesign -dv --verbose=4 dist/mac-arm64/Chattio.app | grep "Authority"
 
 Should show: `Authority=Developer ID Application: Jóhann Sævarsson (QD9KBHBRRZ)`
 
-Check notarization:
+Check notarization (requires APPLE_ID credentials to be set):
 ```bash
 spctl --assess --verbose dist/mac-arm64/Chattio.app
 ```
 
-Should show: `accepted source=Developer ID`
+**Note:** If you see `rejected source=Unnotarized Developer ID`, you need to:
+1. Set `APPLE_ID`, `APPLE_ID_PASSWORD`, and `APPLE_TEAM_ID` environment variables
+2. Rebuild - notarization will happen automatically (takes 5-10 minutes)
+
+Once notarized, should show: `accepted source=Developer ID`
 

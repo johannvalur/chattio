@@ -50,11 +50,13 @@ You have two options for configuring code signing:
 
 ### Option A: Using CSC_NAME (Easier)
 
-Set the certificate name (the part in quotes from the security command above):
+Set the certificate name (the part in quotes from the security command, **without** the "Developer ID Application:" prefix):
 
 ```bash
-export CSC_NAME="Developer ID Application: Your Name (TEAM_ID)"
+export CSC_NAME="Your Name (TEAM_ID)"
 ```
+
+**Important:** electron-builder will automatically add the "Developer ID Application:" prefix, so you should only provide the name and team ID part.
 
 ### Option B: Using CSC_LINK (More Secure)
 
@@ -139,7 +141,15 @@ Should return: `dist/mac-arm64/Chattio.app: accepted source=Developer ID`
 
 - Make sure your certificate is installed in the **login** keychain (not System)
 - Verify the certificate name matches exactly what you set in `CSC_NAME`
+- **Important:** Don't include "Developer ID Application:" prefix in `CSC_NAME` - use just "Your Name (TEAM_ID)"
 - Try unlocking your keychain: `security unlock-keychain ~/Library/Keychains/login.keychain-db`
+
+### "Please remove prefix" error
+
+If you see: `Please remove prefix "Developer ID Application:" from the specified name`
+
+- Remove the "Developer ID Application:" prefix from your `CSC_NAME` or `mac.identity` setting
+- Use format: `"Your Name (TEAM_ID)"` instead of `"Developer ID Application: Your Name (TEAM_ID)"`
 
 ### Notarization fails
 
@@ -159,7 +169,7 @@ You can create a `.env` file (don't commit it!) to store your credentials:
 
 ```bash
 # .env (add to .gitignore!)
-CSC_NAME="Developer ID Application: Your Name (TEAM_ID)"
+CSC_NAME="Your Name (TEAM_ID)"  # Without "Developer ID Application:" prefix
 APPLE_ID="your-apple-id@example.com"
 APPLE_ID_PASSWORD="app-specific-password"
 APPLE_TEAM_ID="YOUR_TEAM_ID"

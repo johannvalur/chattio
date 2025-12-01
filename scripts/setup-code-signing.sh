@@ -6,7 +6,8 @@ echo "🔐 Setting up code signing environment variables..."
 echo ""
 
 # Certificate name (from your installed certificate)
-export CSC_NAME="Developer ID Application: Jóhann Sævarsson (QD9KBHBRRZ)"
+# Note: electron-builder wants just the name part, not the full "Developer ID Application:" prefix
+export CSC_NAME="Jóhann Sævarsson (QD9KBHBRRZ)"
 echo "✓ CSC_NAME set to: $CSC_NAME"
 
 # Team ID (extracted from certificate name)
