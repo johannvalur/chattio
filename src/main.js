@@ -285,6 +285,28 @@ function initializeAutoUpdates() {
 
   autoUpdater.on('error', error => {
     updateCheckInProgress = false
+    // Suppress 404 errors (no releases yet) and network errors for automatic checks
+    const is404 = error?.message?.includes('404') || error?.code === 'ERR_HTTP_RESPONSE_CODE_FAILURE'
+    const isNetworkError = error?.code === 'ENOTFOUND' || error?.code === 'ECONNREFUSED'
+    
+    if (is404 || isNetworkError) {
+      // Silently ignore 404s and network errors for automatic checks
+      if (!manualUpdateRequested) {
+        return
+      }
+      // For manual checks, show a friendly message
+      if (is404) {
+        dialog.showMessageBox(getDialogParent(), {
+          type: 'info',
+          title: 'No updates available',
+          message: 'No releases found on GitHub yet.',
+          detail: 'Updates will be available once you publish a release.'
+        })
+        manualUpdateRequested = false
+        return
+      }
+    }
+    
     console.error('Auto-update error:', error)
     if (manualUpdateRequested) {
       dialog.showMessageBox(getDialogParent(), {
@@ -350,14 +372,29 @@ function requestUpdateCheck(isManual) {
 
   autoUpdater.checkForUpdates().catch(error => {
     updateCheckInProgress = false
+    // Suppress 404 errors (no releases yet)
+    const is404 = error?.message?.includes('404') || error?.code === 'ERR_HTTP_RESPONSE_CODE_FAILURE'
+    if (is404 && !manualUpdateRequested) {
+      // Silently ignore 404s for automatic checks
+      return
+    }
     console.error('Failed to check for updates:', error)
     if (manualUpdateRequested) {
-      dialog.showMessageBox(getDialogParent(), {
-        type: 'error',
-        title: 'Update failed',
-        message: 'Unable to check for updates.',
-        detail: error?.message || 'Unknown error'
-      })
+      if (is404) {
+        dialog.showMessageBox(getDialogParent(), {
+          type: 'info',
+          title: 'No updates available',
+          message: 'No releases found on GitHub yet.',
+          detail: 'Updates will be available once you publish a release.'
+        })
+      } else {
+        dialog.showMessageBox(getDialogParent(), {
+          type: 'error',
+          title: 'Update failed',
+          message: 'Unable to check for updates.',
+          detail: error?.message || 'Unknown error'
+        })
+      }
       manualUpdateRequested = false
     }
   })

@@ -156,14 +156,19 @@ If the build fails, try:
 ### "App is damaged" Error on macOS
 If macOS shows "Chattio.app is damaged and can't be opened", this is a Gatekeeper security feature blocking unsigned apps. To fix:
 
-**Option 1 (Recommended):** Right-click the app and select "Open" from the context menu. This bypasses Gatekeeper for this specific app.
+**Option 1 (Easiest):** Use the provided script:
+```bash
+./scripts/remove-quarantine.sh /path/to/Chattio.app
+```
 
-**Option 2:** Remove the quarantine attribute:
+**Option 2:** Manually remove the quarantine attribute:
 ```bash
 xattr -d com.apple.quarantine /path/to/Chattio.app
 ```
 
-**Option 3:** For proper distribution, code sign the app with an Apple Developer ID certificate (see "macOS code signing & notarization" section above).
+**Option 3:** Right-click the app and select "Open" from the context menu. You may need to do this twice - first time shows a warning, second time opens the app.
+
+**Option 4:** For proper distribution, code sign the app with an Apple Developer ID certificate (see "macOS code signing & notarization" section above). This is required for distributing to users without them seeing this error.
 
 ## License
 
