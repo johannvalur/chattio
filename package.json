@@ -54,7 +54,11 @@
         "dmg",
         "zip"
       ],
-      "icon": "public/icons/icon.icns"
+      "icon": "public/icons/icon.icns",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
     },
     "win": {
       "target": [

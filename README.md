@@ -113,14 +113,17 @@ This copies the latest `.dmg`, `.zip`, and `.exe` artifacts from `dist/` into `c
 
 ### macOS code signing & notarization
 
-The repository ships unsigned macOS builds by default. To distribute outside of Gatekeeper warnings:
+The repository ships unsigned macOS builds by default. To distribute outside of Gatekeeper warnings, you need to code sign and notarize your app.
 
-1. Install an Apple Developer “Developer ID Application” certificate in your keychain.
-2. Export the certificate password to `CSC_KEY_PASSWORD` (or configure `CSC_LINK`).
-3. Re-run `npm run dist:mac`.
-4. Notarize the resulting `.dmg/.zip` via `xcrun notarytool` or enable `APPLE_ID`, `APPLE_ID_PASSWORD`, and `APPLE_TEAM_ID` environment variables so `electron-builder` can notarize automatically.
+**📖 See [CODE_SIGNING.md](./CODE_SIGNING.md) for detailed step-by-step instructions.**
 
-Without those steps Electron Builder will emit “skipped macOS application code signing” and the binaries will be flagged as untrusted.
+Quick setup:
+1. Get an Apple Developer account ($99/year)
+2. Install a "Developer ID Application" certificate
+3. Set environment variables: `CSC_NAME`, `APPLE_ID`, `APPLE_ID_PASSWORD`, `APPLE_TEAM_ID`
+4. Run `npm run dist:mac` - signing and notarization happen automatically
+
+Without code signing, Electron Builder will emit "skipped macOS application code signing" and users will see the "damaged app" error.
 
 ## Downloads
 

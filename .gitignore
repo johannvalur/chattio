@@ -6,4 +6,8 @@ dist/
 *.dmg
 *.blockmap
 test-results/
+.env
+.env.local
+*.p12
+*.cer
 
