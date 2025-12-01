@@ -120,7 +120,7 @@ The repository ships unsigned macOS builds by default. To distribute outside of 
 Quick setup:
 1. Get an Apple Developer account ($99/year)
 2. Install a "Developer ID Application" certificate
-3. Set environment variables: `CSC_NAME`, `APPLE_ID`, `APPLE_ID_PASSWORD`, `APPLE_TEAM_ID`
+3. Set environment variables: `CSC_NAME`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `APPLE_TEAM_ID`
 4. Run `npm run dist:mac` - signing and notarization happen automatically
 
 Without code signing, Electron Builder will emit "skipped macOS application code signing" and users will see the "damaged app" error.

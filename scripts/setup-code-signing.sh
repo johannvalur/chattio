@@ -30,13 +30,13 @@ else
 fi
 
 # Check if app-specific password is set
-if [ -z "$APPLE_ID_PASSWORD" ]; then
+if [ -z "$APPLE_APP_SPECIFIC_PASSWORD" ]; then
     echo ""
-    echo "⚠️  APPLE_ID_PASSWORD not set."
+    echo "⚠️  APPLE_APP_SPECIFIC_PASSWORD not set."
     echo "   Create one at: https://appleid.apple.com → Security → App-Specific Passwords"
-    echo "   Then set it: export APPLE_ID_PASSWORD=\"your-password\""
+    echo "   Then set it: export APPLE_APP_SPECIFIC_PASSWORD=\"your-password\""
 else
-    echo "✓ APPLE_ID_PASSWORD is set (hidden)"
+    echo "✓ APPLE_APP_SPECIFIC_PASSWORD is set (hidden)"
 fi
 
 echo ""
@@ -45,7 +45,7 @@ echo "   source scripts/setup-code-signing.sh"
 echo ""
 echo "   Then set your Apple ID credentials:"
 echo "   export APPLE_ID=\"your-apple-id@example.com\""
-echo "   export APPLE_ID_PASSWORD=\"your-app-specific-password\""
+echo "   export APPLE_APP_SPECIFIC_PASSWORD=\"your-app-specific-password\""
 echo ""
 echo "   Then build:"
 echo "   npm run dist:mac"

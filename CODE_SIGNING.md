@@ -95,7 +95,7 @@ Notarization is required for macOS 10.15+ to avoid security warnings.
 
 ```bash
 export APPLE_ID="your-apple-id@example.com"
-export APPLE_ID_PASSWORD="app-specific-password"  # See below for how to create this
+export APPLE_APP_SPECIFIC_PASSWORD="app-specific-password"  # See below for how to create this
 export APPLE_TEAM_ID="YOUR_TEAM_ID"  # Found in Apple Developer portal
 ```
 
@@ -105,7 +105,7 @@ export APPLE_TEAM_ID="YOUR_TEAM_ID"  # Found in Apple Developer portal
 2. Sign in and go to **Security** section
 3. Under **App-Specific Passwords**, click **Generate Password**
 4. Give it a name (e.g., "Chattio Notarization")
-5. Copy the generated password and use it for `APPLE_ID_PASSWORD`
+5. Copy the generated password and use it for `APPLE_APP_SPECIFIC_PASSWORD`
 
 ### Build with Notarization
 
@@ -153,7 +153,7 @@ If you see: `Please remove prefix "Developer ID Application:" from the specified
 
 ### Notarization fails
 
-- Check that `APPLE_ID_PASSWORD` is an app-specific password, not your regular Apple ID password
+- Check that `APPLE_APP_SPECIFIC_PASSWORD` is an app-specific password, not your regular Apple ID password
 - Verify your Apple ID has access to the team
 - Check notarization status: `xcrun notarytool history --apple-id YOUR_APPLE_ID --team-id YOUR_TEAM_ID --password YOUR_APP_PASSWORD`
 
@@ -171,7 +171,7 @@ You can create a `.env` file (don't commit it!) to store your credentials:
 # .env (add to .gitignore!)
 CSC_NAME="Your Name (TEAM_ID)"  # Without "Developer ID Application:" prefix
 APPLE_ID="your-apple-id@example.com"
-APPLE_ID_PASSWORD="app-specific-password"
+APPLE_APP_SPECIFIC_PASSWORD="app-specific-password"
 APPLE_TEAM_ID="YOUR_TEAM_ID"
 ```
 
