@@ -67,7 +67,7 @@ jobs:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: playwright-report
           path: playwright-report/
@@ -90,7 +90,7 @@ jobs:
       - run: npm run dist:win
       - run: npm run sync:downloads
       - name: Upload Windows downloads
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: downloads-win
           path: chatterly/downloads
@@ -111,7 +111,7 @@ jobs:
       - run: npm run dist:mac
       - run: npm run sync:downloads
       - name: Upload macOS downloads
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: downloads-mac
           path: chatterly/downloads
