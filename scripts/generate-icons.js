@@ -12,7 +12,7 @@ function resolveConvertBinary() {
   const candidates = [
     '/opt/homebrew/bin/convert', // Apple Silicon Homebrew
     '/usr/local/bin/convert', // Intel Homebrew
-    'convert'
+    'convert',
   ];
 
   for (const candidate of candidates) {
@@ -28,9 +28,7 @@ function resolveConvertBinary() {
     }
   }
 
-  throw new Error(
-    'Unable to locate ImageMagick "convert" binary. Set CONVERT_BIN to override.'
-  );
+  throw new Error('Unable to locate ImageMagick "convert" binary. Set CONVERT_BIN to override.');
 }
 
 const CONVERT = resolveConvertBinary();
@@ -48,29 +46,28 @@ const sizes = [16, 32, 64, 128, 256, 512, 1024];
 // Generate PNGs for each size
 sizes.forEach(size => {
   const out = path.join(ICONSET_DIR, `icon_${size}x${size}.png`);
-  execSync(`${CONVERT} -background none -resize ${size}x${size} ${path.join(PUBLIC_DIR, 'logo.svg')} ${out}`);
-  
+  execSync(
+    `${CONVERT} -background none -resize ${size}x${size} ${path.join(PUBLIC_DIR, 'logo.svg')} ${out}`
+  );
+
   // Generate @2x versions for Retina displays
   if (size <= 512) {
     const out2x = path.join(ICONSET_DIR, `icon_${size}x${size}@2x.png`);
-    execSync(`${CONVERT} -background none -resize ${size * 2}x${size * 2} ${path.join(PUBLIC_DIR, 'logo.svg')} ${out2x}`);
+    execSync(
+      `${CONVERT} -background none -resize ${size * 2}x${size * 2} ${path.join(PUBLIC_DIR, 'logo.svg')} ${out2x}`
+    );
   }
 });
 
 // Generate iconset
-const iconutilArgs = [
-  '-c', 'icns',
-  ICONSET_DIR,
-  '-o', path.join(PUBLIC_DIR, 'icon.icns')
-];
+const iconutilArgs = ['-c', 'icns', ICONSET_DIR, '-o', path.join(PUBLIC_DIR, 'icon.icns')];
 
 try {
   execSync(`${ICONUTIL} ${iconutilArgs.join(' ')}`);
   console.log('Successfully generated icon.icns');
-  
+
   // Clean up iconset directory
   fs.rmSync(ICONSET_DIR, { recursive: true, force: true });
-  
 } catch (error) {
   console.error('Error generating icon:', error);
   process.exit(1);

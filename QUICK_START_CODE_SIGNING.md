@@ -3,6 +3,7 @@
 ## ✅ Step 2 Complete: Certificate Found!
 
 Your Developer ID certificate is already installed:
+
 - **Certificate:** `Developer ID Application: Jóhann Sævarsson (QD9KBHBRRZ)`
 - **Team ID:** `QD9KBHBRRZ`
 
@@ -49,6 +50,7 @@ npm run dist:mac
 ```
 
 You should see:
+
 - `• signing` in the output
 - `• notarizing` in the output (takes 5-10 minutes)
 
@@ -65,6 +67,7 @@ APPLE_ID_PASSWORD="your-app-specific-password"
 ```
 
 Then load it before building:
+
 ```bash
 export $(cat .env | xargs)
 npm run dist:mac
@@ -81,13 +84,14 @@ codesign -dv --verbose=4 dist/mac-arm64/Chattio.app | grep "Authority"
 Should show: `Authority=Developer ID Application: Jóhann Sævarsson (QD9KBHBRRZ)`
 
 Check notarization (requires APPLE_ID credentials to be set):
+
 ```bash
 spctl --assess --verbose dist/mac-arm64/Chattio.app
 ```
 
 **Note:** If you see `rejected source=Unnotarized Developer ID`, you need to:
+
 1. Set `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, and `APPLE_TEAM_ID` environment variables
 2. Rebuild - notarization will happen automatically (takes 5-10 minutes)
 
 Once notarized, should show: `accepted source=Developer ID`
-

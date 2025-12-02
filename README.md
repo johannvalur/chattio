@@ -1,52 +1,125 @@
-# Unified Messenger
+# Chattio - Unified Messaging Client
 
-A unified messaging application for Mac that combines multiple messaging platforms into one window.
+![Chattio Logo](public/logo3.png)
 
-## Features
+A modern, unified messaging application for Mac that combines multiple messaging platforms into one elegant window.
 
-- Access multiple messaging platforms in one window
-- Tabbed interface for easy switching between services
-- Native macOS look and feel
-- Keyboard shortcuts for quick navigation
-- Support for Messenger, WhatsApp, Instagram, and LinkedIn
+## ✨ Features
 
-## ⚠️ Installation Note
+- **Unified Inbox**: Access all your messages in one place
+- **Multi-Platform Support**:
+  - Facebook Messenger
+  - WhatsApp
+  - Instagram Direct
+  - LinkedIn Messaging
+  - More coming soon!
+- **Native Experience**:
+  - macOS-style notifications
+  - System tray integration
+  - Global keyboard shortcuts
+  - Dark/Light theme support
+- **Productivity Boost**:
+  - Tabbed interface
+  - Quick reply from notifications
+  - Do Not Disturb mode
+  - Message search
 
-**If you see "Chattio.app is damaged and can't be opened" after downloading:**
+## 🚀 Quick Start
 
-This is a macOS security feature. The app is safe to use. Quick fix:
-1. Right-click the app → Select "Open" (you may need to do this twice)
-2. Or run: `./scripts/fix-damaged-app.sh ~/Downloads/Chattio.app`
+### Prerequisites
 
-See [INSTALL_INSTRUCTIONS.md](./INSTALL_INSTRUCTIONS.md) for detailed installation steps.
+- Node.js v16+ and npm v7+
+- macOS 10.15+ (for building)
+- Xcode Command Line Tools
 
-**For developers:** To avoid this error for users, the app needs to be notarized. See [CODE_SIGNING.md](./CODE_SIGNING.md).
+### Installation
 
-## Prerequisites
+1. **Clone the repository**
 
-- Node.js (v16 or later)
-- npm (v7 or later)
-- macOS (for building the .app or .dmg)
-- Xcode Command Line Tools (for building)
-
-## Installation
-
-1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/unified-messenger.git
-   cd unified-messenger
+   git clone https://github.com/yourusername/chattio.git
+   cd chattio
    ```
 
-2. Install dependencies:
+2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
-3. Install required tools (if not already installed):
+3. **Start the development server**
    ```bash
-   # Install ImageMagick for icon generation
-   brew install imagemagick
+   npm start
    ```
+
+### Building for Production
+
+```bash
+# For development
+npm run dist:mac
+
+# For production (signed and notarized)
+CSC_NAME="Your Developer ID" npm run dist:mac
+```
+
+## ⚠️ Installation Note
+
+If you see "Chattio.app is damaged and can't be opened" after downloading:
+
+1. Right-click the app → Select "Open" (you may need to do this twice)
+2. Or run: `./scripts/fix-damaged-app.sh ~/Downloads/Chattio.app`
+
+For detailed installation instructions, see [INSTALL_INSTRUCTIONS.md](./INSTALL_INSTRUCTIONS.md).
+
+## 🛠 Development
+
+### Project Structure
+
+```
+chattio/
+├── build/          # Build configurations
+├── public/         # Static assets
+├── scripts/        # Build and utility scripts
+├── src/            # Application source
+│   ├── main/       # Main process code
+│   └── renderer/   # Renderer process code
+└── tests/          # Test suites
+```
+
+### Scripts
+
+- `npm start` - Start in development mode
+- `npm test` - Run all tests
+- `npm run dist` - Build for current platform
+- `npm run clean` - Clean build artifacts
+
+### Code Style
+
+We use:
+
+- ESLint for code linting
+- Prettier for code formatting
+- TypeScript for type safety (migration in progress)
+
+## 🤝 Contributing
+
+We welcome contributions! Please read our [Contributing Guidelines](.github/CONTRIBUTING.md) before submitting pull requests.
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Electron team for the amazing framework
+- All contributors who helped improve this project
+- The open-source community
 
 ## Running in Development
 
@@ -97,6 +170,7 @@ GitHub Actions (`.github/workflows/ci.yml`) runs the full test matrix on every p
 ## Building for Production
 
 ### Build .app Bundle
+
 ```bash
 npm run dist:mac
 ```
@@ -104,15 +178,18 @@ npm run dist:mac
 The application bundle will be created in the `dist/mac` directory.
 
 ### Create DMG Installer
+
 ```bash
 npm run dist:mac
 # The DMG file will be created in the 'dist' directory
 ```
 
 ### Build Windows installer
+
 ```bash
 npm run dist:win
 ```
+
 This produces a signed (unsigned by default) `exe`/NSIS installer under `dist/`.
 
 After any successful `dist:*` run, publish the binaries to the marketing site so the download buttons stay fresh:
@@ -130,6 +207,7 @@ The repository ships unsigned macOS builds by default. To distribute outside of 
 **📖 See [CODE_SIGNING.md](./CODE_SIGNING.md) for detailed step-by-step instructions.**
 
 Quick setup:
+
 1. Get an Apple Developer account ($99/year)
 2. Install a "Developer ID Application" certificate
 3. Set environment variables: `CSC_NAME`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `APPLE_TEAM_ID`
@@ -151,6 +229,7 @@ Every successful deploy on `main`/`master` builds the macOS `.dmg/.zip` and Wind
 ## Customization
 
 ### Changing the Icon
+
 1. Replace `public/transparent.png` with your own square PNG
 2. Run `npm run generate-icons` to regenerate `public/icons/*`
 3. Rebuild the application
@@ -158,25 +237,32 @@ Every successful deploy on `main`/`master` builds the macOS `.dmg/.zip` and Wind
 ## Troubleshooting
 
 ### Icon Generation Issues
+
 If you encounter issues with icon generation, ensure you have the following installed:
+
 - ImageMagick (`brew install imagemagick`)
 - Proper permissions to execute scripts
 
 ### Build Issues
+
 If the build fails, try:
+
 1. Deleting `node_modules` and `package-lock.json`
 2. Running `npm install` again
 3. Ensuring all build dependencies are installed
 
 ### "App is damaged" Error on macOS
+
 If macOS shows "Chattio.app is damaged and can't be opened", this is a Gatekeeper security feature blocking unsigned apps. To fix:
 
 **Option 1 (Easiest):** Use the provided script:
+
 ```bash
 ./scripts/remove-quarantine.sh /path/to/Chattio.app
 ```
 
 **Option 2:** Manually remove the quarantine attribute:
+
 ```bash
 xattr -d com.apple.quarantine /path/to/Chattio.app
 ```
