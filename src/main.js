@@ -69,7 +69,7 @@ function createWindow() {
       contextIsolation: false,
       webviewTag: true
     },
-    icon: path.join(__dirname, '../public/transparent.png')
+    icon: path.join(__dirname, '../public/logo.png')
   }
   
   // Restore position if saved

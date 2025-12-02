@@ -109,7 +109,7 @@ function sendNativeNotification(unreadEntries, totalMessages) {
 				
 				new Notification('Chattio', {
 					body: message,
-					icon: '../public/transparent.png',
+					icon: '../public/logo.png',
 					tag: 'chattio-unread',
 					requireInteraction: false
 				});
