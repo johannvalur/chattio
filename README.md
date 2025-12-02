@@ -10,6 +10,18 @@ A unified messaging application for Mac that combines multiple messaging platfor
 - Keyboard shortcuts for quick navigation
 - Support for Messenger, WhatsApp, Instagram, and LinkedIn
 
+## ⚠️ Installation Note
+
+**If you see "Chattio.app is damaged and can't be opened" after downloading:**
+
+This is a macOS security feature. The app is safe to use. Quick fix:
+1. Right-click the app → Select "Open" (you may need to do this twice)
+2. Or run: `./scripts/fix-damaged-app.sh ~/Downloads/Chattio.app`
+
+See [INSTALL_INSTRUCTIONS.md](./INSTALL_INSTRUCTIONS.md) for detailed installation steps.
+
+**For developers:** To avoid this error for users, the app needs to be notarized. See [CODE_SIGNING.md](./CODE_SIGNING.md).
+
 ## Prerequisites
 
 - Node.js (v16 or later)
