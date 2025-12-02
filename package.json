@@ -54,7 +54,7 @@
     "@typescript-eslint/parser": "^7.18.0",
     "concurrently": "^9.2.1",
     "electron": "^25.9.8",
-    "electron-builder": "^24.4.0",
+    "electron-builder": "^26.0.12",
     "electron-icon-builder": "^2.0.1",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.2",
