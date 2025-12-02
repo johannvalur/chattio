@@ -35,8 +35,18 @@ fi
 # Set up code signing
 export CSC_NAME="Jóhann Sævarsson (QD9KBHBRRZ)"
 export APPLE_TEAM_ID="QD9KBHBRRZ"
-export APPLE_ID="$APPLE_ID"
-export APPLE_APP_SPECIFIC_PASSWORD="$APPLE_APP_SPECIFIC_PASSWORD"
+
+# Only set notarization credentials if they're provided and non-empty
+if [ -n "$APPLE_ID" ] && [ -n "$APPLE_APP_SPECIFIC_PASSWORD" ]; then
+    export APPLE_ID="$APPLE_ID"
+    export APPLE_APP_SPECIFIC_PASSWORD="$APPLE_APP_SPECIFIC_PASSWORD"
+    echo "✓ Notarization will be enabled"
+else
+    # Unset to prevent electron-builder from trying to notarize
+    unset APPLE_ID
+    unset APPLE_APP_SPECIFIC_PASSWORD
+    echo "⚠️  Notarization credentials not provided - skipping notarization"
+fi
 
 echo "✓ Environment variables configured:"
 echo "  APPLE_ID: $APPLE_ID"
