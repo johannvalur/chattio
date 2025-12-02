@@ -1,57 +1,46 @@
-name: Auto-merge Dependabot PRs
+name: Dependabot Auto-merge Helper
 
 on:
   pull_request_target:
     types: [opened, reopened, synchronize, labeled]
 
 jobs:
-  auto-merge:
-    name: Auto-merge Dependabot PRs
+  suggest-auto-merge:
+    name: Suggest Auto-merge for Dependabot
     runs-on: ubuntu-latest
-    # Only run for Dependabot PRs
     if: >
       github.actor == 'dependabot[bot]' &&
-      (github.event_name != 'pull_request_target' ||
-       github.event.action == 'opened' ||
+      (github.event.action == 'opened' ||
        github.event.action == 'reopened' ||
-       github.event.action == 'synchronize' ||
        (github.event.action == 'labeled' && github.event.label.name == 'auto-merge'))
 
     steps:
-      - name: Enable auto-merge for Dependabot PRs
+      - name: Check if PR is from Dependabot
+        id: check-dependabot
         uses: actions/github-script@v7
         with:
           script: |
-            const { data: pullRequest } = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number,
-            });
+            try {
+              const { data: pr } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.issue.number,
+              });
 
-            // Only auto-merge if the PR is from Dependabot and has the right labels
-            if (pullRequest.user.login === 'dependabot[bot]' && 
-                pullRequest.labels.some(label => label.name === 'dependencies')) {
-              
-              // Add auto-merge label if not present
-              if (!pullRequest.labels.some(label => label.name === 'auto-merge')) {
-                await github.rest.issues.addLabels({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: context.issue.number,
-                  labels: ['auto-merge']
-                });
+              if (pr.user.login === 'dependabot[bot]' && 
+                  pr.labels.some(label => label.name === 'dependencies')) {
+                console.log('✅ This is a Dependabot PR with the dependencies label');
+                console.log('\n=== SUGGESTED ACTION ===');
+                console.log('To enable auto-merge for this PR:');
+                console.log('1. Go to the PR page');
+                console.log('2. Click on "Enable auto-merge"');
+                console.log('3. Select "Squash and merge"');
+                console.log('4. Click "Enable auto-merge"');
+                console.log('===========================');
+                return true;
               }
-
-              // Enable auto-merge
-              try {
-                await github.rest.pulls.enableAutomerge({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  pull_number: context.issue.number,
-                  merge_method: 'squash'
-                });
-                console.log('Auto-merge enabled for PR #' + context.issue.number);
-              } catch (error) {
-                console.log('Could not enable auto-merge. It might already be enabled.');
-              }
+              return false;
+            } catch (error) {
+              console.error('Error checking PR:', error);
+              return false;
             }

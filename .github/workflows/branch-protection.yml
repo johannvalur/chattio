@@ -1,60 +1,54 @@
-name: Branch Protection
+name: Suggest Branch Protection
 
 on:
-  create:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to check protection for'
+        required: true
+        default: 'main'
 
 jobs:
-  protect-branches:
-    name: Protect Main Branch
+  suggest-protection:
+    name: Suggest Branch Protection Rules
     runs-on: ubuntu-latest
     steps:
-      - name: Check if branch is protected
-        id: branch-protection
+      - name: Check branch protection
+        id: check-protection
         uses: actions/github-script@v7
         with:
           script: |
             try {
+              const branch = '${{ github.event.inputs.branch || 'main' }}';
+              console.log(`Checking protection for branch: ${branch}`);
+              
+              // This will fail if no protection exists
               await github.rest.repos.getBranchProtection({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                branch: context.ref.replace('refs/heads/', '')
+                branch: branch
               });
-              console.log('Branch protection already exists');
+              
+              console.log(`✅ Branch '${branch}' is already protected`);
               return true;
             } catch (error) {
               if (error.status === 404) {
-                console.log('No branch protection found, will create one');
+                console.log('⚠️ No branch protection found. Please enable branch protection with these recommended settings:');
+                console.log('\n=== RECOMMENDED BRANCH PROTECTION SETTINGS ===');
+                console.log('1. Require a pull request before merging');
+                console.log('   - Require approvals: 1');
+                console.log('   - Dismiss stale pull request approvals when new commits are pushed: true');
+                console.log('   - Require code owner review: true');
+                console.log('2. Require status checks to pass before merging');
+                console.log('   - Require branches to be up to date before merging: true');
+                console.log('   - Status checks that are required: lint-and-typecheck, test');
+                console.log('3. Require conversation resolution before merging: true');
+                console.log('4. Do not allow bypassing the above settings');
+                console.log('5. Restrict who can push to matching branches: (specify team or users)');
+                console.log('6. Allow force pushes: false');
+                console.log('7. Allow deletions: false');
+                console.log('==============================================');
                 return false;
               }
               throw error;
             }
-
-      - name: Create branch protection
-        if: steps.branch-protection.outputs.result == 'false'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.rest.repos.updateBranchProtection({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              branch: context.ref.replace('refs/heads/', ''),
-              required_status_checks: {
-                strict: true,
-                contexts: ['lint-and-typecheck', 'test']
-              },
-              enforce_admins: true,
-              required_pull_request_reviews: {
-                dismiss_stale_reviews: true,
-                require_code_owner_reviews: true,
-                required_approving_review_count: 1
-              },
-              restrictions: null,
-              required_linear_history: true,
-              allow_force_pushes: false,
-              allow_deletions: false
-            });
-            console.log('Branch protection rules applied successfully');
