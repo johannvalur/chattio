@@ -1,0 +1,60 @@
+name: Branch Protection
+
+on:
+  create:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  protect-branches:
+    name: Protect Main Branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if branch is protected
+        id: branch-protection
+        uses: actions/github-script@v7
+        with:
+          script: |
+            try {
+              await github.rest.repos.getBranchProtection({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                branch: context.ref.replace('refs/heads/', '')
+              });
+              console.log('Branch protection already exists');
+              return true;
+            } catch (error) {
+              if (error.status === 404) {
+                console.log('No branch protection found, will create one');
+                return false;
+              }
+              throw error;
+            }
+
+      - name: Create branch protection
+        if: steps.branch-protection.outputs.result == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.updateBranchProtection({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              branch: context.ref.replace('refs/heads/', ''),
+              required_status_checks: {
+                strict: true,
+                contexts: ['lint-and-typecheck', 'test']
+              },
+              enforce_admins: true,
+              required_pull_request_reviews: {
+                dismiss_stale_reviews: true,
+                require_code_owner_reviews: true,
+                required_approving_review_count: 1
+              },
+              restrictions: null,
+              required_linear_history: true,
+              allow_force_pushes: false,
+              allow_deletions: false
+            });
+            console.log('Branch protection rules applied successfully');
