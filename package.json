@@ -56,7 +56,7 @@
     "electron": "^25.9.8",
     "electron-builder": "^24.4.0",
     "electron-icon-builder": "^2.0.1",
-    "eslint": "^9.39.1",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.2",
     "eslint-plugin-prettier": "^5.5.4",
     "http-server": "^14.1.1",
