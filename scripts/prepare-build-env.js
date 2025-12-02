@@ -30,10 +30,10 @@ if (!process.env.APPLE_TEAM_ID) {
 }
 
 // Check if we have all required notarization credentials
-const hasNotarization = 
-  process.env.APPLE_ID && 
+const hasNotarization =
+  process.env.APPLE_ID &&
   process.env.APPLE_ID.trim() !== '' &&
-  process.env.APPLE_APP_SPECIFIC_PASSWORD && 
+  process.env.APPLE_APP_SPECIFIC_PASSWORD &&
   process.env.APPLE_APP_SPECIFIC_PASSWORD.trim() !== '';
 
 if (hasNotarization) {
@@ -44,4 +44,3 @@ if (hasNotarization) {
   delete process.env.APPLE_ID;
   delete process.env.APPLE_APP_SPECIFIC_PASSWORD;
 }
-

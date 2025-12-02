@@ -40,6 +40,7 @@ security find-identity -v -p codesigning | grep "Developer ID Application"
 ```
 
 You should see output like:
+
 ```
 1) ABC123DEF456... "Developer ID Application: Your Name (TEAM_ID)"
 ```
@@ -69,6 +70,7 @@ If your certificate is in a `.p12` file:
    - Set a password when prompted
 
 2. Set environment variables:
+
 ```bash
 export CSC_LINK="/path/to/your/certificate.p12"
 export CSC_KEY_PASSWORD="your-certificate-password"
@@ -83,6 +85,7 @@ npm run dist:mac
 ```
 
 You should see output indicating code signing is happening:
+
 ```
 • signing         file=dist/mac-arm64/Chattio.app identity=Developer ID Application: Your Name (TEAM_ID)
 ```
@@ -124,6 +127,7 @@ codesign -dv --verbose=4 dist/mac-arm64/Chattio.app
 ```
 
 You should see:
+
 - `Authority=Developer ID Application: Your Name (TEAM_ID)`
 - `Signature=adhoc` should NOT appear
 
@@ -194,4 +198,3 @@ npx dotenv -- npm run dist:mac
 - [Apple Code Signing Guide](https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/)
 - [Electron Builder Code Signing](https://www.electron.build/code-signing)
 - [Notarization Guide](https://developer.apple.com/documentation/security/notarizing_macos_software_before_distribution)
-
