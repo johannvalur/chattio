@@ -51,7 +51,7 @@
     "@types/lodash": "^4.17.21",
     "@types/node": "^24.10.1",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
+    "@typescript-eslint/parser": "^8.48.1",
     "concurrently": "^9.2.1",
     "electron": "^25.9.8",
     "electron-builder": "^24.4.0",
