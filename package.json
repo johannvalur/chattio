@@ -14,7 +14,7 @@
     "prepack": "npm run generate-icons",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
-    "dist:mac": "npm run generate-icons && electron-builder --mac",
+    "dist:mac": "bash scripts/build-mac.sh",
     "postdist:mac": "npm run sync:downloads",
     "dist:win": "npm run generate-icons && electron-builder --win --x64"
   },
