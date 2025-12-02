@@ -130,12 +130,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Download Windows artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: downloads-win
           path: downloads/win
       - name: Download macOS artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: downloads-mac
           path: downloads/mac
