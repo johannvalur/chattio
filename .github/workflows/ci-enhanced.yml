@@ -205,7 +205,7 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_TITLE: 'Deployment Failed'
-          SLACK_MESSAGE: 'Workflow failed in job: ${{ join(needs.*.result != 'success' && needs.*.result || '') }}'
+          SLACK_MESSAGE: 'Workflow failed. Check the GitHub Actions run for details.'
           SLACK_COLOR: 'danger'
       - name: Send success notification
         if: steps.check.outputs.all == 'success'
