@@ -1,4 +1,4 @@
-# Unified Messenger
+# Chattio
 
 A unified messaging application for Mac that combines multiple messaging platforms into one window.
 
@@ -8,7 +8,11 @@ A unified messaging application for Mac that combines multiple messaging platfor
 - Tabbed interface for easy switching between services
 - Native macOS look and feel
 - Keyboard shortcuts for quick navigation
-- Support for Messenger, WhatsApp, Instagram, and LinkedIn
+- Support for Messenger, WhatsApp, Instagram, LinkedIn, and more
+- **Memory Optimization**: Efficient WebView management with automatic cleanup
+- **Virtual Scrolling**: Smooth performance with large message lists
+- **Resource Management**: Optimized WebView settings for better performance
+- **Modern Build System**: Webpack-based build process with hot-reloading in development
 
 ## ⚠️ Installation Note
 
@@ -22,9 +26,56 @@ See [INSTALL_INSTRUCTIONS.md](./INSTALL_INSTRUCTIONS.md) for detailed installati
 
 **For developers:** To avoid this error for users, the app needs to be notarized. See [CODE_SIGNING.md](./CODE_SIGNING.md).
 
-## Prerequisites
+## Development
+
+### Prerequisites
 
 - Node.js (v16 or later)
+- npm (v7 or later)
+
+### Getting Started
+
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+### Build Commands
+
+- `npm run dev`: Start development server with hot-reloading
+- `npm run build`: Create a production build
+- `npm run dist`: Package the application for distribution
+- `npm run dist:mac`: Build for macOS
+- `npm run dist:win`: Build for Windows
+
+## Project Structure
+
+- `src/`: Application source code
+  - `main/`: Main process code
+  - `renderer/`: Renderer process code
+  - `lib/`: Shared utilities and services
+- `public/`: Static assets
+- `tests/`: Test files
+- `webpack/`: Webpack configuration files
+
+## Build System
+
+The project uses Webpack for both development and production builds:
+
+- **Development**:
+  - Hot module replacement
+  - Source maps for debugging
+  - Fast incremental builds
+
+- **Production**:
+  - Minification and tree-shaking
+  - Asset optimization
+  - Environment-specific configurations
 - npm (v7 or later)
 - macOS (for building the .app or .dmg)
 - Xcode Command Line Tools (for building)
@@ -53,6 +104,24 @@ See [INSTALL_INSTRUCTIONS.md](./INSTALL_INSTRUCTIONS.md) for detailed installati
 ```bash
 npm start
 ```
+
+### Memory Management
+
+Chattio includes several optimizations to manage memory usage:
+
+- **WebView Recycling**: Only a limited number of WebViews are kept in memory (default: 3)
+- **Automatic Cleanup**: Inactive WebViews are automatically unloaded after 5 minutes
+- **Optimized Settings**: WebViews use optimized settings for better performance and lower memory usage
+
+### Virtual Scrolling
+
+Message lists use virtual scrolling to maintain performance with large numbers of messages:
+
+- Only visible messages are rendered in the DOM
+- Smooth scrolling experience with minimal memory usage
+- Automatic cleanup of off-screen elements
+
+To use virtual scrolling in your message lists, add the `message-list` class to your container element and initialize a new `VirtualScroller` instance.
 
 ### Automatic updates
 
@@ -93,6 +162,13 @@ The Playwright config starts a thin static server (`scripts/serve-chatterly.js`)
 ## Deployment
 
 GitHub Actions (`.github/workflows/ci.yml`) runs the full test matrix on every push/pull request. Successful pushes to `main` automatically publish the static `chatterly/` bundle to GitHub Pages.
+
+## Performance Tips
+
+1. **Reduce Active Tabs**: Keep only frequently used tabs open to minimize memory usage
+2. **Use Keyboard Shortcuts**: Quickly switch between tabs using keyboard shortcuts
+3. **Monitor Performance**: Check the built-in performance monitor in developer tools
+4. **Update Regularly**: Keep the app updated for the latest performance improvements
 
 ## Building for Production
 

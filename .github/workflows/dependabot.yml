@@ -1,0 +1,33 @@
+name: Dependabot
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Run weekly on Sunday
+  workflow_dispatch:
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Update dependencies
+        run: |
+          npx npm-check-updates --upgrade
+          npm install
+          npm audit fix
+      
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(deps): update dependencies'
+          title: 'chore(deps): update dependencies'
+          body: 'Automated dependency updates'
+          branch: 'dependencies/update-$(date +%s)'
+          delete-branch: true
+          labels: dependencies,automated

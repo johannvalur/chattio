@@ -189,6 +189,43 @@ function openTab(evt, platform) {
 // Using config file for centralized constant
 const chromeUserAgent = CHROME_USER_AGENT;
 
+// Secure webview defaults
+const WEBVIEW_DEFAULTS = {
+  // Disable node integration for security
+  nodeIntegration: false,
+  // Enable context isolation
+  contextIsolation: true,
+  // Enable web security
+  webSecurity: true,
+  // Disallow running insecure content
+  allowRunningInsecureContent: false,
+  // Disable webview tag (we'll enable it per-webview)
+  webviewTag: false,
+  // Enable sandbox
+  sandbox: true
+};
+
+// Secure webview attributes
+const SECURE_WEBVIEW_ATTRIBUTES = {
+  // Disable popups
+  allowpopups: 'false',
+  // Disable web security (use with caution, only if absolutely necessary)
+  webpreferences: Object.entries(WEBVIEW_DEFAULTS)
+    .map(([key, value]) => `${key}=${value}`)
+    .join(',')
+};
+
+// Function to safely set webview attributes
+function setWebviewAttributes(webview, attributes) {
+  Object.entries(attributes).forEach(([key, value]) => {
+    try {
+      webview.setAttribute(key, value);
+    } catch (error) {
+      console.warn(`Failed to set webview attribute ${key}:`, error);
+    }
+  });
+}
+
 function getPlatformHost(platform) {
 	try {
 		const platformConfig = PLATFORMS[platform];
@@ -458,8 +495,24 @@ function setupWebviews() {
 		}
 		
 		webview.addEventListener('did-fail-load', (event) => {
-			logger.error('Failed to load:', event);
-		});
+			// Only log errors that we don't explicitly ignore
+			if (![-3, -102, -105, -106, -107, -109].includes(event.errorCode)) {
+				logger.error('WebView failed to load:', {
+					errorCode: event.errorCode,
+					errorDescription: event.errorDescription,
+					validatedURL: event.validatedURL,
+					isMainFrame: event.isMainFrame
+				});
+			}
+			
+			// For certain error codes, we can try to recover
+			if (event.errorCode === -105) { // CONNECTION_REFUSED
+				setTimeout(() => webview.reload(), 2000);
+			}
+		}, { passive: true });
+		
+		// Apply secure attributes to all webviews
+		setWebviewAttributes(webview, SECURE_WEBVIEW_ATTRIBUTES);
 		
 		// For WhatsApp, Slack, and Teams specifically, inject scripts to bypass browser checks
 		if (platform === 'whatsapp' || platform === 'slack' || platform === 'teams') {
