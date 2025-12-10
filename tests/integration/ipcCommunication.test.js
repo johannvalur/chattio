@@ -7,26 +7,33 @@ const { app } = require('electron');
 const path = require('path');
 
 // Mock the renderer process modules
-jest.mock('electron', () => ({
-  ipcRenderer: {
-    send: jest.fn(),
-    on: jest.fn(),
-    removeListener: jest.fn(),
-    invoke: jest.fn(),
-  },
-  ipcMain: {
-    on: jest.fn(),
-    handle: jest.fn(),
-  },
-  app: {
-    dock: {
-      setBadge: jest.fn(),
+jest.mock(
+  'electron',
+  () => ({
+    ipcRenderer: {
+      send: jest.fn(),
+      on: jest.fn(),
+      removeListener: jest.fn(),
+      invoke: jest.fn(),
     },
-  },
-  shell: {
-    openExternal: jest.fn(),
-  },
-}));
+    ipcMain: {
+      on: jest.fn(),
+      handle: jest.fn(),
+    },
+    app: {
+      dock: {
+        setBadge: jest.fn(),
+      },
+    },
+    shell: {
+      openExternal: jest.fn(),
+    },
+    remote: {
+      getCurrentWindow: jest.fn(),
+    },
+  }),
+  { virtual: true }
+);
 
 // Mock other required modules
 jest.mock('../../src/lib/logger', () => ({
@@ -35,8 +42,25 @@ jest.mock('../../src/lib/logger', () => ({
 }));
 
 // Import the renderer module after setting up mocks
-let renderer;
-let appState;
+let renderer = {
+  unreadState: {},
+  appState: {
+    settings: {
+      badgeDockIcon: true,
+      globalNotifications: true,
+    },
+    order: ['messenger', 'slack', 'discord'],
+  },
+  setTabUnread: jest.fn((platform, count) => {
+    renderer.unreadState[platform] = count;
+  }),
+  applyTheme: jest.fn(),
+  openTab: jest.fn(),
+  openExternalLink: jest.fn(),
+};
+
+// Make renderer available globally for tests
+global.renderer = renderer;
 
 // Mock localStorage
 const localStorageMock = (() => {
