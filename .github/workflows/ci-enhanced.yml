@@ -80,7 +80,7 @@ jobs:
         run: npx npm-check-updates
         continue-on-error: true
       - name: Run dependency check
-        uses: dependency-review-action@v4
+        uses: actions/dependency-review-action@v4
 
   accessibility:
     needs: lint

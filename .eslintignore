@@ -1,0 +1,15 @@
+# Test files
+tests/
+*.test.js
+*.spec.js
+
+# Config files
+*.config.js
+
+# Build output
+dist/
+build/
+coverage/
+
+# Node modules
+node_modules/

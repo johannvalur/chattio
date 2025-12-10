@@ -1,6 +1,7 @@
 const { ipcRenderer } = require('electron');
 const { PLATFORMS } = require('../../lib/config');
 const logger = require('../../lib/logger');
+const { produce } = require('immer');
 
 const PLATFORM_KEYS = Object.keys(PLATFORMS);
 const STORAGE_KEY = 'chatterly-app-state';
@@ -15,17 +16,23 @@ function buildDefaultAppsState() {
 const defaultState = {
   apps: buildDefaultAppsState(),
   order: [...PLATFORM_KEYS],
+  lastActiveApp: 'whatsapp',
+  windowBounds: { width: 1200, height: 800, x: 0, y: 0, isMaximized: false },
+  isFirstRun: false,
+  version: '1.0.0',
   settings: {
     theme: 'system',
-    sidebarDensity: 'comfortable',
-    globalNotifications: true,
-    badgeDockIcon: true,
-    showWelcome: true,
-    launchAtLogin: false,
+    fontSize: 'medium',
+    autoHideSidebar: false,
+    launchOnStartup: true,
+    minimizeToTray: true,
+    closeToTray: true,
+    notifications: true,
     hardwareAcceleration: true,
-    lastActiveTab: 'whatsapp',
-    sidebarCollapsed: false
-  }
+    spellCheck: true,
+    autoUpdate: true,
+    betaUpdates: false,
+  },
 };
 
 let appState = { ...defaultState };
@@ -39,28 +46,28 @@ function loadAppState() {
     const savedState = localStorage.getItem(STORAGE_KEY);
     if (savedState) {
       const parsed = JSON.parse(savedState);
-      
+
       // Merge with defaults to ensure all platforms are included
       appState = {
         ...defaultState,
         ...parsed,
         apps: {
           ...buildDefaultAppsState(),
-          ...(parsed.apps || {})
+          ...(parsed.apps || {}),
         },
         settings: {
           ...defaultState.settings,
-          ...(parsed.settings || {})
-        }
+          ...(parsed.settings || {}),
+        },
       };
-      
+
       // Ensure all platforms are in the order array
-      PLATFORM_KEYS.forEach(platform => {
+      PLATFORM_KEYS.forEach((platform) => {
         if (!appState.order.includes(platform)) {
           appState.order.push(platform);
         }
       });
-      
+
       logger.info('App state loaded');
     }
   } catch (error) {
@@ -94,15 +101,18 @@ module.exports = {
   getState: () => ({ ...appState }),
   updateState: (updater) => {
     if (typeof updater === 'function') {
-      appState = updater(appState);
+      appState = produce(appState, (draft) => {
+        updater(draft);
+      });
     } else {
       appState = { ...appState, ...updater };
     }
+    saveAppState();
     saveAppState();
     return appState;
   },
   isNotificationsEnabled,
   resetAppState,
   saveAppState,
-  loadAppState
+  loadAppState,
 };
