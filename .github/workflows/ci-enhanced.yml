@@ -193,14 +193,23 @@ jobs:
         with:
           name: macos-build
           path: dist
+      
+      # Create downloads directory and copy artifacts
+      - name: Set up downloads directory
+        run: |
+          mkdir -p chattio/downloads
+          cp -r dist/* chattio/downloads/
+      
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v4
         with:
           enablement: true
+      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: chattio
+      
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
