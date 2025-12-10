@@ -196,11 +196,14 @@ jobs:
     steps:
       - name: Check workflow status
         id: check
-        uses: ffurrer2/extract-action-status@v1
-        with:
-          status: ${{ join(needs.*.result, ' ') }}
-      - name: Send notification
-        if: steps.check.outputs.all != 'success'
+        run: |
+          if [[ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
+            echo "status=failure" >> $GITHUB_OUTPUT
+          else
+            echo "status=success" >> $GITHUB_OUTPUT
+          fi
+      - name: Send failure notification
+        if: steps.check.outputs.status == 'failure'
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -208,7 +211,7 @@ jobs:
           SLACK_MESSAGE: 'Workflow failed. Check the GitHub Actions run for details.'
           SLACK_COLOR: 'danger'
       - name: Send success notification
-        if: steps.check.outputs.all == 'success'
+        if: steps.check.outputs.status == 'success'
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
