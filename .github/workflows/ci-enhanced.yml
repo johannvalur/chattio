@@ -205,31 +205,37 @@ jobs:
           echo "All files in dist/:"
           find dist/ -type f
       
-      # Copy artifacts to root directory for GitHub Pages
+      # Prepare GitHub Pages files
       - name: Prepare GitHub Pages files
         run: |
-          # Create necessary directories
-          mkdir -p downloads
+          # Create a fresh directory for the deployment
+          mkdir -p _site
           
-          # Copy files with error handling
+          # Copy website files to _site
+          echo "Copying website files..."
+          cp -r chattio/* _site/ || echo "Warning: Some website files could not be copied"
+          
+          # Create downloads directory in _site
+          mkdir -p _site/downloads
+          
+          # Copy build artifacts to downloads directory
           if [ "$(ls -A dist/ 2>/dev/null)" ]; then
-            echo "Copying files from dist/ to downloads/"
-            cp -r dist/* downloads/ || echo "Warning: Some files could not be copied"
+            echo "Copying build artifacts to _site/downloads/"
+            cp -r dist/* _site/downloads/ || echo "Warning: Some files could not be copied to downloads/"
           else
-            echo "Warning: dist/ directory is empty"
+            echo "Warning: dist/ directory is empty - no build artifacts to copy"
           fi
           
-          # Copy all other website files
-          echo "Copying website files..."
-          cp -r chattio/* . || echo "Warning: Some website files could not be copied"
-          
-          # Verify the files were copied
+          # Verify the files were copied correctly
           echo "---"
-          echo "Final directory structure:"
-          find . -maxdepth 2 -type d | sort
+          echo "Final directory structure in _site:"
+          find _site -maxdepth 2 -type d | sort
           echo "---"
-          echo "Files in downloads/:"
-          ls -la downloads/
+          echo "Files in _site/downloads/:"
+          ls -la _site/downloads/
+          echo "---"
+          echo "All files to be deployed:"
+          find _site -type f | sort
       
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v4
@@ -243,16 +249,19 @@ jobs:
           echo "Root directory structure:"
           ls -la .
           echo "---"
-          echo "Downloads directory:"
-          ls -la downloads/
+          echo "_site directory structure:"
+          ls -la _site/
           echo "---"
-          echo "All files to be uploaded:"
-          find . -type f -not -path './.git/*' | sort
+          echo "Files in _site/downloads/:"
+          ls -la _site/downloads/
+          echo "---"
+          echo "All files to be deployed:"
+          find _site -type f | sort
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
           retention-days: 1
           compression-level: 6
       
