@@ -218,10 +218,34 @@ jobs:
           # Create downloads directory in _site
           mkdir -p _site/downloads
           
-          # Copy build artifacts to downloads directory
+          # Copy build artifacts to downloads directory with consistent filenames
           if [ "$(ls -A dist/ 2>/dev/null)" ]; then
             echo "Copying build artifacts to _site/downloads/"
-            cp -r dist/* _site/downloads/ || echo "Warning: Some files could not be copied to downloads/"
+            mkdir -p _site/downloads
+            
+            # Copy with consistent filenames
+            for file in dist/*; do
+              filename=$(basename "$file")
+              # Normalize filenames to match the expected URLs
+              case "$filename" in
+                *Chattio-*-arm64.dmg)
+                  cp "$file" "_site/downloads/Chattio-mac-arm64.dmg"
+                  ;;
+                *Chattio-*-arm64-mac.zip)
+                  cp "$file" "_site/downloads/Chattio-mac-arm64.zip"
+                  ;;
+                *Chatterly.exe)
+                  cp "$file" "_site/downloads/Chatterly.exe"
+                  ;;
+                *)
+                  cp "$file" "_site/downloads/"
+                  ;;
+              esac
+            done
+            
+            echo "---"
+            echo "Files copied to _site/downloads/:"
+            ls -la _site/downloads/
           else
             echo "Warning: dist/ directory is empty - no build artifacts to copy"
           fi
