@@ -194,23 +194,53 @@ jobs:
           name: macos-build
           path: dist
       
+      # Debug: List downloaded artifacts
+      - name: List downloaded artifacts
+        run: |
+          ls -la dist/
+          echo "---"
+          find dist/ -type f
+      
       # Create downloads directory and copy artifacts
       - name: Set up downloads directory
         run: |
+          # Create necessary directories
           mkdir -p chattio/downloads
-          cp -r dist/* chattio/downloads/
+          
+          # Copy files with error handling
+          if [ "$(ls -A dist/ 2>/dev/null)" ]; then
+            echo "Copying files from dist/ to chattio/downloads/"
+            cp -r dist/* chattio/downloads/ || echo "Warning: Some files could not be copied"
+          else
+            echo "Warning: dist/ directory is empty"
+          fi
+          
+          # Verify the files were copied
+          echo "---"
+          echo "Files in chattio/downloads/:"
+          ls -la chattio/downloads/
       
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v4
         with:
           enablement: true
       
+      - name: Verify files before upload
+        run: |
+          echo "Directory structure:"
+          find chattio -type d | sort
+          echo "\nFiles to be uploaded:"
+          find chattio -type f
+      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: chattio
+          retention-days: 1
+          compression-level: 6
       
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        timeout-minutes: 10
 
