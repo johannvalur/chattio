@@ -74,7 +74,12 @@
           "panel",
           "webview",
           "content",
-          "element"
+          "element",
+          "tab",
+          "btn",
+          "el",
+          "node",
+          "item"
         ]
       }
     ],

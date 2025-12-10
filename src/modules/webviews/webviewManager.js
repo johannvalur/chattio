@@ -56,7 +56,7 @@ class WebviewManager {
   }
 
   setupWebviewEvents(webview, platform, config) {
-    const { url, preloadScript, customCSS } = config;
+    const { url: _url, preloadScript, customCSS } = config;
 
     // Load the webview when added to DOM
     webview.addEventListener('dom-ready', () => {

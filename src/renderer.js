@@ -382,7 +382,7 @@ function setupWebviews() {
         }
       });
 
-      webview.addEventListener('did-start-navigation', (event) => {
+      webview.addEventListener('did-start-navigation', (_event) => {
         if (typeof webview.setUserAgent === 'function') {
           try {
             webview.setUserAgent(chromeUserAgent);
@@ -1105,7 +1105,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // Listen for system theme changes if using system theme
   if (window.matchMedia) {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleSystemThemeChange = (e) => {
+    const handleSystemThemeChange = (_e) => {
       const currentTheme = window.localStorage.getItem('chatterly-theme') || 'system';
       if (currentTheme === 'system') {
         applyTheme('system');
