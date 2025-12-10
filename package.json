@@ -29,9 +29,9 @@
     "sync:downloads": "node ./scripts/sync-downloads.js",
     "prepack": "npm run generate-icons",
     "pack": "electron-builder --dir",
-    "dist:mac": "npm run generate-icons && npm run build && electron-builder --mac",
+    "dist:mac": "npm run generate-icons && npm run build && electron-builder --mac --publish never",
     "postdist:mac": "npm run sync:downloads",
-    "dist:win": "npm run generate-icons && npm run build && electron-builder --win --x64"
+    "dist:win": "npm run generate-icons && npm run build && electron-builder --win --x64 --publish never"
   },
   "keywords": [
     "messenger",
