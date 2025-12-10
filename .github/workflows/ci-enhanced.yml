@@ -80,7 +80,11 @@ jobs:
         run: npx npm-check-updates
         continue-on-error: true
       - name: Run dependency check
+        if: github.event_name == 'pull_request'
         uses: actions/dependency-review-action@v4
+        with:
+          base_ref: ${{ github.event.pull_request.base.ref }}
+          head_ref: ${{ github.event.pull_request.head.ref }}
 
   accessibility:
     needs: lint
