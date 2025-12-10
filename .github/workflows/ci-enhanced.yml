@@ -197,28 +197,39 @@ jobs:
       # Debug: List downloaded artifacts
       - name: List downloaded artifacts
         run: |
+          echo "Current working directory: $(pwd)"
+          echo "---"
+          echo "Contents of dist/:"
           ls -la dist/
           echo "---"
+          echo "All files in dist/:"
           find dist/ -type f
       
-      # Create downloads directory and copy artifacts
-      - name: Set up downloads directory
+      # Copy artifacts to root directory for GitHub Pages
+      - name: Prepare GitHub Pages files
         run: |
           # Create necessary directories
-          mkdir -p chattio/downloads
+          mkdir -p downloads
           
           # Copy files with error handling
           if [ "$(ls -A dist/ 2>/dev/null)" ]; then
-            echo "Copying files from dist/ to chattio/downloads/"
-            cp -r dist/* chattio/downloads/ || echo "Warning: Some files could not be copied"
+            echo "Copying files from dist/ to downloads/"
+            cp -r dist/* downloads/ || echo "Warning: Some files could not be copied"
           else
             echo "Warning: dist/ directory is empty"
           fi
           
+          # Copy all other website files
+          echo "Copying website files..."
+          cp -r chattio/* . || echo "Warning: Some website files could not be copied"
+          
           # Verify the files were copied
           echo "---"
-          echo "Files in chattio/downloads/:"
-          ls -la chattio/downloads/
+          echo "Final directory structure:"
+          find . -maxdepth 2 -type d | sort
+          echo "---"
+          echo "Files in downloads/:"
+          ls -la downloads/
       
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v4
@@ -227,15 +238,21 @@ jobs:
       
       - name: Verify files before upload
         run: |
-          echo "Directory structure:"
-          find chattio -type d | sort
-          echo "\nFiles to be uploaded:"
-          find chattio -type f
+          echo "Current working directory: $(pwd)"
+          echo "---"
+          echo "Root directory structure:"
+          ls -la .
+          echo "---"
+          echo "Downloads directory:"
+          ls -la downloads/
+          echo "---"
+          echo "All files to be uploaded:"
+          find . -type f -not -path './.git/*' | sort
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: chattio
+          path: .
           retention-days: 1
           compression-level: 6
       
