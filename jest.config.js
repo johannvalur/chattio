@@ -1,25 +1,37 @@
 /** @type {import('jest').Config} */
 module.exports = {
+  // Default test environment
   testEnvironment: 'node',
-  testMatch: ['**/tests/**/*.test.[jt]s?(x)'],
+
+  // Test environment overrides for specific paths
   testEnvironmentOptions: {
     url: 'http://localhost',
   },
-  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+
+  // Test file matching patterns
+  testMatch: ['**/tests/**/*.test.[jt]s?(x)'],
+
+  // Setup files
   setupFilesAfterEnv: ['<rootDir>/tests/setup/jest.setup.js'],
-  moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
+
+  // Module handling
+  moduleFileExtensions: ['js', 'jsx', 'json'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@tests/(.*)$': '<rootDir>/tests/$1',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
+
+  // Transform configuration
   transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
+    '^.+\\.(js|jsx)$': 'babel-jest',
   },
+
+  // Coverage configuration
   collectCoverage: true,
   coverageDirectory: 'coverage',
   collectCoverageFrom: [
-    'src/**/*.{js,jsx,ts,tsx}',
+    'src/**/*.{js,jsx}',
     '!**/node_modules/**',
     '!**/vendor/**',
     '!**/dist/**',
@@ -28,12 +40,24 @@ module.exports = {
     '!**/public/**',
   ],
   coverageReporters: ['text', 'lcov', 'clover'],
-  testEnvironmentOptions: {
-    url: 'http://localhost',
-  },
+
+  // Ignore patterns
+  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   transformIgnorePatterns: ['/node_modules/(?!(your-module-to-transform|another-module)/)'],
-  // Force exit to prevent hanging
-  forceExit: true,
-  // Test timeout
+
+  // Global test timeout
   testTimeout: 10000,
+
+  // Run tests in band to avoid port conflicts
+  maxWorkers: 1,
+  maxConcurrency: 1,
+
+  // Watch plugins temporarily disabled due to dependency conflicts
+  // watchPlugins: [
+  //   'jest-watch-typeahead/filename',
+  //   'jest-watch-typeahead/testname',
+  // ],
+
+  // Global teardown
+  globalTeardown: '<rootDir>/tests/setup/globalTeardown.js',
 };

@@ -87,8 +87,33 @@ describe('appState', () => {
     // Mock the global localStorage
     global.localStorage = localStorageMock;
 
+    // Mock performance API using defineProperty to avoid read-only issues
+    Object.defineProperty(global, 'performance', {
+      value: {
+        now: jest.fn(() => Date.now()),
+      },
+      writable: true,
+      configurable: true,
+    });
+
     // Mock the current date for testing
-    jest.useFakeTimers().setSystemTime(new Date('2023-01-01T00:00:00Z'));
+    jest.useFakeTimers({
+      now: new Date('2023-01-01T00:00:00Z'),
+      doNotFake: [
+        'nextTick',
+        'setImmediate',
+        'clearImmediate',
+        'setInterval',
+        'clearInterval',
+        'setTimeout',
+        'clearTimeout',
+        'performance',
+        'requestAnimationFrame',
+        'cancelAnimationFrame',
+        'requestIdleCallback',
+        'cancelIdleCallback',
+      ],
+    });
   });
 
   beforeEach(() => {

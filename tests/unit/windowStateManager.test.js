@@ -17,20 +17,51 @@ const fsMocks = {};
 
 // Mock fs module - need to support both promisify and promises API
 jest.mock('fs', () => {
-  fsMocks.access = jest.fn((path, mode, callback) => {
-    if (callback) callback(null);
+  // Create mock implementations that work with both callback and Promise APIs
+  fsMocks.access = jest.fn().mockImplementation((path, mode, callback) => {
+    if (typeof mode === 'function') {
+      callback = mode;
+    }
+    if (callback) {
+      callback(null);
+      return undefined;
+    }
     return Promise.resolve();
   });
-  fsMocks.readFile = jest.fn((path, encoding, callback) => {
-    if (callback) callback(null, '{}');
+
+  fsMocks.readFile = jest.fn().mockImplementation((path, encoding, callback) => {
+    if (typeof encoding === 'function') {
+      callback = encoding;
+      encoding = 'utf8';
+    }
+    if (callback) {
+      callback(null, '{}');
+      return undefined;
+    }
     return Promise.resolve('{}');
   });
-  fsMocks.writeFile = jest.fn((path, data, options, callback) => {
-    if (callback) callback(null);
+
+  fsMocks.writeFile = jest.fn().mockImplementation((path, data, options, callback) => {
+    if (typeof options === 'function') {
+      callback = options;
+      options = {};
+    }
+    if (callback) {
+      callback(null);
+      return undefined;
+    }
     return Promise.resolve();
   });
-  fsMocks.mkdir = jest.fn((path, options, callback) => {
-    if (callback) callback(null);
+
+  fsMocks.mkdir = jest.fn().mockImplementation((path, options, callback) => {
+    if (typeof options === 'function') {
+      callback = options;
+      options = { recursive: true };
+    }
+    if (callback) {
+      callback(null);
+      return undefined;
+    }
     return Promise.resolve();
   });
 
@@ -45,9 +76,9 @@ jest.mock('fs', () => {
       W_OK: 2,
     },
     promises: {
-      access: jest.fn(),
-      readFile: jest.fn(),
-      writeFile: jest.fn(),
+      access: jest.fn().mockResolvedValue(undefined),
+      readFile: jest.fn().mockResolvedValue('{}'),
+      writeFile: jest.fn().mockResolvedValue(undefined),
       mkdir: jest.fn(),
     },
   };
@@ -56,27 +87,110 @@ jest.mock('fs', () => {
 // Import the module after setting up mocks
 const WindowStateManager = require('@/lib/windowStateManager');
 
+// Helper function to flush promises
+function flushPromises() {
+  return new Promise(jest.requireActual('timers').setImmediate);
+}
+
+// Helper to handle async/await in tests
+async function waitForPromises() {
+  await Promise.resolve();
+  await new Promise((resolve) => setImmediate(resolve));
+}
+
 describe('WindowStateManager', () => {
   let windowStateManager;
   const testStatePath = path.join('/tmp/electron-test', 'window-state.json');
 
-  beforeEach(() => {
+  // Mock console.error to catch any unhandled rejections
+  const originalConsoleError = console.error;
+
+  beforeAll(() => {
+    // Mock console.error to prevent test output pollution
+    console.error = jest.fn();
+  });
+
+  afterAll(() => {
+    // Restore console.error
+    console.error = originalConsoleError;
+  });
+
+  beforeEach(async () => {
     // Reset all mocks before each test
     jest.clearAllMocks();
-    if (fsMocks.access) fsMocks.access.mockReset();
-    if (fsMocks.readFile) fsMocks.readFile.mockReset();
-    if (fsMocks.writeFile) fsMocks.writeFile.mockReset();
-    if (fsMocks.mkdir) fsMocks.mkdir.mockReset();
 
-    // Reset fs.promises mocks too
+    // Reset fs mocks with proper error handling
+    if (fsMocks.access) {
+      fsMocks.access.mockReset();
+      fsMocks.access.mockImplementation((path, mode, callback) => {
+        if (typeof mode === 'function') {
+          callback = mode;
+        }
+        if (callback) {
+          process.nextTick(callback, null);
+          return undefined;
+        }
+        return Promise.resolve();
+      });
+    }
+
+    if (fsMocks.readFile) {
+      fsMocks.readFile.mockReset();
+      fsMocks.readFile.mockImplementation((path, encoding, callback) => {
+        if (typeof encoding === 'function') {
+          callback = encoding;
+          encoding = 'utf8';
+        }
+        if (callback) {
+          callback(null, '{}');
+          return undefined;
+        }
+        return Promise.resolve('{}');
+      });
+    }
+
+    if (fsMocks.writeFile) {
+      fsMocks.writeFile.mockReset();
+      fsMocks.writeFile.mockImplementation((path, data, options, callback) => {
+        if (typeof options === 'function') {
+          callback = options;
+          options = {};
+        }
+        if (callback) {
+          callback(null);
+          return undefined;
+        }
+        return Promise.resolve();
+      });
+    }
+
+    if (fsMocks.mkdir) {
+      fsMocks.mkdir.mockReset();
+      fsMocks.mkdir.mockImplementation((path, options, callback) => {
+        if (typeof options === 'function') {
+          callback = options;
+          options = { recursive: true };
+        }
+        if (callback) {
+          callback(null);
+          return undefined;
+        }
+        return Promise.resolve();
+      });
+    }
+
+    // Reset fs.promises mocks with proper implementations
     const fs = require('fs');
-    fs.promises.access.mockReset();
-    fs.promises.readFile.mockReset();
-    fs.promises.writeFile.mockReset();
-    fs.promises.mkdir.mockReset();
+    fs.promises.access.mockReset().mockResolvedValue(undefined);
+    fs.promises.readFile.mockReset().mockResolvedValue('{}');
+    fs.promises.writeFile.mockReset().mockResolvedValue(undefined);
+    fs.promises.mkdir.mockReset().mockResolvedValue(undefined);
 
     // Create a new instance for each test
     windowStateManager = new WindowStateManager(mockApp);
+
+    // Ensure all pending promises are resolved
+    await waitForPromises();
   });
 
   describe('constructor', () => {
@@ -120,13 +234,21 @@ describe('WindowStateManager', () => {
     });
 
     it('should not create directory if it exists', async () => {
-      // Mock access to succeed
+      // Mock access to succeed for both callback and promise APIs
       fsMocks.access.mockImplementationOnce((path, mode, callback) => {
+        if (typeof mode === 'function') {
+          callback = mode;
+        }
         if (callback) {
-          callback(null);
+          process.nextTick(callback, null);
+          return undefined;
         }
         return Promise.resolve();
       });
+
+      // Also mock the promises API
+      const fs = require('fs');
+      fs.promises.access.mockResolvedValueOnce(undefined);
 
       await windowStateManager.ensureUserDataDir();
 
@@ -163,12 +285,25 @@ describe('WindowStateManager', () => {
     it('should return null for non-existent state file', async () => {
       // Mock access to fail with ENOENT - the code catches this and returns null immediately
       fsMocks.access.mockImplementationOnce((path, mode, callback) => {
-        if (callback) {
-          callback({ code: 'ENOENT' });
+        if (typeof mode === 'function') {
+          callback = mode;
         }
-        return Promise.reject({ code: 'ENOENT' });
+        const error = new Error('File not found');
+        error.code = 'ENOENT';
+
+        if (callback) {
+          process.nextTick(() => callback(error));
+          return undefined;
+        }
+        return Promise.reject(error);
       });
 
+      // Also mock the promises version
+      const fs = require('fs');
+      fs.promises.access.mockRejectedValueOnce(new Error('File not found'));
+
+      // Ensure the test waits for all promises to resolve
+      await waitForPromises();
       const state = await windowStateManager.load();
       expect(state).toBeNull();
     });

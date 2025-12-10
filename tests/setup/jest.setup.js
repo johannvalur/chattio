@@ -87,15 +87,32 @@ try {
 
 if (JSDOM) {
   // Use jsdom for better DOM support
+  // Create a clean JSDOM instance for testing
   const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
     url: 'http://localhost',
     pretendToBeVisual: true,
     resources: 'usable',
+    runScripts: 'dangerously',
   });
 
+  // Set up global window and document
   global.window = dom.window;
   global.document = dom.window.document;
-  global.navigator = dom.window.navigator;
+
+  // Define navigator with proper property descriptors
+  Object.defineProperty(global, 'navigator', {
+    value: {
+      ...dom.window.navigator,
+      userAgent: 'node.js',
+      platform: 'node',
+      appVersion: '',
+    },
+    writable: true,
+    configurable: true,
+  });
+
+  // Ensure window.navigator is also set
+  global.window.navigator = global.navigator;
 
   // Ensure localStorage is available
   if (!global.window.localStorage) {
