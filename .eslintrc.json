@@ -79,7 +79,9 @@
           "btn",
           "el",
           "node",
-          "item"
+          "item",
+          "test",
+          "otherItem"
         ]
       }
     ],

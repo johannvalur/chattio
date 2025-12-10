@@ -23,24 +23,24 @@ function updateUnreadSummary() {
     );
     const hasUnreadServices = unreadEntries.length;
     const totalMessages = unreadEntries.reduce((sum, [_, count]) => sum + count, 0);
-    
+
     // Only send badge update if badge is enabled
     const { settings } = appState.getState();
     if (settings.badgeDockIcon) {
       ipcRenderer.send('unread-summary', {
         ...unreadState,
         totalUnreadServices: hasUnreadServices,
-        totalMessages: totalMessages
+        totalMessages: totalMessages,
       });
     } else {
       // Clear badge if disabled
       ipcRenderer.send('unread-summary', {
         ...unreadState,
         totalUnreadServices: 0,
-        totalMessages: 0
+        totalMessages: 0,
       });
     }
-    
+
     // Send native notification if enabled and there are unread messages
     if (settings.globalNotifications && totalMessages > 0) {
       if (totalMessages > lastNotificationSnapshot) {
@@ -50,7 +50,7 @@ function updateUnreadSummary() {
     } else {
       lastNotificationSnapshot = 0;
     }
-    
+
     saveUnreadState();
   } catch (error) {
     logger.error('Error updating unread summary:', error);
@@ -62,17 +62,18 @@ function sendNativeNotification(unreadEntries, totalMessages) {
   if (now - lastNotificationTime < NOTIFICATION_COOLDOWN) {
     return;
   }
-  
+
   lastNotificationTime = now;
-  
+
   try {
     const notification = new Notification('New Messages', {
-      body: unreadEntries.length === 1
-        ? `${totalMessages} new message${totalMessages > 1 ? 's' : ''} in ${unreadEntries[0][0]}`
-        : `${totalMessages} new messages across ${unreadEntries.length} services`,
-      silent: true
+      body:
+        unreadEntries.length === 1
+          ? `${totalMessages} new message${totalMessages > 1 ? 's' : ''} in ${unreadEntries[0][0]}`
+          : `${totalMessages} new messages across ${unreadEntries.length} services`,
+      silent: true,
     });
-    
+
     notification.onclick = () => {
       window.focus();
       notification.close();
@@ -96,7 +97,7 @@ function restoreUnreadState() {
     if (savedState) {
       const parsed = JSON.parse(savedState);
       // Only restore counts for known platforms
-      Object.keys(parsed).forEach(platform => {
+      Object.keys(parsed).forEach((platform) => {
         if (PLATFORM_KEYS.includes(platform)) {
           unreadState[platform] = parsed[platform];
         }
@@ -110,7 +111,7 @@ function restoreUnreadState() {
 
 function updateTabBadge(tabElement, count) {
   if (!tabElement) return;
-  
+
   const badge = tabElement.querySelector('.unread-badge');
   if (count > 0) {
     const badgeText = count > 99 ? '99+' : count.toString();
@@ -130,7 +131,7 @@ function updateTabBadge(tabElement, count) {
 
 function updateSidebarBadge(buttonElement, count) {
   if (!buttonElement) return;
-  
+
   const badge = buttonElement.querySelector('.unread-badge');
   if (count > 0) {
     const badgeText = count > 9 ? '9+' : count.toString();
@@ -155,19 +156,19 @@ function setTabUnread(platform, count, options = {}) {
 
   const previousCount = unreadState[platform] || 0;
   const newCount = Math.max(0, parseInt(count, 10) || 0);
-  
+
   // Only proceed if count actually changed
   if (newCount === previousCount) return;
-  
+
   unreadState[platform] = newCount;
-  
+
   // Update UI elements
   const tabElement = document.querySelector(`.tab-pane[data-platform="${platform}"]`);
   const buttonElement = document.querySelector(`.sidebar-button[data-platform="${platform}"]`);
-  
+
   updateTabBadge(tabElement, newCount);
   updateSidebarBadge(buttonElement, newCount);
-  
+
   // Update summary if not silent
   if (!options.silent) {
     updateUnreadSummary();
@@ -175,7 +176,7 @@ function setTabUnread(platform, count, options = {}) {
 }
 
 function resetUnreadState() {
-  PLATFORM_KEYS.forEach(platform => {
+  PLATFORM_KEYS.forEach((platform) => {
     unreadState[platform] = 0;
   });
   saveUnreadState();
@@ -188,5 +189,5 @@ restoreUnreadState();
 module.exports = {
   setTabUnread,
   resetUnreadState,
-  getUnreadState: () => ({ ...unreadState })
+  getUnreadState: () => ({ ...unreadState }),
 };

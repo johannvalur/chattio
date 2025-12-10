@@ -11,7 +11,7 @@ class WindowStateManager {
     if (!app || typeof app.getPath !== 'function') {
       throw new Error('Invalid app instance provided to WindowStateManager');
     }
-    
+
     this.userDataPath = app.getPath('userData');
     this.windowStateFile = path.join(this.userDataPath, 'window-state.json');
     this.maxRetries = 3;
@@ -41,19 +41,19 @@ class WindowStateManager {
       try {
         await accessAsync(this.windowStateFile, fs.constants.R_OK);
         const data = await readFileAsync(this.windowStateFile, 'utf8');
-        
+
         if (!data.trim()) {
           console.warn('Window state file is empty');
           return null;
         }
 
         const state = JSON.parse(data);
-        
+
         // Validate the loaded state
         if (this.validateState(state)) {
           return state;
         }
-        
+
         console.warn('Invalid window state format, using defaults');
         return null;
       } catch (error) {
@@ -61,14 +61,14 @@ class WindowStateManager {
           // File doesn't exist yet, which is fine for first run
           return null;
         }
-        
+
         if (attempt === this.maxRetries) {
           console.error(`Failed to load window state after ${this.maxRetries} attempts:`, error);
           return null;
         }
-        
+
         // Wait before retrying
-        await new Promise(resolve => setTimeout(resolve, this.retryDelay * attempt));
+        await new Promise((resolve) => setTimeout(resolve, this.retryDelay * attempt));
       }
     }
     return null;
@@ -79,7 +79,7 @@ class WindowStateManager {
    */
   validateState(state) {
     if (!state || typeof state !== 'object') return false;
-    
+
     // Check for required numeric properties
     const requiredProps = ['width', 'height', 'x', 'y'];
     for (const prop of requiredProps) {
@@ -87,12 +87,12 @@ class WindowStateManager {
         return false;
       }
     }
-    
+
     // Validate screen boundaries (basic check)
     if (state.x > 10000 || state.y > 10000) {
       return false;
     }
-    
+
     return true;
   }
 
@@ -111,7 +111,7 @@ class WindowStateManager {
       x: Math.floor(bounds.x),
       y: Math.floor(bounds.y),
       isMaximized: Boolean(isMaximized),
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
 
     // Validate before saving
@@ -122,7 +122,7 @@ class WindowStateManager {
 
     try {
       await this.ensureUserDataDir();
-      
+
       for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
         try {
           await writeFileAsync(
@@ -135,7 +135,7 @@ class WindowStateManager {
           if (attempt === this.maxRetries) {
             throw error;
           }
-          await new Promise(resolve => setTimeout(resolve, this.retryDelay * attempt));
+          await new Promise((resolve) => setTimeout(resolve, this.retryDelay * attempt));
         }
       }
     } catch (error) {
@@ -143,7 +143,7 @@ class WindowStateManager {
       // Consider notifying the user if this is critical
       return false;
     }
-    
+
     return true;
   }
 
@@ -153,25 +153,29 @@ class WindowStateManager {
   getWindowOptions(savedState, defaultOptions = {}) {
     const defaultWidth = Math.max(800, Math.min(2560, 1200));
     const defaultHeight = Math.max(600, Math.min(1440, 800));
-    
+
     const windowOptions = {
-      width: (savedState?.width && savedState.width > 0) ? Math.floor(savedState.width) : defaultWidth,
-      height: (savedState?.height && savedState.height > 0) ? Math.floor(savedState.height) : defaultHeight,
+      width:
+        savedState?.width && savedState.width > 0 ? Math.floor(savedState.width) : defaultWidth,
+      height:
+        savedState?.height && savedState.height > 0 ? Math.floor(savedState.height) : defaultHeight,
       minWidth: 400,
       minHeight: 300,
-      ...defaultOptions
+      ...defaultOptions,
     };
-    
+
     // Restore position if saved and valid
-    if (savedState && 
-        typeof savedState.x === 'number' && 
-        typeof savedState.y === 'number' &&
-        savedState.x >= 0 && 
-        savedState.y >= 0) {
+    if (
+      savedState &&
+      typeof savedState.x === 'number' &&
+      typeof savedState.y === 'number' &&
+      savedState.x >= 0 &&
+      savedState.y >= 0
+    ) {
       windowOptions.x = Math.floor(savedState.x);
       windowOptions.y = Math.floor(savedState.y);
     }
-    
+
     return windowOptions;
   }
 }

@@ -19,6 +19,7 @@ A unified messaging application for Mac that combines multiple messaging platfor
 **If you see "Chattio.app is damaged and can't be opened" after downloading:**
 
 This is a macOS security feature. The app is safe to use. Quick fix:
+
 1. Right-click the app → Select "Open" (you may need to do this twice)
 2. Or run: `./scripts/fix-damaged-app.sh ~/Downloads/Chattio.app`
 
@@ -83,12 +84,14 @@ The project uses Webpack for both development and production builds:
 ## Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/yourusername/unified-messenger.git
    cd unified-messenger
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
@@ -173,6 +176,7 @@ GitHub Actions (`.github/workflows/ci.yml`) runs the full test matrix on every p
 ## Building for Production
 
 ### Build .app Bundle
+
 ```bash
 npm run dist:mac
 ```
@@ -180,15 +184,18 @@ npm run dist:mac
 The application bundle will be created in the `dist/mac` directory.
 
 ### Create DMG Installer
+
 ```bash
 npm run dist:mac
 # The DMG file will be created in the 'dist' directory
 ```
 
 ### Build Windows installer
+
 ```bash
 npm run dist:win
 ```
+
 This produces a signed (unsigned by default) `exe`/NSIS installer under `dist/`.
 
 After any successful `dist:*` run, publish the binaries to the marketing site so the download buttons stay fresh:
@@ -206,6 +213,7 @@ The repository ships unsigned macOS builds by default. To distribute outside of 
 **📖 See [CODE_SIGNING.md](./CODE_SIGNING.md) for detailed step-by-step instructions.**
 
 Quick setup:
+
 1. Get an Apple Developer account ($99/year)
 2. Install a "Developer ID Application" certificate
 3. Set environment variables: `CSC_NAME`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `APPLE_TEAM_ID`
@@ -227,6 +235,7 @@ Every successful deploy on `main`/`master` builds the macOS `.dmg/.zip` and Wind
 ## Customization
 
 ### Changing the Icon
+
 1. Replace `public/transparent.png` with your own square PNG
 2. Run `npm run generate-icons` to regenerate `public/icons/*`
 3. Rebuild the application
@@ -234,25 +243,32 @@ Every successful deploy on `main`/`master` builds the macOS `.dmg/.zip` and Wind
 ## Troubleshooting
 
 ### Icon Generation Issues
+
 If you encounter issues with icon generation, ensure you have the following installed:
+
 - ImageMagick (`brew install imagemagick`)
 - Proper permissions to execute scripts
 
 ### Build Issues
+
 If the build fails, try:
+
 1. Deleting `node_modules` and `package-lock.json`
 2. Running `npm install` again
 3. Ensuring all build dependencies are installed
 
 ### "App is damaged" Error on macOS
+
 If macOS shows "Chattio.app is damaged and can't be opened", this is a Gatekeeper security feature blocking unsigned apps. To fix:
 
 **Option 1 (Easiest):** Use the provided script:
+
 ```bash
 ./scripts/remove-quarantine.sh /path/to/Chattio.app
 ```
 
 **Option 2:** Manually remove the quarantine attribute:
+
 ```bash
 xattr -d com.apple.quarantine /path/to/Chattio.app
 ```

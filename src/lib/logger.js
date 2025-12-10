@@ -4,31 +4,35 @@ const { IS_DEV } = require('./config');
 // Common error patterns to ignore
 const IGNORED_ERRORS = [
   // Error code -3 (net::ERR_ABORTED) for specific URLs
-  { 
-    test: (args) => args.some(arg => 
-      arg?.errorCode === -3 && 
-      arg.validatedURL && (
-        arg.validatedURL.includes('messenger.com/e2ee/') ||
-        arg.validatedURL.includes('instagram.com/direct') ||
-        arg.validatedURL.includes('x.com/i/flow/login') ||
-        arg.validatedURL.includes('teams.microsoft.com') ||
-        arg.validatedURL.includes('facebook.com/tr/')
-      )
-    )
+  {
+    test: (args) =>
+      args.some(
+        (arg) =>
+          arg?.errorCode === -3 &&
+          arg.validatedURL &&
+          (arg.validatedURL.includes('messenger.com/e2ee/') ||
+            arg.validatedURL.includes('instagram.com/direct') ||
+            arg.validatedURL.includes('x.com/i/flow/login') ||
+            arg.validatedURL.includes('teams.microsoft.com') ||
+            arg.validatedURL.includes('facebook.com/tr/'))
+      ),
   },
   // Common network errors
-  { 
-    test: (args) => args.some(arg => 
-      arg?.errorCode && [-102, -105, -106, -107, -109].includes(arg.errorCode)
-    )
+  {
+    test: (args) =>
+      args.some((arg) => arg?.errorCode && [-102, -105, -106, -107, -109].includes(arg.errorCode)),
   },
   // Common resource loading errors
-  { 
-    test: (args) => args.some(arg => 
-      arg?.validatedURL && 
-      /\.(jpg|jpeg|png|gif|css|js|woff|woff2|ttf|eot|svg|mp4|webm|mp3)(\?.*)?$/i.test(arg.validatedURL)
-    )
-  }
+  {
+    test: (args) =>
+      args.some(
+        (arg) =>
+          arg?.validatedURL &&
+          /\.(jpg|jpeg|png|gif|css|js|woff|woff2|ttf|eot|svg|mp4|webm|mp3)(\?.*)?$/i.test(
+            arg.validatedURL
+          )
+      ),
+  },
 ];
 
 // Check if the log should be ignored
@@ -45,7 +49,7 @@ const originalConsole = {
   error: console.error,
   warn: console.warn,
   info: console.info,
-  debug: console.debug
+  debug: console.debug,
 };
 
 // Override console methods
@@ -80,8 +84,7 @@ const logger = {
   error: console.error,
   warn: console.warn,
   info: console.info,
-  debug: console.debug
+  debug: console.debug,
 };
 
 module.exports = logger;
-

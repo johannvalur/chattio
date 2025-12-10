@@ -1,6 +1,7 @@
 # Chattio Project Improvement Plan
 
 ## 1. Dependency Management
+
 - [x] Create planner document
 - [x] Clean up unused dependencies
   - [x] Remove @jest/globals
@@ -13,6 +14,7 @@
   - [x] Add jest-haste-map
 
 ## 2. Code Quality and Structure
+
 - [x] Main Process Improvements
   - [x] Move window state management to a separate module
   - [x] Enhance error handling for file operations
@@ -27,6 +29,7 @@
   - [x] Refactor large functions
 
 ## 3. Testing
+
 - [x] Increase Test Coverage
   - [x] Add unit tests for main process
     - [x] Test auto-update functionality
@@ -46,6 +49,7 @@
     - [x] Add CI integration for visual testing
 
 ## 4. Performance Optimization
+
 - [ ] Implement code-splitting
   - [ ] Split renderer code into logical chunks
   - [ ] Lazy load non-critical components
@@ -56,6 +60,7 @@
     - [ ] Add webview lifecycle management
 
 ## 5. Security Enhancements
+
 - [ ] Update Electron security settings
   - [ ] Disable nodeIntegration
   - [ ] Enable contextIsolation
@@ -64,6 +69,7 @@
   - [ ] Add certificate verification for external resources
 
 ## 6. Build and Deployment
+
 - [x] Optimize build process
   - [x] Set up webpack for main and renderer processes
   - [x] Implement production and development builds
@@ -78,6 +84,7 @@
   - [x] Build scripts for different platforms
 
 ## 7. Documentation
+
 - [x] Review and update all documentation
   - [x] Update README with new features and build instructions
   - [x] Document build system in ARCHITECTURE.md
@@ -86,12 +93,14 @@
   - [x] Add contribution guidelines
 
 ## 8. Accessibility
+
 - [ ] Improve keyboard navigation
 - [ ] Add ARIA labels and roles
 - [ ] Ensure color contrast compliance
 - [ ] Add screen reader support
 
 ## Progress Log
+
 - 2025-03-12: Created initial improvement plan
 - 2025-03-12: Completed dependency cleanup and updates
 - 2025-03-12: Refactored window state management into a separate module

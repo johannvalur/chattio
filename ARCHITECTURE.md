@@ -45,6 +45,7 @@ The project uses a modern Webpack-based build system with separate configuration
 ### Environment Variables
 
 The build system supports different environments:
+
 - `development`: For local development with debugging tools
 - `production`: For optimized production builds
 - `test`: For running tests with appropriate mocks
@@ -54,6 +55,7 @@ Environment variables can be set using `cross-env` for cross-platform compatibil
 ## Core Components
 
 ### 1. Main Process (`src/main.js`)
+
 - **Responsibility**: Application lifecycle, window management, and native OS integration
 - **Key Modules**:
   - `app`: Handles application lifecycle events
@@ -62,6 +64,7 @@ Environment variables can be set using `cross-env` for cross-platform compatibil
   - `Menu`: Manages application menus
 
 ### 2. Renderer Process (`src/renderer.js`)
+
 - **Responsibility**: UI rendering and user interaction
 - **Key Features**:
   - Tabbed interface for multiple messaging services
@@ -70,6 +73,7 @@ Environment variables can be set using `cross-env` for cross-platform compatibil
   - Virtual scrolling for message lists
 
 ### 3. Services (`src/lib/`)
+
 - **config.js**: Application configuration and constants
 - **logger.js**: Centralized logging service
 - **sidebarManager.js**: Manages the sidebar navigation
@@ -101,12 +105,14 @@ Environment variables can be set using `cross-env` for cross-platform compatibil
 ## Memory Management
 
 ### WebView Management
+
 - **WebView Pooling**: Maintains a limited number of active WebViews (default: 3)
 - **LRU Eviction**: Least Recently Used WebViews are unloaded when limit is reached
 - **Automatic Cleanup**: Inactive WebViews are automatically unloaded after 5 minutes
 - **Optimized Settings**: WebViews use optimized settings for better performance
 
 ### Virtual Scrolling
+
 - **DOM Recycling**: Only visible messages are rendered in the DOM
 - **Viewport Detection**: Tracks visible area for efficient rendering
 - **Batch Updates**: Groups DOM operations for better performance
@@ -123,13 +129,13 @@ Environment variables can be set using `cross-env` for cross-platform compatibil
 ## Performance Considerations
 
 - **Lazy Loading**: WebViews are loaded on demand
-- **Resource Management**: 
+- **Resource Management**:
   - Unused WebViews are unloaded when not active
   - Memory-intensive features are disabled by default
-- **Memory Management**: 
+- **Memory Management**:
   - Regular cleanup of unused resources
   - Garbage collection optimization
-- **Optimized Builds**: 
+- **Optimized Builds**:
   - Production builds are optimized and minified
   - Dead code elimination
 
@@ -149,10 +155,12 @@ Environment variables can be set using `cross-env` for cross-platform compatibil
 ## Dependencies
 
 ### Core Dependencies
+
 - Electron: ^25.0.0
 - electron-builder: ^24.4.0
 
 ### Development Dependencies
+
 - Jest: ^29.7.0
 - Playwright: ^1.56.1
 - electron-icon-builder: ^2.0.1
@@ -180,12 +188,12 @@ Environment variables can be set using `cross-env` for cross-platform compatibil
    - Improved garbage collection
    - Memory compression for inactive tabs
 
-2. **Features**:
+4. **Features**:
    - Notification center integration
    - Custom keyboard shortcuts
    - Plugin system for additional services
 
-3. **Security**:
+5. **Security**:
    - Enhanced sandboxing
    - Certificate pinning
    - Secure storage for credentials
@@ -193,12 +201,14 @@ Environment variables can be set using `cross-env` for cross-platform compatibil
 ## Performance Optimization Techniques
 
 ### WebView Optimization
+
 - Disabled unnecessary browser features
 - Optimized renderer settings
 - Disabled background throttling
 - Hardware acceleration tuning
 
 ### Virtual Scrolling
+
 - Efficient DOM diffing
 - RequestAnimationFrame for smooth scrolling
 - Offscreen rendering buffer
@@ -223,11 +233,13 @@ Environment variables can be set using `cross-env` for cross-platform compatibil
 ## Deployment
 
 ### Development
+
 - `npm start`: Start the development server
 - `npm test`: Run tests
 - `npm run dist`: Create production builds
 
 ### Production
+
 - GitHub Actions for CI/CD
 - Automated builds on tag push
 - Signed and notarized releases
@@ -236,6 +248,7 @@ Environment variables can be set using `cross-env` for cross-platform compatibil
 ## Troubleshooting
 
 ### Common Issues
+
 1. **App is Damaged**
    - See `scripts/fix-damaged-app.sh`
    - May require manual code signing in development
