@@ -114,7 +114,6 @@
       "prettier --write"
     ]
   },
-  "optionalDependencies": {},
   "size-limit": [
     {
       "path": "dist/renderer.js",

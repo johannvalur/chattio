@@ -1,22 +1,30 @@
-# [PROJECT_NAME] Constitution
-
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# Chattio Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
+### I. User Experience First
 
-<!-- Example: I. Library-First -->
+Every feature and change must prioritize intuitive, responsive, and accessible user experience. Interface decisions should be guided by usability testing and user feedback. Performance optimizations should maintain or improve the perceived speed and responsiveness of the application.
 
-[PRINCIPLE_1_DESCRIPTION]
+### II. Component-Based Architecture
 
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+UI components should be modular, reusable, and follow a single responsibility principle. Each component must be independently testable and documented with clear interfaces. State management should be predictable and centralized where it makes sense.
 
-### [PRINCIPLE_2_NAME]
+### III. Security by Design
 
-<!-- Example: II. CLI Interface -->
+All features must be developed with security in mind from the start. This includes proper input validation, secure communication protocols, and following the principle of least privilege. Regular security audits and dependency updates are mandatory.
 
-[PRINCIPLE_2_DESCRIPTION]
+### IV. Testing and Quality
+
+Maintain high test coverage (80%+) with a focus on meaningful tests. Implement unit tests for business logic and integration tests for critical user flows. All tests must pass before merging to main.
+
+### V. Documentation Driven
+
+Documentation is a first-class citizen. All public APIs, components, and significant features must be documented. Keep documentation up-to-date with code changes. Use JSDoc/TSDoc for code-level documentation.
+
+### VI. Continuous Improvement
+
+Regularly review and update development practices, dependencies, and architecture. Encourage and act on feedback from both users and team members. Technical debt should be tracked and addressed in a timely manner.
 
 <!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
 
