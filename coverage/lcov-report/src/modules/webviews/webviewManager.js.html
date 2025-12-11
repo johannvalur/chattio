@@ -438,7 +438,13 @@
 <a name='L373'></a><a href='#L373'>373</a>
 <a name='L374'></a><a href='#L374'>374</a>
 <a name='L375'></a><a href='#L375'>375</a>
-<a name='L376'></a><a href='#L376'>376</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L376'></a><a href='#L376'>376</a>
+<a name='L377'></a><a href='#L377'>377</a>
+<a name='L378'></a><a href='#L378'>378</a>
+<a name='L379'></a><a href='#L379'>379</a>
+<a name='L380'></a><a href='#L380'>380</a>
+<a name='L381'></a><a href='#L381'>381</a>
+<a name='L382'></a><a href='#L382'>382</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -477,8 +483,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -514,10 +518,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -569,6 +577,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -718,6 +727,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -736,6 +746,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -755,6 +766,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -814,7 +826,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const { ipcRenderer } = <span class="cstat-no" title="statement not covered" >require('electron');</span>
-const { PLATFORMS, CHROME_USER_AGENT } = <span class="cstat-no" title="statement not covered" >require('../../lib/config');</span>
+const { PLATFORMS: _PLATFORMS, CHROME_USER_AGENT } = <span class="cstat-no" title="statement not covered" >require('../../lib/config');</span>
 const logger = <span class="cstat-no" title="statement not covered" >require('../../lib/logger');</span>
 &nbsp;
 class WebviewManager {
@@ -829,7 +841,7 @@ class WebviewManager {
 <span class="fstat-no" title="function not covered" >  in</span>itialize() {
     // Set up IPC handlers
 <span class="cstat-no" title="statement not covered" >    this.setupIpcHandlers();</span>
-    
+&nbsp;
     // Set up global event listeners
 <span class="cstat-no" title="statement not covered" >    this.setupEventListeners();</span>
   }
@@ -841,75 +853,77 @@ class WebviewManager {
 <span class="cstat-no" title="statement not covered" >      this.setWebviewActive(platform);</span>
 <span class="cstat-no" title="statement not covered" >      return existing.instance;</span>
     }
-    
+&nbsp;
     const webview = <span class="cstat-no" title="statement not covered" >document.createElement('webview');</span>
-    
+&nbsp;
     // Configure webview with security settings
 <span class="cstat-no" title="statement not covered" >    webview.setAttribute('class', 'webview');</span>
 <span class="cstat-no" title="statement not covered" >    webview.setAttribute('data-platform', platform);</span>
 <span class="cstat-no" title="statement not covered" >    webview.setAttribute('useragent', CHROME_USER_AGENT);</span>
-<span class="cstat-no" title="statement not covered" >    webview.setAttribute('webpreferences', </span>
-      'contextIsolation=yes,' +
-      'nodeIntegration=no,' +
-      'webSecurity=true,' +
-      'sandbox=yes'
+<span class="cstat-no" title="statement not covered" >    webview.setAttribute(</span>
+      'webpreferences',
+      'contextIsolation=yes,' + 'nodeIntegration=no,' + 'webSecurity=true,' + 'sandbox=yes'
     );
 <span class="cstat-no" title="statement not covered" >    webview.setAttribute('allowpopups', '');</span>
-    
+&nbsp;
     // Store reference with metadata
     const webviewData = <span class="cstat-no" title="statement not covered" >{</span>
       instance: webview,
       lastActive: Date.now(),
       config: { ...config },
-      isLoaded: false
+      isLoaded: false,
     };
-    
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    this.webviews.set(platform, webviewData);</span>
-    
+&nbsp;
     // Set up webview event listeners
 <span class="cstat-no" title="statement not covered" >    this.setupWebviewEvents(webview, platform, config);</span>
-    
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    return webview;</span>
   }
 &nbsp;
 <span class="fstat-no" title="function not covered" >  se</span>tupWebviewEvents(webview, platform, config) {
-    const { url, preloadScript, customCSS } = <span class="cstat-no" title="statement not covered" >config;</span>
-    
+    const { url: _url, preloadScript, customCSS } = <span class="cstat-no" title="statement not covered" >config;</span>
+&nbsp;
     // Load the webview when added to DOM
 <span class="cstat-no" title="statement not covered" >    webview.addEventListener('dom-ready', <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      logger.info(`Webview ready: ${platform}`);</span>
-      
+&nbsp;
       // Inject custom CSS if provided
 <span class="cstat-no" title="statement not covered" >      if (customCSS) {</span>
-<span class="cstat-no" title="statement not covered" >        webview.insertCSS(customCSS).catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        webview.insertCSS(customCSS).catch(<span class="fstat-no" title="function not covered" >(e</span>rr) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >          logger.error(`Failed to inject CSS for ${platform}:`, err);</span>
         });
       }
-      
+&nbsp;
       // Inject preload script if provided
 <span class="cstat-no" title="statement not covered" >      if (preloadScript) {</span>
-<span class="cstat-no" title="statement not covered" >        webview.executeJavaScript(`</span>
+<span class="cstat-no" title="statement not covered" >        webview</span>
+          .executeJavaScript(
+            `
           (function() {
             ${preloadScript}
           })();
-        `).catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {
-<span class="cstat-no" title="statement not covered" >          logger.error(`Failed to inject preload script for ${platform}:`, err);</span>
-        });
+        `
+          )
+          .catch(<span class="fstat-no" title="function not covered" >(e</span>rr) =&gt; {
+<span class="cstat-no" title="statement not covered" >            logger.error(`Failed to inject preload script for ${platform}:`, err);</span>
+          });
       }
-      
+&nbsp;
       // Notify that webview is ready
 <span class="cstat-no" title="statement not covered" >      this.emit('webview-ready', { platform, webview });</span>
     });
-    
+&nbsp;
     // Handle page title updates for unread counts
 <span class="cstat-no" title="statement not covered" >    webview.addEventListener('page-title-updated', <span class="fstat-no" title="function not covered" >(e</span>) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      this.emit('title-updated', {</span>
         platform,
         title: e.title,
-        webview
+        webview,
       });
     });
-    
+&nbsp;
     // Handle new window events (e.g., external links)
 <span class="cstat-no" title="statement not covered" >    webview.addEventListener('new-window', <span class="fstat-no" title="function not covered" >(e</span>) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      e.preventDefault();</span>
@@ -917,38 +931,39 @@ class WebviewManager {
 <span class="cstat-no" title="statement not covered" >        ipcRenderer.send('open-external', e.url);</span>
       }
     });
-    
+&nbsp;
     // Handle console messages for debugging
 <span class="cstat-no" title="statement not covered" >    webview.addEventListener('console-message', <span class="fstat-no" title="function not covered" >(e</span>) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      logger.debug(`[${platform} Console] ${e.message}`);</span>
     });
-    
+&nbsp;
     // Handle navigation
 <span class="cstat-no" title="statement not covered" >    webview.addEventListener('did-navigate', <span class="fstat-no" title="function not covered" >(e</span>) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      this.emit('navigate', {</span>
         platform,
         url: e.url,
-        isInPlace: e.isInPlace
+        isInPlace: e.isInPlace,
       });
     });
-    
+&nbsp;
     // Handle loading states
 <span class="cstat-no" title="statement not covered" >    webview.addEventListener('did-start-loading', <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      this.emit('loading', { platform, isLoading: true });</span>
     });
-    
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    webview.addEventListener('did-stop-loading', <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      this.emit('loading', { platform, isLoading: false });</span>
     });
-    
+&nbsp;
     // Handle errors
 <span class="cstat-no" title="statement not covered" >    webview.addEventListener('did-fail-load', <span class="fstat-no" title="function not covered" >(e</span>) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >      if (e.errorCode !== -3) { // Ignore aborted page loads</span>
+<span class="cstat-no" title="statement not covered" >      if (e.errorCode !== -3) {</span>
+        // Ignore aborted page loads
 <span class="cstat-no" title="statement not covered" >        logger.error(`Failed to load ${platform}:`, e);</span>
 <span class="cstat-no" title="statement not covered" >        this.emit('error', {</span>
           platform,
           error: e,
-          isMainFrame: e.isMainFrame
+          isMainFrame: e.isMainFrame,
         });
       }
     });
@@ -959,7 +974,7 @@ class WebviewManager {
 <span class="cstat-no" title="statement not covered" >    ipcRenderer.on('refresh-webview', <span class="fstat-no" title="function not covered" >(_</span>, platform) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      this.refresh(platform);</span>
     });
-    
+&nbsp;
     // Handle navigation commands
 <span class="cstat-no" title="statement not covered" >    ipcRenderer.on('navigate-webview', <span class="fstat-no" title="function not covered" >(_</span>, { platform, url }) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      this.navigate(platform, url);</span>
@@ -971,7 +986,7 @@ class WebviewManager {
   }
 &nbsp;
   // Public API
-  
+&nbsp;
 <span class="fstat-no" title="function not covered" >  ge</span>tWebview(platform) {
     const webviewData = <span class="cstat-no" title="statement not covered" >this.webviews.get(platform);</span>
 <span class="cstat-no" title="statement not covered" >    return webviewData?.instance || null;</span>
@@ -987,19 +1002,19 @@ class WebviewManager {
 &nbsp;
     // Update last active time
 <span class="cstat-no" title="statement not covered" >    this.setWebviewActive(platform);</span>
-    
+&nbsp;
     // Set as active
 <span class="cstat-no" title="statement not covered" >    this.activeWebview = webviewData.instance;</span>
 <span class="cstat-no" title="statement not covered" >    this.emit('active-changed', { platform, webview: webviewData.instance });</span>
-    
+&nbsp;
     // Load the webview if it hasn't been loaded yet
 <span class="cstat-no" title="statement not covered" >    if (!webviewData.isLoaded) {</span>
 <span class="cstat-no" title="statement not covered" >      this.loadWebview(platform);</span>
     }
-    
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    return true;</span>
   }
-  
+&nbsp;
 <span class="fstat-no" title="function not covered" >  se</span>tWebviewActive(platform) {
     const webviewData = <span class="cstat-no" title="statement not covered" >this.webviews.get(platform);</span>
 <span class="cstat-no" title="statement not covered" >    if (webviewData) {</span>
@@ -1008,23 +1023,23 @@ class WebviewManager {
 <span class="cstat-no" title="statement not covered" >      this.setupInactivityTimeout(platform);</span>
     }
   }
-  
+&nbsp;
 <span class="fstat-no" title="function not covered" >  lo</span>adWebview(platform) {
     const webviewData = <span class="cstat-no" title="statement not covered" >this.webviews.get(platform);</span>
 <span class="cstat-no" title="statement not covered" >    if (!webviewData || webviewData.isLoaded) <span class="cstat-no" title="statement not covered" >return;</span></span>
-    
+&nbsp;
     const { instance: webview, config } = <span class="cstat-no" title="statement not covered" >webviewData;</span>
-    
+&nbsp;
     // Set the source URL
 <span class="cstat-no" title="statement not covered" >    if (config.url) {</span>
 <span class="cstat-no" title="statement not covered" >      webview.setAttribute('src', config.url);</span>
 <span class="cstat-no" title="statement not covered" >      webviewData.isLoaded = true;</span>
     }
   }
-  
+&nbsp;
 <span class="fstat-no" title="function not covered" >  se</span>tupInactivityTimeout(platform) {
 <span class="cstat-no" title="statement not covered" >    this.clearInactivityTimeout(platform);</span>
-    
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    this.inactivityTimeouts.set(</span>
       platform,
       setTimeout(<span class="fstat-no" title="function not covered" >()</span> =&gt; {
@@ -1032,14 +1047,14 @@ class WebviewManager {
       }, this.INACTIVITY_TIMEOUT)
     );
   }
-  
+&nbsp;
 <span class="fstat-no" title="function not covered" >  cl</span>earInactivityTimeout(platform) {
 <span class="cstat-no" title="statement not covered" >    if (this.inactivityTimeouts.has(platform)) {</span>
 <span class="cstat-no" title="statement not covered" >      clearTimeout(this.inactivityTimeouts.get(platform));</span>
 <span class="cstat-no" title="statement not covered" >      this.inactivityTimeouts.delete(platform);</span>
     }
   }
-  
+&nbsp;
 <span class="fstat-no" title="function not covered" >  un</span>loadInactiveWebview(platform) {
     // Don't unload the active webview
     const webviewData = <span class="cstat-no" title="statement not covered" >this.webviews.get(platform);</span>
@@ -1047,22 +1062,22 @@ class WebviewManager {
 <span class="cstat-no" title="statement not covered" >      this.setupInactivityTimeout(platform);</span>
 <span class="cstat-no" title="statement not covered" >      return;</span>
     }
-    
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    logger.info(`Unloading inactive webview: ${platform}`);</span>
-    
+&nbsp;
     // Remove from DOM
 <span class="cstat-no" title="statement not covered" >    if (webviewData.instance.parentNode) {</span>
 <span class="cstat-no" title="statement not covered" >      webviewData.instance.parentNode.removeChild(webviewData.instance);</span>
     }
-    
+&nbsp;
     // Clean up event listeners
 <span class="cstat-no" title="statement not covered" >    this.cleanupWebviewEvents(webviewData.instance);</span>
-    
+&nbsp;
     // Remove reference
 <span class="cstat-no" title="statement not covered" >    this.webviews.delete(platform);</span>
 <span class="cstat-no" title="statement not covered" >    this.emit('webview-unloaded', { platform });</span>
   }
-  
+&nbsp;
 <span class="fstat-no" title="function not covered" >  cl</span>eanupWebviewEvents(webview) {
     // Clone the webview to remove all event listeners
     const newWebview = <span class="cstat-no" title="statement not covered" >webview.cloneNode(false);</span>
@@ -1090,9 +1105,10 @@ class WebviewManager {
     const webview = <span class="cstat-no" title="statement not covered" >platform ? this.getWebview(platform) : this.getActiveWebview();</span>
 <span class="cstat-no" title="statement not covered" >    if (webview) {</span>
       // If the webview was unloaded, reload it
-      const webviewData = <span class="cstat-no" title="statement not covered" >Array.from(this.webviews.entries())</span>
-        .find(<span class="fstat-no" title="function not covered" >([</span>_, data]) =&gt; <span class="cstat-no" title="statement not covered" >data.instance === webview)</span>?.[1];
-      
+      const webviewData = <span class="cstat-no" title="statement not covered" >Array.from(this.webviews.entries()).find(</span>
+<span class="fstat-no" title="function not covered" >        ([</span>_, data]) =&gt; <span class="cstat-no" title="statement not covered" >data.instance === webview</span>
+      )?.[1];
+&nbsp;
 <span class="cstat-no" title="statement not covered" >      if (webviewData &amp;&amp; !webviewData.isLoaded) {</span>
 <span class="cstat-no" title="statement not covered" >        this.loadWebview(platform);</span>
       } else {
@@ -1106,16 +1122,17 @@ class WebviewManager {
 <span class="fstat-no" title="function not covered" >  go</span>Back(platform) {
     const webview = <span class="cstat-no" title="statement not covered" >platform ? this.getWebview(platform) : this.getActiveWebview();</span>
 <span class="cstat-no" title="statement not covered" >    if (!webview) <span class="cstat-no" title="statement not covered" >return false;</span></span>
-    
+&nbsp;
     // If the webview was unloaded, reload it first
-    const webviewData = <span class="cstat-no" title="statement not covered" >Array.from(this.webviews.entries())</span>
-      .find(<span class="fstat-no" title="function not covered" >([</span>_, data]) =&gt; <span class="cstat-no" title="statement not covered" >data.instance === webview)</span>?.[1];
-    
+    const webviewData = <span class="cstat-no" title="statement not covered" >Array.from(this.webviews.entries()).find(</span>
+<span class="fstat-no" title="function not covered" >      ([</span>_, data]) =&gt; <span class="cstat-no" title="statement not covered" >data.instance === webview</span>
+    )?.[1];
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    if (webviewData &amp;&amp; !webviewData.isLoaded) {</span>
 <span class="cstat-no" title="statement not covered" >      this.loadWebview(platform || this.getPlatformForWebview(webview));</span>
 <span class="cstat-no" title="statement not covered" >      return true;</span>
     }
-    
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    if (webview.canGoBack()) {</span>
 <span class="cstat-no" title="statement not covered" >      webview.goBack();</span>
 <span class="cstat-no" title="statement not covered" >      return true;</span>
@@ -1126,23 +1143,24 @@ class WebviewManager {
 <span class="fstat-no" title="function not covered" >  go</span>Forward(platform) {
     const webview = <span class="cstat-no" title="statement not covered" >platform ? this.getWebview(platform) : this.getActiveWebview();</span>
 <span class="cstat-no" title="statement not covered" >    if (!webview) <span class="cstat-no" title="statement not covered" >return false;</span></span>
-    
+&nbsp;
     // If the webview was unloaded, reload it first
-    const webviewData = <span class="cstat-no" title="statement not covered" >Array.from(this.webviews.entries())</span>
-      .find(<span class="fstat-no" title="function not covered" >([</span>_, data]) =&gt; <span class="cstat-no" title="statement not covered" >data.instance === webview)</span>?.[1];
-    
+    const webviewData = <span class="cstat-no" title="statement not covered" >Array.from(this.webviews.entries()).find(</span>
+<span class="fstat-no" title="function not covered" >      ([</span>_, data]) =&gt; <span class="cstat-no" title="statement not covered" >data.instance === webview</span>
+    )?.[1];
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    if (webviewData &amp;&amp; !webviewData.isLoaded) {</span>
 <span class="cstat-no" title="statement not covered" >      this.loadWebview(platform || this.getPlatformForWebview(webview));</span>
 <span class="cstat-no" title="statement not covered" >      return true;</span>
     }
-    
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    if (webview.canGoForward()) {</span>
 <span class="cstat-no" title="statement not covered" >      webview.goForward();</span>
 <span class="cstat-no" title="statement not covered" >      return true;</span>
     }
 <span class="cstat-no" title="statement not covered" >    return false;</span>
   }
-  
+&nbsp;
 <span class="fstat-no" title="function not covered" >  ge</span>tPlatformForWebview(webview) {
 <span class="cstat-no" title="statement not covered" >    for (const [platform, data] of this.webviews.entries()) {</span>
 <span class="cstat-no" title="statement not covered" >      if (data.instance === webview) {</span>
@@ -1195,7 +1213,7 @@ const webviewManager = <span class="cstat-no" title="statement not covered" >new
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-09T22:23:43.640Z
+                at 2025-12-10T09:13:51.741Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

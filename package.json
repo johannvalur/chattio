@@ -52,6 +52,7 @@
     "@babel/preset-env": "^7.28.5",
     "@babel/preset-react": "^7.23.3",
     "@babel/runtime": "^7.23.5",
+    "@electron/notarize": "^3.1.1",
     "@playwright/test": "^1.56.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
@@ -69,6 +70,7 @@
     "cross-env": "^10.1.0",
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^7.0.2",
+    "dotenv": "^17.2.3",
     "electron": "^25.0.0",
     "electron-builder": "^24.4.0",
     "electron-icon-builder": "^2.0.1",
@@ -112,9 +114,7 @@
       "prettier --write"
     ]
   },
-  "optionalDependencies": {
-    "dmg-license": "^1.0.11"
-  },
+  "optionalDependencies": {},
   "size-limit": [
     {
       "path": "dist/renderer.js",
@@ -127,6 +127,8 @@
     "directories": {
       "output": "dist"
     },
+    "afterPack": null,
+    "afterSign": null,
     "mac": {
       "category": "public.app-category.social-networking",
       "target": [
@@ -134,11 +136,11 @@
         "zip"
       ],
       "icon": "public/icons/icon.icns",
-      "hardenedRuntime": true,
+      "hardenedRuntime": false,
       "gatekeeperAssess": false,
-      "entitlements": "build/entitlements.mac.plist",
-      "entitlementsInherit": "build/entitlements.mac.plist",
-      "identity": "Jóhann Sævarsson (QD9KBHBRRZ)"
+      "type": "development",
+      "notarize": false,
+      "sign": false
     },
     "win": {
       "target": [
@@ -150,27 +152,6 @@
         }
       ],
       "icon": "public/icons/icon.ico"
-    },
-    "dmg": {
-      "title": "Chattio",
-      "icon": "public/icons/icon.icns",
-      "background": "public/background.png",
-      "window": {
-        "width": 600,
-        "height": 400
-      },
-      "contents": [
-        {
-          "x": 130,
-          "y": 220
-        },
-        {
-          "x": 410,
-          "y": 220,
-          "type": "link",
-          "path": "/Applications"
-        }
-      ]
     },
     "nsis": {
       "oneClick": false,
@@ -185,7 +166,8 @@
       "provider": "github",
       "owner": "johannvalur",
       "repo": "chattio"
-    }
+    },
+    "electronDist": "/Users/johannvs/Downloads/chattio-a099b63ef592914d90cdeb387ed7c0bd64c18197/node_modules/electron/dist"
   },
   "dependencies": {
     "electron-updater": "^6.1.8"

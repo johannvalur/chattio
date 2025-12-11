@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>6/12</span>
+                <span class='fraction'>0/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">37.5% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>6/16</span>
+                <span class='fraction'>0/16</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/2</span>
+                <span class='fraction'>0/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">40% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>4/10</span>
+                <span class='fraction'>0/10</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -90,11 +90,10 @@
 <a name='L25'></a><a href='#L25'>25</a>
 <a name='L26'></a><a href='#L26'>26</a>
 <a name='L27'></a><a href='#L27'>27</a>
-<a name='L28'></a><a href='#L28'>28</a>
-<a name='L29'></a><a href='#L29'>29</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">2x</span>
+<a name='L28'></a><a href='#L28'>28</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -114,39 +113,37 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">function resolveThemeClass(theme, prefersDark = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> {
-	if (theme === 'dark') return 'theme-dark';
-	if (theme === 'light') return 'theme-light';
-	return prefersDark ? 'theme-dark' : 'theme-light';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">function <span class="fstat-no" title="function not covered" >resolveThemeClass(</span>theme, prefersDark = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> {
+<span class="cstat-no" title="statement not covered" >  if (theme === 'dark') <span class="cstat-no" title="statement not covered" >return 'theme-dark';</span></span>
+<span class="cstat-no" title="statement not covered" >  if (theme === 'light') <span class="cstat-no" title="statement not covered" >return 'theme-light';</span></span>
+<span class="cstat-no" title="statement not covered" >  return prefersDark ? 'theme-dark' : 'theme-light';</span>
 }
 &nbsp;
 function <span class="fstat-no" title="function not covered" >applyThemeToDocument(</span>doc, theme, prefersDark) {
-<span class="cstat-no" title="statement not covered" >	if (!doc || !doc.body) {</span>
-<span class="cstat-no" title="statement not covered" >		throw new Error('Document with body is required to apply theme');</span>
-	}
-	const className = <span class="cstat-no" title="statement not covered" >resolveThemeClass(</span>
-		theme,
-		typeof prefersDark === 'boolean'
-			? prefersDark
-			: typeof window !== 'undefined' &amp;&amp;
-				  window.matchMedia &amp;&amp;
-				  window.matchMedia('(prefers-color-scheme: dark)').matches
-	);
-<span class="cstat-no" title="statement not covered" >	doc.body.classList.remove('theme-light', 'theme-dark');</span>
-<span class="cstat-no" title="statement not covered" >	doc.body.classList.add(className);</span>
-<span class="cstat-no" title="statement not covered" >	return className;</span>
+<span class="cstat-no" title="statement not covered" >  if (!doc || !doc.body) {</span>
+<span class="cstat-no" title="statement not covered" >    throw new Error('Document with body is required to apply theme');</span>
+  }
+  const className = <span class="cstat-no" title="statement not covered" >resolveThemeClass(</span>
+    theme,
+    typeof prefersDark === 'boolean'
+      ? prefersDark
+      : typeof window !== 'undefined' &amp;&amp;
+          window.matchMedia &amp;&amp;
+          window.matchMedia('(prefers-color-scheme: dark)').matches
+  );
+<span class="cstat-no" title="statement not covered" >  doc.body.classList.remove('theme-light', 'theme-dark');</span>
+<span class="cstat-no" title="statement not covered" >  doc.body.classList.add(className);</span>
+<span class="cstat-no" title="statement not covered" >  return className;</span>
 }
 &nbsp;
-module.exports = {
-	resolveThemeClass,
-	applyThemeToDocument
+<span class="cstat-no" title="statement not covered" >module.exports = {</span>
+  resolveThemeClass,
+  applyThemeToDocument,
 };
-&nbsp;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -154,7 +151,7 @@ module.exports = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-09T22:23:43.640Z
+                at 2025-12-10T09:13:51.741Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

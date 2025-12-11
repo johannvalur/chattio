@@ -544,10 +544,10 @@ function <span class="fstat-no" title="function not covered" >createPlatformTab(
 &nbsp;
   // Store reference
 <span class="cstat-no" title="statement not covered" >  activeTabs.set(platform, tab);</span>
-  
+&nbsp;
   // Set up event listeners
 <span class="cstat-no" title="statement not covered" >  setupTabEventListeners(tab, platform, config);</span>
-  
+&nbsp;
 <span class="cstat-no" title="statement not covered" >  return tab;</span>
 }
 &nbsp;
@@ -555,24 +555,24 @@ function <span class="fstat-no" title="function not covered" >setupTabEventListe
   const webview = <span class="cstat-no" title="statement not covered" >tab.querySelector('webview');</span>
   const refreshBtn = <span class="cstat-no" title="statement not covered" >tab.querySelector('.refresh');</span>
   const externalBtn = <span class="cstat-no" title="statement not covered" >tab.querySelector('.external');</span>
-  
+&nbsp;
   // Handle webview load events
 <span class="cstat-no" title="statement not covered" >  webview.addEventListener('did-start-loading', <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    tab.classList.add('loading');</span>
   });
-  
+&nbsp;
 <span class="cstat-no" title="statement not covered" >  webview.addEventListener('did-stop-loading', <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    tab.classList.remove('loading');</span>
-    
+&nbsp;
     // Inject custom CSS if needed
 <span class="cstat-no" title="statement not covered" >    if (config.customCSS) {</span>
 <span class="cstat-no" title="statement not covered" >      webview.insertCSS({ code: config.customCSS });</span>
     }
-    
+&nbsp;
     // Update unread count based on page title
 <span class="cstat-no" title="statement not covered" >    updateUnreadFromTitle(webview, platform);</span>
   });
-  
+&nbsp;
   // Handle new window events (open external links in default browser)
 <span class="cstat-no" title="statement not covered" >  webview.addEventListener('new-window', <span class="fstat-no" title="function not covered" >(e</span>) =&gt; {</span>
     const url = <span class="cstat-no" title="statement not covered" >e.url;</span>
@@ -581,17 +581,17 @@ function <span class="fstat-no" title="function not covered" >setupTabEventListe
 <span class="cstat-no" title="statement not covered" >      ipcRenderer.send('open-external', url);</span>
     }
   });
-  
+&nbsp;
   // Handle page title updates for unread counts
 <span class="cstat-no" title="statement not covered" >  webview.addEventListener('page-title-updated', <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    updateUnreadFromTitle(webview, platform);</span>
   });
-  
+&nbsp;
   // Button handlers
 <span class="cstat-no" title="statement not covered" >  refreshBtn.addEventListener('click', <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    if (webview) <span class="cstat-no" title="statement not covered" >webview.reload();</span></span>
   });
-  
+&nbsp;
 <span class="cstat-no" title="statement not covered" >  externalBtn.addEventListener('click', <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
     const url = <span class="cstat-no" title="statement not covered" >webview.getURL();</span>
 <span class="cstat-no" title="statement not covered" >    if (url) {</span>
@@ -604,11 +604,11 @@ function <span class="fstat-no" title="function not covered" >updateUnreadFromTi
 <span class="cstat-no" title="statement not covered" >  try {</span>
     const title = <span class="cstat-no" title="statement not covered" >webview.getTitle();</span>
 <span class="cstat-no" title="statement not covered" >    if (!title) <span class="cstat-no" title="statement not covered" >return;</span></span>
-    
+&nbsp;
     // Extract unread count from title (e.g., "(2) Messenger")
     const match = <span class="cstat-no" title="statement not covered" >title.match(/\((\d+)\)/);</span>
     const unreadCount = <span class="cstat-no" title="statement not covered" >match ? parseInt(match[1], 10) : 0;</span>
-    
+&nbsp;
     // Update unread state
 <span class="cstat-no" title="statement not covered" >    unreadState.setTabUnread(platform, unreadCount);</span>
   } catch (error) {
@@ -618,34 +618,34 @@ function <span class="fstat-no" title="function not covered" >updateUnreadFromTi
 &nbsp;
 function <span class="fstat-no" title="function not covered" >showTab(</span>platform) {
   // Hide all tabs first
-<span class="cstat-no" title="statement not covered" >  document.querySelectorAll('.tab-pane').forEach(<span class="fstat-no" title="function not covered" >ta</span>b =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >  document.querySelectorAll('.tab-pane').forEach(<span class="fstat-no" title="function not covered" >(t</span>ab) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    tab.style.display = 'none';</span>
   });
-  
+&nbsp;
   // Show the selected tab
   const tab = <span class="cstat-no" title="statement not covered" >activeTabs.get(platform);</span>
 <span class="cstat-no" title="statement not covered" >  if (tab) {</span>
 <span class="cstat-no" title="statement not covered" >    tab.style.display = 'block';</span>
-    
+&nbsp;
     // Focus the webview if it's already loaded
     const webview = <span class="cstat-no" title="statement not covered" >tab.querySelector('webview');</span>
 <span class="cstat-no" title="statement not covered" >    if (webview) {</span>
 <span class="cstat-no" title="statement not covered" >      webview.focus();</span>
-      
+&nbsp;
       // Reset unread count when tab is shown
 <span class="cstat-no" title="statement not covered" >      unreadState.setTabUnread(platform, 0);</span>
     }
-    
+&nbsp;
     // Update active state in sidebar
-<span class="cstat-no" title="statement not covered" >    document.querySelectorAll('.sidebar-button').forEach(<span class="fstat-no" title="function not covered" >bt</span>n =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    document.querySelectorAll('.sidebar-button').forEach(<span class="fstat-no" title="function not covered" >(b</span>tn) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      btn.classList.toggle('active', btn.dataset.platform === platform);</span>
     });
-    
+&nbsp;
     // Update last active tab in state
 <span class="cstat-no" title="statement not covered" >    appState.updateState({</span>
       settings: {
-        lastActiveTab: platform
-      }
+        lastActiveTab: platform,
+      },
     });
   }
 }
@@ -653,16 +653,16 @@ function <span class="fstat-no" title="function not covered" >showTab(</span>pla
 function <span class="fstat-no" title="function not covered" >createTabsContainer(</span>) {
   const container = <span class="cstat-no" title="statement not covered" >document.createElement('div');</span>
 <span class="cstat-no" title="statement not covered" >  container.className = 'tabs-container';</span>
-  
+&nbsp;
   // Create tabs for each platform
-<span class="cstat-no" title="statement not covered" >  PLATFORM_KEYS.forEach(<span class="fstat-no" title="function not covered" >pl</span>atform =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >  PLATFORM_KEYS.forEach(<span class="fstat-no" title="function not covered" >(p</span>latform) =&gt; {</span>
     const config = <span class="cstat-no" title="statement not covered" >PLATFORMS[platform];</span>
 <span class="cstat-no" title="statement not covered" >    if (config) {</span>
       const tab = <span class="cstat-no" title="statement not covered" >createPlatformTab(platform, config);</span>
 <span class="cstat-no" title="statement not covered" >      container.appendChild(tab);</span>
     }
   });
-  
+&nbsp;
 <span class="cstat-no" title="statement not covered" >  return container;</span>
 }
 &nbsp;
@@ -670,12 +670,12 @@ function <span class="fstat-no" title="function not covered" >initializeTabs(</s
   const container = <span class="cstat-no" title="statement not covered" >document.querySelector('.main-content') || document.body;</span>
   const tabsContainer = <span class="cstat-no" title="statement not covered" >createTabsContainer();</span>
 <span class="cstat-no" title="statement not covered" >  container.appendChild(tabsContainer);</span>
-  
+&nbsp;
   // Show the last active tab or the first one
   const { settings } = <span class="cstat-no" title="statement not covered" >appState.getState();</span>
   const defaultTab = <span class="cstat-no" title="statement not covered" >settings.lastActiveTab || PLATFORM_KEYS[0];</span>
 <span class="cstat-no" title="statement not covered" >  showTab(defaultTab);</span>
-  
+&nbsp;
   // Set up keyboard shortcuts for tab switching
 <span class="cstat-no" title="statement not covered" >  setupKeyboardShortcuts();</span>
 }
@@ -684,11 +684,11 @@ function <span class="fstat-no" title="function not covered" >setupKeyboardShort
 <span class="cstat-no" title="statement not covered" >  document.addEventListener('keydown', <span class="fstat-no" title="function not covered" >(e</span>) =&gt; {</span>
     // Only handle if not in an input field
 <span class="cstat-no" title="statement not covered" >    if (document.activeElement.tagName === 'INPUT') <span class="cstat-no" title="statement not covered" >return;</span></span>
-    
+&nbsp;
     const { order } = <span class="cstat-no" title="statement not covered" >appState.getState();</span>
     const currentTab = <span class="cstat-no" title="statement not covered" >document.querySelector('.tab-pane[style*="display: block"]');</span>
     const currentIndex = <span class="cstat-no" title="statement not covered" >order.indexOf(currentTab?.dataset.platform);</span>
-    
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {</span>
 <span class="cstat-no" title="statement not covered" >      e.preventDefault();</span>
       const nextIndex = <span class="cstat-no" title="statement not covered" >(currentIndex + 1) % order.length;</span>
@@ -730,7 +730,7 @@ function <span class="fstat-no" title="function not covered" >setupKeyboardShort
       const webview = <span class="cstat-no" title="statement not covered" >tab.querySelector('webview');</span>
 <span class="cstat-no" title="statement not covered" >      if (webview) <span class="cstat-no" title="statement not covered" >webview.reload();</span></span>
     }
-  }
+  },
 };
 &nbsp;</pre></td></tr></table></pre>
 
@@ -739,7 +739,7 @@ function <span class="fstat-no" title="function not covered" >setupKeyboardShort
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-09T22:23:43.640Z
+                at 2025-12-10T09:13:51.741Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
