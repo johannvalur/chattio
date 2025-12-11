@@ -146,18 +146,44 @@ jobs:
     needs: [test, security, accessibility]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     runs-on: macos-latest
+    env:
+      ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES: "true"
+      ELECTRON_BUILDER_CACHE: "${{ runner.temp }}/electron-builder-cache"
+      
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-      - name: Install dependencies
+      
+      - name: Install system dependencies
+        run: |
+          brew install --cask xquartz
+          xcode-select --install || true
+      
+      - name: Install Node.js dependencies
         run: |
           npm ci
           npm install --save-dev @babel/plugin-transform-runtime @babel/preset-react @babel/runtime
+          npx electron-builder install-app-deps
+      
+      - name: Clear caches
+        run: |
+          rm -rf ~/Library/Caches/electron-builder
+          rm -rf ~/Library/Caches/electron
+          rm -rf node_modules/.cache
+      
+      - name: Set permissions
+        run: chmod -R 777 ${{ github.workspace }}
+      
       - name: Build for macOS
-        run: npm run dist:mac
+        run: |
+          npm run generate-icons
+          npm run build
+          npx electron-builder --mac --x64 --publish never
       - name: Run sync
         run: npm run sync:downloads
       - name: Upload macOS artifacts

@@ -29,7 +29,7 @@
     "sync:downloads": "node ./scripts/sync-downloads.js",
     "prepack": "npm run generate-icons",
     "pack": "electron-builder --dir",
-    "dist:mac": "npm run generate-icons && npm run build && electron-builder --mac --publish never",
+    "dist:mac": "npm run generate-icons && npm run build && electron-builder --mac --x64 --publish never",
     "postdist:mac": "npm run sync:downloads",
     "dist:win": "npm run generate-icons && npm run build && electron-builder --win --x64 --publish never"
   },
@@ -165,8 +165,7 @@
       "provider": "github",
       "owner": "johannvalur",
       "repo": "chattio"
-    },
-    "electronDist": "/Users/johannvs/Downloads/chattio-a099b63ef592914d90cdeb387ed7c0bd64c18197/node_modules/electron/dist"
+    }
   },
   "dependencies": {
     "electron-updater": "^6.1.8"
