@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
@@ -166,9 +166,25 @@ jobs:
       
       - name: Install Node.js dependencies
         run: |
-          npm ci
+          # Clear npm cache and retry if installation fails
+          npm cache clean --force
+          npm ci --prefer-offline --no-audit
           npm install --save-dev @babel/plugin-transform-runtime @babel/preset-react @babel/runtime
-          npx electron-builder install-app-deps
+          
+          # Install electron dependencies with retry
+          n=0
+          until [ $n -ge 3 ]
+          do
+            npx electron-builder install-app-deps && break
+            n=$((n+1))
+            echo "Retry $n/3: electron-builder install-app-deps failed, retrying..."
+            sleep 5
+          done
+          
+          if [ $n -eq 3 ]; then
+            echo "Failed to install electron dependencies after 3 attempts"
+            exit 1
+          fi
       
       - name: Clear caches
         run: |
