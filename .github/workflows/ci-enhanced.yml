@@ -166,6 +166,10 @@ jobs:
       
       - name: Install Node.js dependencies
         run: |
+          # Set Electron mirror to use GitHub's mirror
+          export ELECTRON_MIRROR="https://github.com/electron/electron/releases/download/v"
+          export ELECTRON_CUSTOM_DIR="{{ version }}"
+          
           # Clear npm cache and retry if installation fails
           npm cache clean --force
           npm ci --prefer-offline --no-audit
