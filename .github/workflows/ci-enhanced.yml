@@ -166,29 +166,37 @@ jobs:
       
       - name: Install Node.js dependencies
         run: |
-          # Set Electron mirror to use GitHub's mirror
-          export ELECTRON_MIRROR="https://github.com/electron/electron/releases/download/v"
-          export ELECTRON_CUSTOM_DIR="{{ version }}"
+          # Install electron-download globally
+          npm install -g electron-download
           
-          # Clear npm cache and retry if installation fails
-          npm cache clean --force
-          npm ci --prefer-offline --no-audit
-          npm install --save-dev @babel/plugin-transform-runtime @babel/preset-react @babel/runtime
-          
-          # Install electron dependencies with retry
+          # Download Electron with retries
           n=0
           until [ $n -ge 3 ]
           do
-            npx electron-builder install-app-deps && break
+            electron-download --version=$(grep '"electron":' package.json | cut -d '"' -f 4) --platform=darwin --arch=x64 && break
             n=$((n+1))
-            echo "Retry $n/3: electron-builder install-app-deps failed, retrying..."
+            echo "Retry $n/3: electron-download failed, retrying..."
             sleep 5
           done
           
           if [ $n -eq 3 ]; then
-            echo "Failed to install electron dependencies after 3 attempts"
+            echo "Failed to download Electron after 3 attempts"
             exit 1
           fi
+          
+          # Set Electron environment variables
+          export ELECTRON_SKIP_BINARY_DOWNLOAD=1
+          export npm_config_target=$(grep '"electron":' package.json | cut -d '"' -f 4)
+          export npm_config_arch=x64
+          export npm_config_target_arch=x64
+          export npm_config_disturl=https://electronjs.org/headers
+          export npm_config_runtime=electron
+          export npm_config_build_from_source=true
+          
+          # Install dependencies
+          npm ci --prefer-offline --no-audit
+          npm install --save-dev @babel/plugin-transform-runtime @babel/preset-react @babel/runtime
+          npx electron-builder install-app-deps
       
       - name: Clear caches
         run: |
