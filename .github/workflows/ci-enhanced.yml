@@ -118,18 +118,52 @@ jobs:
     needs: [test, security, accessibility]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     runs-on: windows-latest
+    env:
+      NODE_OPTIONS: --openssl-legacy-provider
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: '22.x'
           cache: 'npm'
       - name: Install dependencies
         run: |
-          npm ci
+          # Skip optional dependencies that might cause issues
+          npm config set optional false
+          npm config set phantomjs_cdnurl ""
+          npm config set phantomjs_disable_host_check true
+          
+          # Install with retry
+          n=0
+          until [ $n -ge 3 ]
+          do
+            npm ci --no-optional --prefer-offline --no-audit && break
+            n=$((n+1))
+            echo "Retry $n/3: npm ci failed, retrying..."
+            sleep 5
+          done
+          
+          if [ $n -eq 3 ]; then
+            echo "Failed to install dependencies after 3 attempts"
+            exit 1
+          fi
+          
+          # Install required dev dependencies
           npm install --save-dev @babel/plugin-transform-runtime @babel/preset-react @babel/runtime
+          
       - name: Build for Windows
-        run: npm run dist:win
+        run: |
+          # Set environment variables for Windows build
+          $env:ELECTRON_SKIP_BINARY_DOWNLOAD = "1"
+          $env:npm_config_target = (Get-Content package.json | ConvertFrom-Json).devDependencies.electron
+          $env:npm_config_arch = "x64"
+          $env:npm_config_target_arch = "x64"
+          $env:npm_config_disturl = "https://electronjs.org/headers"
+          $env:npm_config_runtime = "electron"
+          $env:npm_config_build_from_source = "true"
+          
+          # Run the build
+          npm run dist:win
       - name: Run sync
         run: npm run sync:downloads
       - name: Upload Windows artifacts
@@ -166,36 +200,40 @@ jobs:
       
       - name: Install Node.js dependencies
         run: |
-          # Install electron-download globally
-          npm install -g electron-download
+          # Install Node Version Manager (nvm)
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
           
-          # Download Electron with retries
+          # Install and use Node.js 22
+          nvm install 22
+          nvm use 22
+          
+          # Configure npm to skip optional dependencies
+          npm config set optional false
+          npm config set phantomjs_cdnurl ""
+          npm config set phantomjs_disable_host_check true
+          
+          # Install with retry
           n=0
           until [ $n -ge 3 ]
           do
-            electron-download --version=$(grep '"electron":' package.json | cut -d '"' -f 4) --platform=darwin --arch=x64 && break
+            npm ci --no-optional --prefer-offline --no-audit && break
             n=$((n+1))
-            echo "Retry $n/3: electron-download failed, retrying..."
+            echo "Retry $n/3: npm ci failed, retrying..."
             sleep 5
           done
           
           if [ $n -eq 3 ]; then
-            echo "Failed to download Electron after 3 attempts"
+            echo "Failed to install dependencies after 3 attempts"
             exit 1
           fi
           
-          # Set Electron environment variables
-          export ELECTRON_SKIP_BINARY_DOWNLOAD=1
-          export npm_config_target=$(grep '"electron":' package.json | cut -d '"' -f 4)
-          export npm_config_arch=x64
-          export npm_config_target_arch=x64
-          export npm_config_disturl=https://electronjs.org/headers
-          export npm_config_runtime=electron
-          export npm_config_build_from_source=true
-          
-          # Install dependencies
-          npm ci --prefer-offline --no-audit
+          # Install required dev dependencies
           npm install --save-dev @babel/plugin-transform-runtime @babel/preset-react @babel/runtime
+          
+          # Install electron-builder and its dependencies
+          npm install -g electron-builder
           npx electron-builder install-app-deps
       
       - name: Clear caches
