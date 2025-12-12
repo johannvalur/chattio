@@ -138,22 +138,18 @@ jobs:
         run: npm run dist:win
       - name: Run sync
         run: npm run sync:downloads
-      - name: Clean up old artifacts
-        if: github.ref == 'refs/heads/main'
-        run: |
-          # List and delete artifacts using GitHub CLI
-          gh extension install actions/gh-actions-cache --force
-          gh actions-cache list --limit 100 | awk 'NR>1 {print $3}' | xargs -I{} gh actions-cache delete {} --confirm
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: |
-            dist/
-            !**/node_modules/**
+            dist/*.dmg
+            dist/*.exe
+            dist/*.zip
+            dist/*.AppImage
+            dist/*.snap
+            dist/*.deb
+            dist/make/*
           retention-days: ${{ env.ARTIFACT_RETENTION_DAYS }}
           if-no-files-found: error
           compression-level: 9
@@ -176,22 +172,18 @@ jobs:
         run: npm run dist:mac
       - name: Run sync
         run: npm run sync:downloads
-      - name: Clean up old artifacts
-        if: github.ref == 'refs/heads/main'
-        run: |
-          # List and delete artifacts using GitHub CLI
-          gh extension install actions/gh-actions-cache --force
-          gh actions-cache list --limit 100 | awk 'NR>1 {print $3}' | xargs -I{} gh actions-cache delete {} --confirm
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: |
-            dist/
-            !**/node_modules/**
+            dist/*.dmg
+            dist/*.exe
+            dist/*.zip
+            dist/*.AppImage
+            dist/*.snap
+            dist/*.deb
+            dist/make/*
           retention-days: ${{ env.ARTIFACT_RETENTION_DAYS }}
           if-no-files-found: error
           compression-level: 9
