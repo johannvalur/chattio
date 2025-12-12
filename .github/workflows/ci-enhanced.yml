@@ -21,6 +21,9 @@ jobs:
   lint:
     name: Lint and Validate
     runs-on: ubuntu-latest
+    permissions:
+      actions: write  # For artifact cleanup
+      contents: read  # For code checkout
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -135,17 +138,11 @@ jobs:
         run: npm run sync:downloads
       - name: Clean up old artifacts
         if: github.ref == 'refs/heads/main'
-        run: |
-          # List all artifacts
-          artifacts=$(gh api repos/${{ github.repository }}/actions/artifacts --jq '.artifacts[] | .id')
-          
-          # Delete all artifacts
-          for artifact_id in $artifacts; do
-            echo "Deleting artifact ID: $artifact_id"
-            gh api repos/${{ github.repository }}/actions/artifacts/$artifact_id -X DELETE
-          done || echo "No artifacts to delete"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: build-artifacts
+          workflow: ci-enhanced.yml
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -177,17 +174,11 @@ jobs:
         run: npm run sync:downloads
       - name: Clean up old artifacts
         if: github.ref == 'refs/heads/main'
-        run: |
-          # List all artifacts
-          artifacts=$(gh api repos/${{ github.repository }}/actions/artifacts --jq '.artifacts[] | .id')
-          
-          # Delete all artifacts
-          for artifact_id in $artifacts; do
-            echo "Deleting artifact ID: $artifact_id"
-            gh api repos/${{ github.repository }}/actions/artifacts/$artifact_id -X DELETE
-          done || echo "No artifacts to delete"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: build-artifacts
+          workflow: ci-enhanced.yml
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
