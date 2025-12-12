@@ -255,8 +255,7 @@
 <a name='L190'></a><a href='#L190'>190</a>
 <a name='L191'></a><a href='#L191'>191</a>
 <a name='L192'></a><a href='#L192'>192</a>
-<a name='L193'></a><a href='#L193'>193</a>
-<a name='L194'></a><a href='#L194'>194</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L193'></a><a href='#L193'>193</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -325,7 +324,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -474,24 +472,24 @@ function <span class="fstat-no" title="function not covered" >updateUnreadSummar
     );
     const hasUnreadServices = <span class="cstat-no" title="statement not covered" >unreadEntries.length;</span>
     const totalMessages = <span class="cstat-no" title="statement not covered" >unreadEntries.reduce(<span class="fstat-no" title="function not covered" >(s</span>um, [_, count]) =&gt; <span class="cstat-no" title="statement not covered" >sum + count,</span> 0);</span>
-&nbsp;
+    
     // Only send badge update if badge is enabled
     const { settings } = <span class="cstat-no" title="statement not covered" >appState.getState();</span>
 <span class="cstat-no" title="statement not covered" >    if (settings.badgeDockIcon) {</span>
 <span class="cstat-no" title="statement not covered" >      ipcRenderer.send('unread-summary', {</span>
         ...unreadState,
         totalUnreadServices: hasUnreadServices,
-        totalMessages: totalMessages,
+        totalMessages: totalMessages
       });
     } else {
       // Clear badge if disabled
 <span class="cstat-no" title="statement not covered" >      ipcRenderer.send('unread-summary', {</span>
         ...unreadState,
         totalUnreadServices: 0,
-        totalMessages: 0,
+        totalMessages: 0
       });
     }
-&nbsp;
+    
     // Send native notification if enabled and there are unread messages
 <span class="cstat-no" title="statement not covered" >    if (settings.globalNotifications &amp;&amp; totalMessages &gt; 0) {</span>
 <span class="cstat-no" title="statement not covered" >      if (totalMessages &gt; lastNotificationSnapshot) {</span>
@@ -501,7 +499,7 @@ function <span class="fstat-no" title="function not covered" >updateUnreadSummar
     } else {
 <span class="cstat-no" title="statement not covered" >      lastNotificationSnapshot = 0;</span>
     }
-&nbsp;
+    
 <span class="cstat-no" title="statement not covered" >    saveUnreadState();</span>
   } catch (error) {
 <span class="cstat-no" title="statement not covered" >    logger.error('Error updating unread summary:', error);</span>
@@ -513,18 +511,17 @@ function <span class="fstat-no" title="function not covered" >sendNativeNotifica
 <span class="cstat-no" title="statement not covered" >  if (now - lastNotificationTime &lt; NOTIFICATION_COOLDOWN) {</span>
 <span class="cstat-no" title="statement not covered" >    return;</span>
   }
-&nbsp;
+  
 <span class="cstat-no" title="statement not covered" >  lastNotificationTime = now;</span>
-&nbsp;
+  
 <span class="cstat-no" title="statement not covered" >  try {</span>
     const notification = <span class="cstat-no" title="statement not covered" >new Notification('New Messages', {</span>
-      body:
-        unreadEntries.length === 1
-          ? `${totalMessages} new message${totalMessages &gt; 1 ? 's' : ''} in ${unreadEntries[0][0]}`
-          : `${totalMessages} new messages across ${unreadEntries.length} services`,
-      silent: true,
+      body: unreadEntries.length === 1
+        ? `${totalMessages} new message${totalMessages &gt; 1 ? 's' : ''} in ${unreadEntries[0][0]}`
+        : `${totalMessages} new messages across ${unreadEntries.length} services`,
+      silent: true
     });
-&nbsp;
+    
 <span class="cstat-no" title="statement not covered" >    notification.onclick = <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      window.focus();</span>
 <span class="cstat-no" title="statement not covered" >      notification.close();</span>
@@ -548,7 +545,7 @@ function <span class="fstat-no" title="function not covered" >restoreUnreadState
 <span class="cstat-no" title="statement not covered" >    if (savedState) {</span>
       const parsed = <span class="cstat-no" title="statement not covered" >JSON.parse(savedState);</span>
       // Only restore counts for known platforms
-<span class="cstat-no" title="statement not covered" >      Object.keys(parsed).forEach(<span class="fstat-no" title="function not covered" >(p</span>latform) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      Object.keys(parsed).forEach(<span class="fstat-no" title="function not covered" >pl</span>atform =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >        if (PLATFORM_KEYS.includes(platform)) {</span>
 <span class="cstat-no" title="statement not covered" >          unreadState[platform] = parsed[platform];</span>
         }
@@ -562,7 +559,7 @@ function <span class="fstat-no" title="function not covered" >restoreUnreadState
 &nbsp;
 function <span class="fstat-no" title="function not covered" >updateTabBadge(</span>tabElement, count) {
 <span class="cstat-no" title="statement not covered" >  if (!tabElement) <span class="cstat-no" title="statement not covered" >return;</span></span>
-&nbsp;
+  
   const badge = <span class="cstat-no" title="statement not covered" >tabElement.querySelector('.unread-badge');</span>
 <span class="cstat-no" title="statement not covered" >  if (count &gt; 0) {</span>
     const badgeText = <span class="cstat-no" title="statement not covered" >count &gt; 99 ? '99+' : count.toString();</span>
@@ -582,7 +579,7 @@ function <span class="fstat-no" title="function not covered" >updateTabBadge(</s
 &nbsp;
 function <span class="fstat-no" title="function not covered" >updateSidebarBadge(</span>buttonElement, count) {
 <span class="cstat-no" title="statement not covered" >  if (!buttonElement) <span class="cstat-no" title="statement not covered" >return;</span></span>
-&nbsp;
+  
   const badge = <span class="cstat-no" title="statement not covered" >buttonElement.querySelector('.unread-badge');</span>
 <span class="cstat-no" title="statement not covered" >  if (count &gt; 0) {</span>
     const badgeText = <span class="cstat-no" title="statement not covered" >count &gt; 9 ? '9+' : count.toString();</span>
@@ -607,19 +604,19 @@ function <span class="fstat-no" title="function not covered" >setTabUnread(</spa
 &nbsp;
   const previousCount = <span class="cstat-no" title="statement not covered" >unreadState[platform] || 0;</span>
   const newCount = <span class="cstat-no" title="statement not covered" >Math.max(0, parseInt(count, 10) || 0);</span>
-&nbsp;
+  
   // Only proceed if count actually changed
 <span class="cstat-no" title="statement not covered" >  if (newCount === previousCount) <span class="cstat-no" title="statement not covered" >return;</span></span>
-&nbsp;
+  
 <span class="cstat-no" title="statement not covered" >  unreadState[platform] = newCount;</span>
-&nbsp;
+  
   // Update UI elements
   const tabElement = <span class="cstat-no" title="statement not covered" >document.querySelector(`.tab-pane[data-platform="${platform}"]`);</span>
   const buttonElement = <span class="cstat-no" title="statement not covered" >document.querySelector(`.sidebar-button[data-platform="${platform}"]`);</span>
-&nbsp;
+  
 <span class="cstat-no" title="statement not covered" >  updateTabBadge(tabElement, newCount);</span>
 <span class="cstat-no" title="statement not covered" >  updateSidebarBadge(buttonElement, newCount);</span>
-&nbsp;
+  
   // Update summary if not silent
 <span class="cstat-no" title="statement not covered" >  if (!options.silent) {</span>
 <span class="cstat-no" title="statement not covered" >    updateUnreadSummary();</span>
@@ -627,7 +624,7 @@ function <span class="fstat-no" title="function not covered" >setTabUnread(</spa
 }
 &nbsp;
 function <span class="fstat-no" title="function not covered" >resetUnreadState(</span>) {
-<span class="cstat-no" title="statement not covered" >  PLATFORM_KEYS.forEach(<span class="fstat-no" title="function not covered" >(p</span>latform) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >  PLATFORM_KEYS.forEach(<span class="fstat-no" title="function not covered" >pl</span>atform =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    unreadState[platform] = 0;</span>
   });
 <span class="cstat-no" title="statement not covered" >  saveUnreadState();</span>
@@ -640,7 +637,7 @@ function <span class="fstat-no" title="function not covered" >resetUnreadState(<
 <span class="cstat-no" title="statement not covered" >module.exports = {</span>
   setTabUnread,
   resetUnreadState,
-  getUnreadState: <span class="fstat-no" title="function not covered" >()</span> =&gt; (<span class="cstat-no" title="statement not covered" >{ ...unreadState })</span>,
+  getUnreadState: <span class="fstat-no" title="function not covered" >()</span> =&gt; (<span class="cstat-no" title="statement not covered" >{ ...unreadState })</span>
 };
 &nbsp;</pre></td></tr></table></pre>
 
@@ -649,7 +646,7 @@ function <span class="fstat-no" title="function not covered" >resetUnreadState(<
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-10T09:13:51.741Z
+                at 2025-12-09T22:23:43.640Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/169</span>
+                <span class='fraction'>0/168</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/162</span>
+                <span class='fraction'>0/161</span>
             </div>
         
             
@@ -396,11 +396,7 @@
 <a name='L331'></a><a href='#L331'>331</a>
 <a name='L332'></a><a href='#L332'>332</a>
 <a name='L333'></a><a href='#L333'>333</a>
-<a name='L334'></a><a href='#L334'>334</a>
-<a name='L335'></a><a href='#L335'>335</a>
-<a name='L336'></a><a href='#L336'>336</a>
-<a name='L337'></a><a href='#L337'>337</a>
-<a name='L338'></a><a href='#L338'>338</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L334'></a><a href='#L334'>334</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -473,7 +469,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -555,12 +550,9 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -753,7 +745,7 @@ class SettingsManager {
 <span class="cstat-no" title="statement not covered" >    this.hardwareAccelToggle = null;</span>
 <span class="cstat-no" title="statement not covered" >    this.shortcutManager = new ShortcutManager();</span>
 <span class="cstat-no" title="statement not covered" >    this.activeTab = 'general';</span>
-&nbsp;
+    
 <span class="cstat-no" title="statement not covered" >    this.initialize();</span>
   }
 &nbsp;
@@ -764,7 +756,7 @@ class SettingsManager {
     } else {
 <span class="cstat-no" title="statement not covered" >      this.setupUI();</span>
     }
-&nbsp;
+    
     // Listen for settings changes from other windows
 <span class="cstat-no" title="statement not covered" >    ipcRenderer.on('settings-updated', <span class="fstat-no" title="function not covered" >(_</span>, settings) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      this.updateUI(settings);</span>
@@ -781,73 +773,72 @@ class SettingsManager {
 <span class="cstat-no" title="statement not covered" >    this.launchAtLoginToggle = document.getElementById('launch-login-toggle');</span>
 <span class="cstat-no" title="statement not covered" >    this.hardwareAccelToggle = document.getElementById('hardware-accel-toggle');</span>
 <span class="cstat-no" title="statement not covered" >    this.resetSettingsBtn = document.getElementById('reset-settings');</span>
-&nbsp;
+    
     // Set up tab switching
 <span class="cstat-no" title="statement not covered" >    this.setupTabs();</span>
-&nbsp;
+    
     // Set up event listeners
 <span class="cstat-no" title="statement not covered" >    this.setupEventListeners();</span>
-&nbsp;
+    
     // Load current settings
 <span class="cstat-no" title="statement not covered" >    this.loadSettings();</span>
   }
-&nbsp;
+  
 <span class="fstat-no" title="function not covered" >  se</span>tupTabs() {
     const tabs = <span class="cstat-no" title="statement not covered" >document.querySelectorAll('.settings-tab');</span>
-<span class="cstat-no" title="statement not covered" >    tabs.forEach(<span class="fstat-no" title="function not covered" >(t</span>ab) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    tabs.forEach(<span class="fstat-no" title="function not covered" >ta</span>b =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      tab.addEventListener('click', <span class="fstat-no" title="function not covered" >(e</span>) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >        e.preventDefault();</span>
         const tabId = <span class="cstat-no" title="statement not covered" >tab.getAttribute('data-tab');</span>
 <span class="cstat-no" title="statement not covered" >        this.switchTab(tabId);</span>
       });
     });
-&nbsp;
+    
     // Show the active tab by default
 <span class="cstat-no" title="statement not covered" >    this.switchTab(this.activeTab);</span>
   }
-&nbsp;
+  
 <span class="fstat-no" title="function not covered" >  sw</span>itchTab(tabId) {
     // Hide all tab content
-<span class="cstat-no" title="statement not covered" >    document.querySelectorAll('.tab-content').forEach(<span class="fstat-no" title="function not covered" >(e</span>lement) =&gt; {</span>
-      const contentElement = <span class="cstat-no" title="statement not covered" >element;</span>
-<span class="cstat-no" title="statement not covered" >      contentElement.style.display = 'none';</span>
+<span class="cstat-no" title="statement not covered" >    document.querySelectorAll('.tab-content').forEach(<span class="fstat-no" title="function not covered" >co</span>ntent =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      content.style.display = 'none';</span>
     });
-&nbsp;
+    
     // Remove active class from all tabs
-<span class="cstat-no" title="statement not covered" >    document.querySelectorAll('.settings-tab').forEach(<span class="fstat-no" title="function not covered" >(t</span>abElement) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >      tabElement.classList.remove('active');</span>
+<span class="cstat-no" title="statement not covered" >    document.querySelectorAll('.settings-tab').forEach(<span class="fstat-no" title="function not covered" >ta</span>b =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      tab.classList.remove('active');</span>
     });
-&nbsp;
+    
     // Show the selected tab content
     const activeContent = <span class="cstat-no" title="statement not covered" >document.getElementById(`${tabId}-tab`);</span>
 <span class="cstat-no" title="statement not covered" >    if (activeContent) {</span>
 <span class="cstat-no" title="statement not covered" >      activeContent.style.display = 'block';</span>
     }
-&nbsp;
+    
     // Add active class to the selected tab
     const activeTab = <span class="cstat-no" title="statement not covered" >document.querySelector(`.settings-tab[data-tab="${tabId}"]`);</span>
 <span class="cstat-no" title="statement not covered" >    if (activeTab) {</span>
 <span class="cstat-no" title="statement not covered" >      activeTab.classList.add('active');</span>
     }
-&nbsp;
+    
 <span class="cstat-no" title="statement not covered" >    this.activeTab = tabId;</span>
-&nbsp;
+    
     // Initialize shortcut settings if needed
 <span class="cstat-no" title="statement not covered" >    if (tabId === 'shortcuts') {</span>
 <span class="cstat-no" title="statement not covered" >      this.initializeShortcutSettings();</span>
     }
   }
-&nbsp;
+  
 <span class="fstat-no" title="function not covered" >  in</span>itializeShortcutSettings() {
     const container = <span class="cstat-no" title="statement not covered" >document.getElementById('shortcuts-container');</span>
 <span class="cstat-no" title="statement not covered" >    if (!container) <span class="cstat-no" title="statement not covered" >return;</span></span>
-&nbsp;
+    
     // Clear existing content
 <span class="cstat-no" title="statement not covered" >    container.innerHTML = '';</span>
-&nbsp;
+    
     // Get all registered shortcuts
     const shortcuts = <span class="cstat-no" title="statement not covered" >this.shortcutManager.getAllShortcuts();</span>
-&nbsp;
+    
     // Group shortcuts by category
     const categories = <span class="cstat-no" title="statement not covered" >{};</span>
 <span class="cstat-no" title="statement not covered" >    Object.entries(shortcuts).forEach(<span class="fstat-no" title="function not covered" >([</span>id, shortcut]) =&gt; {</span>
@@ -856,82 +847,79 @@ class SettingsManager {
       }
 <span class="cstat-no" title="statement not covered" >      categories[shortcut.category].push({ id, ...shortcut });</span>
     });
-&nbsp;
+    
     // Create UI for each category
 <span class="cstat-no" title="statement not covered" >    Object.entries(categories).forEach(<span class="fstat-no" title="function not covered" >([</span>category, categoryShortcuts]) =&gt; {</span>
       const categoryElement = <span class="cstat-no" title="statement not covered" >document.createElement('div');</span>
 <span class="cstat-no" title="statement not covered" >      categoryElement.className = 'shortcut-category';</span>
-&nbsp;
+      
       const categoryTitle = <span class="cstat-no" title="statement not covered" >document.createElement('h3');</span>
 <span class="cstat-no" title="statement not covered" >      categoryTitle.textContent = category;</span>
 <span class="cstat-no" title="statement not covered" >      categoryElement.appendChild(categoryTitle);</span>
-&nbsp;
+      
       const shortcutsList = <span class="cstat-no" title="statement not covered" >document.createElement('div');</span>
 <span class="cstat-no" title="statement not covered" >      shortcutsList.className = 'shortcuts-list';</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >      categoryShortcuts.forEach(<span class="fstat-no" title="function not covered" >(s</span>hortcut) =&gt; {</span>
+      
+<span class="cstat-no" title="statement not covered" >      categoryShortcuts.forEach(<span class="fstat-no" title="function not covered" >sh</span>ortcut =&gt; {</span>
         const shortcutElement = <span class="cstat-no" title="statement not covered" >this.createShortcutElement(shortcut);</span>
 <span class="cstat-no" title="statement not covered" >        shortcutsList.appendChild(shortcutElement);</span>
       });
-&nbsp;
+      
 <span class="cstat-no" title="statement not covered" >      categoryElement.appendChild(shortcutsList);</span>
 <span class="cstat-no" title="statement not covered" >      container.appendChild(categoryElement);</span>
     });
   }
-&nbsp;
+  
 <span class="fstat-no" title="function not covered" >  cr</span>eateShortcutElement(shortcut) {
     const element = <span class="cstat-no" title="statement not covered" >document.createElement('div');</span>
 <span class="cstat-no" title="statement not covered" >    element.className = 'shortcut-item';</span>
 <span class="cstat-no" title="statement not covered" >    element.dataset.id = shortcut.id;</span>
-&nbsp;
+    
     const label = <span class="cstat-no" title="statement not covered" >document.createElement('span');</span>
 <span class="cstat-no" title="statement not covered" >    label.className = 'shortcut-label';</span>
 <span class="cstat-no" title="statement not covered" >    label.textContent = shortcut.description;</span>
-&nbsp;
+    
     const keys = <span class="cstat-no" title="statement not covered" >document.createElement('div');</span>
 <span class="cstat-no" title="statement not covered" >    keys.className = 'shortcut-keys';</span>
-&nbsp;
-    const keyElements = <span class="cstat-no" title="statement not covered" >shortcut.key</span>
-      .split('+')
-      .map(<span class="fstat-no" title="function not covered" >(k</span>ey) =&gt; {
-        const keyElement = <span class="cstat-no" title="statement not covered" >document.createElement('kbd');</span>
-<span class="cstat-no" title="statement not covered" >        keyElement.textContent = key.trim();</span>
-<span class="cstat-no" title="statement not covered" >        return keyElement.outerHTML;</span>
-      })
-      .join(' + ');
-&nbsp;
+    
+    const keyElements = <span class="cstat-no" title="statement not covered" >shortcut.key.split('+').map(<span class="fstat-no" title="function not covered" >ke</span>y =&gt; {</span>
+      const keyElement = <span class="cstat-no" title="statement not covered" >document.createElement('kbd');</span>
+<span class="cstat-no" title="statement not covered" >      keyElement.textContent = key.trim();</span>
+<span class="cstat-no" title="statement not covered" >      return keyElement.outerHTML;</span>
+    }).join(' + ');
+    
 <span class="cstat-no" title="statement not covered" >    keys.innerHTML = keyElements;</span>
-&nbsp;
+    
     const editButton = <span class="cstat-no" title="statement not covered" >document.createElement('button');</span>
 <span class="cstat-no" title="statement not covered" >    editButton.className = 'btn btn-sm btn-outline-secondary edit-shortcut';</span>
 <span class="cstat-no" title="statement not covered" >    editButton.textContent = 'Edit';</span>
 <span class="cstat-no" title="statement not covered" >    editButton.addEventListener('click', <span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >this.startEditingShortcut(shortcut.id))</span>;</span>
-&nbsp;
+    
 <span class="cstat-no" title="statement not covered" >    element.appendChild(label);</span>
 <span class="cstat-no" title="statement not covered" >    element.appendChild(keys);</span>
 <span class="cstat-no" title="statement not covered" >    element.appendChild(editButton);</span>
-&nbsp;
+    
 <span class="cstat-no" title="statement not covered" >    return element;</span>
   }
-&nbsp;
+  
 <span class="fstat-no" title="function not covered" >  st</span>artEditingShortcut(shortcutId) {
     const element = <span class="cstat-no" title="statement not covered" >document.querySelector(`.shortcut-item[data-id="${shortcutId}"]`);</span>
 <span class="cstat-no" title="statement not covered" >    if (!element) <span class="cstat-no" title="statement not covered" >return;</span></span>
-&nbsp;
+    
     const keysElement = <span class="cstat-no" title="statement not covered" >element.querySelector('.shortcut-keys');</span>
 <span class="cstat-no" title="statement not covered" >    if (!keysElement) <span class="cstat-no" title="statement not covered" >return;</span></span>
-&nbsp;
+    
     const originalContent = <span class="cstat-no" title="statement not covered" >keysElement.innerHTML;</span>
     const input = <span class="cstat-no" title="statement not covered" >document.createElement('input');</span>
 <span class="cstat-no" title="statement not covered" >    input.type = 'text';</span>
 <span class="cstat-no" title="statement not covered" >    input.className = 'form-control form-control-sm shortcut-input';</span>
 <span class="cstat-no" title="statement not covered" >    input.value = this.shortcutManager.getShortcut(shortcutId).key;</span>
-&nbsp;
+    
 <span class="cstat-no" title="statement not covered" >    keysElement.innerHTML = '';</span>
 <span class="cstat-no" title="statement not covered" >    keysElement.appendChild(input);</span>
-&nbsp;
+    
 <span class="cstat-no" title="statement not covered" >    input.focus();</span>
-&nbsp;
+    
     const saveShortcut = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
       const newKey = <span class="cstat-no" title="statement not covered" >input.value.trim();</span>
 <span class="cstat-no" title="statement not covered" >      if (newKey) {</span>
@@ -941,7 +929,7 @@ class SettingsManager {
 <span class="cstat-no" title="statement not covered" >        keysElement.innerHTML = originalContent;</span>
       }
     };
-&nbsp;
+    
 <span class="cstat-no" title="statement not covered" >    input.addEventListener('blur', saveShortcut);</span>
 <span class="cstat-no" title="statement not covered" >    input.addEventListener('keydown', <span class="fstat-no" title="function not covered" >(e</span>) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      if (e.key === 'Enter') {</span>
@@ -954,29 +942,29 @@ class SettingsManager {
 &nbsp;
 <span class="fstat-no" title="function not covered" >  se</span>tupEventListeners() {
 <span class="cstat-no" title="statement not covered" >    if (!this.settingsForm) <span class="cstat-no" title="statement not covered" >return;</span></span>
-&nbsp;
+    
     // Theme change
 <span class="cstat-no" title="statement not covered" >    if (this.themeSelect) {</span>
 <span class="cstat-no" title="statement not covered" >      this.themeSelect.addEventListener('change', <span class="fstat-no" title="function not covered" >(e</span>) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >        this.saveSetting('theme', e.target.value);</span>
       });
     }
-&nbsp;
+    
     // Density change
 <span class="cstat-no" title="statement not covered" >    if (this.densitySelect) {</span>
 <span class="cstat-no" title="statement not covered" >      this.densitySelect.addEventListener('change', <span class="fstat-no" title="function not covered" >(e</span>) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >        this.saveSetting('sidebarDensity', e.target.value);</span>
       });
     }
-&nbsp;
+    
     // Toggle switches
     const toggles = <span class="cstat-no" title="statement not covered" >[</span>
       { element: this.notificationToggle, setting: 'globalNotifications' },
       { element: this.badgeToggle, setting: 'badgeDockIcon' },
       { element: this.launchAtLoginToggle, setting: 'launchAtLogin' },
-      { element: this.hardwareAccelToggle, setting: 'hardwareAcceleration' },
+      { element: this.hardwareAccelToggle, setting: 'hardwareAcceleration' }
     ];
-&nbsp;
+    
 <span class="cstat-no" title="statement not covered" >    toggles.forEach(<span class="fstat-no" title="function not covered" >({</span> element, setting }) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      if (element) {</span>
 <span class="cstat-no" title="statement not covered" >        element.addEventListener('change', <span class="fstat-no" title="function not covered" >(e</span>) =&gt; {</span>
@@ -984,7 +972,7 @@ class SettingsManager {
         });
       }
     });
-&nbsp;
+    
     // Reset settings
 <span class="cstat-no" title="statement not covered" >    if (this.resetSettingsBtn) {</span>
 <span class="cstat-no" title="statement not covered" >      this.resetSettingsBtn.addEventListener('click', <span class="fstat-no" title="function not covered" >(e</span>) =&gt; {</span>
@@ -1003,31 +991,31 @@ class SettingsManager {
 &nbsp;
 <span class="fstat-no" title="function not covered" >  up</span>dateUI(settings) {
 <span class="cstat-no" title="statement not covered" >    if (!settings) <span class="cstat-no" title="statement not covered" >return;</span></span>
-&nbsp;
+    
     // Update theme select
 <span class="cstat-no" title="statement not covered" >    if (this.themeSelect) {</span>
 <span class="cstat-no" title="statement not covered" >      this.themeSelect.value = settings.theme || 'system';</span>
     }
-&nbsp;
+    
     // Update density select
 <span class="cstat-no" title="statement not covered" >    if (this.densitySelect) {</span>
 <span class="cstat-no" title="statement not covered" >      this.densitySelect.value = settings.sidebarDensity || 'comfortable';</span>
     }
-&nbsp;
+    
     // Update toggles
     const toggles = <span class="cstat-no" title="statement not covered" >[</span>
       { element: this.notificationToggle, setting: 'globalNotifications' },
       { element: this.badgeToggle, setting: 'badgeDockIcon' },
       { element: this.launchAtLoginToggle, setting: 'launchAtLogin' },
-      { element: this.hardwareAccelToggle, setting: 'hardwareAcceleration' },
+      { element: this.hardwareAccelToggle, setting: 'hardwareAcceleration' }
     ];
-&nbsp;
+    
 <span class="cstat-no" title="statement not covered" >    toggles.forEach(<span class="fstat-no" title="function not covered" >({</span> element, setting }) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      if (element) {</span>
 <span class="cstat-no" title="statement not covered" >        element.checked = !!settings[setting];</span>
       }
     });
-&nbsp;
+    
     // Apply theme
 <span class="cstat-no" title="statement not covered" >    this.applyTheme(settings.theme);</span>
   }
@@ -1037,20 +1025,20 @@ class SettingsManager {
       // Update app state
 <span class="cstat-no" title="statement not covered" >      appState.updateState({</span>
         settings: {
-          [key]: value,
-        },
+          [key]: value
+        }
       });
-&nbsp;
+      
       // Special handling for theme changes
 <span class="cstat-no" title="statement not covered" >      if (key === 'theme') {</span>
 <span class="cstat-no" title="statement not covered" >        this.applyTheme(value);</span>
       }
-&nbsp;
+      
       // Notify main process if needed (e.g., for launch at login)
 <span class="cstat-no" title="statement not covered" >      if (key === 'launchAtLogin' || key === 'hardwareAcceleration') {</span>
 <span class="cstat-no" title="statement not covered" >        ipcRenderer.send('update-setting', { key, value });</span>
       }
-&nbsp;
+      
 <span class="cstat-no" title="statement not covered" >      logger.debug(`Setting updated: ${key} = ${value}`);</span>
 <span class="cstat-no" title="statement not covered" >      return true;</span>
     } catch (error) {
@@ -1062,10 +1050,10 @@ class SettingsManager {
 <span class="fstat-no" title="function not covered" >  ap</span>plyTheme(theme) {
     // Remove all theme classes
 <span class="cstat-no" title="statement not covered" >    document.documentElement.classList.remove('theme-light', 'theme-dark', 'theme-system');</span>
-&nbsp;
+    
     // Add the selected theme class
 <span class="cstat-no" title="statement not covered" >    document.documentElement.classList.add(`theme-${theme || 'system'}`);</span>
-&nbsp;
+    
     // Notify other windows of theme change
 <span class="cstat-no" title="statement not covered" >    ipcRenderer.send('theme-changed', theme);</span>
   }
@@ -1081,7 +1069,7 @@ const settingsManager = <span class="cstat-no" title="statement not covered" >ne
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-10T09:13:51.741Z
+                at 2025-12-09T22:23:43.640Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

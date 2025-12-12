@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: '22'
+  NODE_VERSION: 20
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
@@ -118,51 +118,18 @@ jobs:
     needs: [test, security, accessibility]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     runs-on: windows-latest
-    env:
-      NODE_OPTIONS: --openssl-legacy-provider
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '22.x'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
       - name: Install dependencies
         run: |
-          # Configure npm to skip phantomjs downloads
-          npm config set phantomjs_cdnurl ""
-          npm config set phantomjs_disable_host_check true
-          
-          # Install with retry
-          n=0
-          until [ $n -ge 3 ]
-          do
-            npm ci --omit=optional --prefer-offline --no-audit && break
-            n=$((n+1))
-            echo "Retry $n/3: npm ci failed, retrying..."
-            sleep 5
-          done
-          
-          if [ $n -eq 3 ]; then
-            echo "Failed to install dependencies after 3 attempts"
-            exit 1
-          fi
-          
-          # Install required dev dependencies
+          npm ci
           npm install --save-dev @babel/plugin-transform-runtime @babel/preset-react @babel/runtime
-          
       - name: Build for Windows
-        run: |
-          # Set environment variables for Windows build
-          $env:ELECTRON_SKIP_BINARY_DOWNLOAD = "1"
-          $env:npm_config_target = (Get-Content package.json | ConvertFrom-Json).devDependencies.electron
-          $env:npm_config_arch = "x64"
-          $env:npm_config_target_arch = "x64"
-          $env:npm_config_disturl = "https://electronjs.org/headers"
-          $env:npm_config_runtime = "electron"
-          $env:npm_config_build_from_source = "true"
-          
-          # Run the build
-          npm run dist:win
+        run: npm run dist:win
       - name: Run sync
         run: npm run sync:downloads
       - name: Upload Windows artifacts
@@ -179,75 +146,18 @@ jobs:
     needs: [test, security, accessibility]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     runs-on: macos-latest
-    env:
-      ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES: "true"
-      ELECTRON_BUILDER_CACHE: "/tmp/electron-builder-cache"
-      
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-      
-      - name: Install system dependencies
+      - name: Install dependencies
         run: |
-          brew install --cask xquartz
-          xcode-select --install || true
-      
-      - name: Install Node.js dependencies
-        run: |
-          # Install Node Version Manager (nvm)
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-          export NVM_DIR="$HOME/.nvm"
-          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-          
-          # Install and use Node.js 22
-          nvm install 22
-          nvm use 22
-          
-          # Configure npm to skip phantomjs downloads
-          npm config set phantomjs_cdnurl ""
-          npm config set phantomjs_disable_host_check true
-          
-          # Install with retry
-          n=0
-          until [ $n -ge 3 ]
-          do
-            npm ci --omit=optional --prefer-offline --no-audit && break
-            n=$((n+1))
-            echo "Retry $n/3: npm ci failed, retrying..."
-            sleep 5
-          done
-          
-          if [ $n -eq 3 ]; then
-            echo "Failed to install dependencies after 3 attempts"
-            exit 1
-          fi
-          
-          # Install required dev dependencies
+          npm ci
           npm install --save-dev @babel/plugin-transform-runtime @babel/preset-react @babel/runtime
-          
-          # Install electron-builder and its dependencies
-          npm install -g electron-builder
-          npx electron-builder install-app-deps
-      
-      - name: Clear caches
-        run: |
-          rm -rf ~/Library/Caches/electron-builder
-          rm -rf ~/Library/Caches/electron
-          rm -rf node_modules/.cache
-      
-      - name: Set permissions
-        run: chmod -R 777 ${{ github.workspace }}
-      
       - name: Build for macOS
-        run: |
-          npm run generate-icons
-          npm run build
-          npx electron-builder --mac --x64 --publish never
+        run: npm run dist:mac
       - name: Run sync
         run: npm run sync:downloads
       - name: Upload macOS artifacts
