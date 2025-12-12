@@ -138,21 +138,12 @@ jobs:
         run: npm run dist:win
       - name: Run sync
         run: npm run sync:downloads
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-artifacts
-          path: |
-            dist/*.dmg
-            dist/*.exe
-            dist/*.zip
-            dist/*.AppImage
-            dist/*.snap
-            dist/*.deb
-            dist/make/*
-          retention-days: ${{ env.ARTIFACT_RETENTION_DAYS }}
-          if-no-files-found: error
-          compression-level: 9
+      - name: Skip artifact upload (storage limit reached)
+        if: true == false  # Temporarily disabled due to storage limits
+        run: |
+          echo "Skipping artifact upload due to storage limits"
+          echo "Build artifacts are available in the 'dist' directory"
+          ls -la dist/
 
   build-mac:
     needs: [test, security, accessibility]
@@ -172,21 +163,12 @@ jobs:
         run: npm run dist:mac
       - name: Run sync
         run: npm run sync:downloads
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-artifacts
-          path: |
-            dist/*.dmg
-            dist/*.exe
-            dist/*.zip
-            dist/*.AppImage
-            dist/*.snap
-            dist/*.deb
-            dist/make/*
-          retention-days: ${{ env.ARTIFACT_RETENTION_DAYS }}
-          if-no-files-found: error
-          compression-level: 9
+      - name: Skip artifact upload (storage limit reached)
+        if: true == false  # Temporarily disabled due to storage limits
+        run: |
+          echo "Skipping artifact upload due to storage limits"
+          echo "Build artifacts are available in the 'dist' directory"
+          ls -la dist/
 
   deploy:
     needs: [build-win, build-mac]
