@@ -304,15 +304,14 @@ jobs:
           echo "All files to be deployed:"
           find _site -type f | sort
       
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
-          retention-days: 1
-          compression-level: 6
+      - name: Skip artifact upload (storage limit reached)
+        if: true == false  # Temporarily disabled due to storage limits
+        run: |
+          echo "Skipping artifact upload due to storage limits"
+          echo "Website files are available in the _site/ directory"
+          ls -la _site/ || echo "No _site directory found"
       
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
         timeout-minutes: 10
-
