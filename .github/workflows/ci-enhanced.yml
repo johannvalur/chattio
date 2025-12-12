@@ -219,11 +219,13 @@ jobs:
           ls -la dist/ || echo "No artifacts downloaded"
           
       # Add deployment steps here as needed
+      - name: Debug dist directory
+        run: |
           echo "Contents of dist/:"
-          ls -la dist/
+          ls -la dist/ || echo "No dist directory found"
           echo "---"
           echo "All files in dist/:"
-          find dist/ -type f
+          find dist/ -type f || echo "No files found in dist/"
       
       # Prepare GitHub Pages files
       - name: Prepare GitHub Pages files
