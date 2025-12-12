@@ -24,6 +24,8 @@ jobs:
     permissions:
       actions: write  # For artifact cleanup
       contents: read  # For code checkout
+      packages: write  # For publishing packages
+      id-token: write  # For GitHub token access
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -138,11 +140,13 @@ jobs:
         run: npm run sync:downloads
       - name: Clean up old artifacts
         if: github.ref == 'refs/heads/main'
-        uses: geekyeggo/delete-artifact@v2
-        with:
-          name: build-artifacts
-          workflow: ci-enhanced.yml
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # List and delete artifacts using GitHub CLI
+          gh extension install actions/gh-actions-cache --force
+          gh actions-cache list --limit 100 | awk 'NR>1 {print $3}' | xargs -I{} gh actions-cache delete {} --confirm
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -174,11 +178,13 @@ jobs:
         run: npm run sync:downloads
       - name: Clean up old artifacts
         if: github.ref == 'refs/heads/main'
-        uses: geekyeggo/delete-artifact@v2
-        with:
-          name: build-artifacts
-          workflow: ci-enhanced.yml
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # List and delete artifacts using GitHub CLI
+          gh extension install actions/gh-actions-cache --force
+          gh actions-cache list --limit 100 | awk 'NR>1 {print $3}' | xargs -I{} gh actions-cache delete {} --confirm
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
