@@ -1,10 +1,10 @@
-name: Enhanced CI/CD
+name: Enhanced CI/CD Pipeline
 
 on:
   push:
-    branches: [main, master]
+    branches: [ main ]
   pull_request:
-    branches: [main, master]
+    branches: [ main ]
   workflow_dispatch:
 
 concurrency:
@@ -15,6 +15,7 @@ env:
   NODE_VERSION: 20
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  ARTIFACT_RETENTION_DAYS: 1
 
 jobs:
   lint:
@@ -132,15 +133,29 @@ jobs:
         run: npm run dist:win
       - name: Run sync
         run: npm run sync:downloads
-      - name: Upload Windows artifacts
+      - name: Clean up old artifacts
+        if: github.ref == 'refs/heads/main'
+        run: |
+          # List all artifacts
+          artifacts=$(gh api repos/${{ github.repository }}/actions/artifacts --jq '.artifacts[] | .id')
+          
+          # Delete all artifacts
+          for artifact_id in $artifacts; do
+            echo "Deleting artifact ID: $artifact_id"
+            gh api repos/${{ github.repository }}/actions/artifacts/$artifact_id -X DELETE
+          done || echo "No artifacts to delete"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: windows-build
+          name: build-artifacts
           path: |
-            dist/*.exe
-            dist/*.blockmap
-            dist/latest.yml
-          retention-days: 7
+            dist/
+            !**/node_modules/**
+          retention-days: ${{ env.ARTIFACT_RETENTION_DAYS }}
+          if-no-files-found: error
+          compression-level: 9
 
   build-mac:
     needs: [test, security, accessibility]
@@ -160,15 +175,29 @@ jobs:
         run: npm run dist:mac
       - name: Run sync
         run: npm run sync:downloads
-      - name: Upload macOS artifacts
+      - name: Clean up old artifacts
+        if: github.ref == 'refs/heads/main'
+        run: |
+          # List all artifacts
+          artifacts=$(gh api repos/${{ github.repository }}/actions/artifacts --jq '.artifacts[] | .id')
+          
+          # Delete all artifacts
+          for artifact_id in $artifacts; do
+            echo "Deleting artifact ID: $artifact_id"
+            gh api repos/${{ github.repository }}/actions/artifacts/$artifact_id -X DELETE
+          done || echo "No artifacts to delete"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: macos-build
+          name: build-artifacts
           path: |
-            dist/*.dmg
-            dist/*.zip
-            dist/latest-mac.yml
-          retention-days: 7
+            dist/
+            !**/node_modules/**
+          retention-days: ${{ env.ARTIFACT_RETENTION_DAYS }}
+          if-no-files-found: error
+          compression-level: 9
 
   deploy:
     needs: [build-win, build-mac]
