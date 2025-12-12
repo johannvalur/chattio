@@ -173,6 +173,7 @@ jobs:
   deploy:
     needs: [build-win, build-mac]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       pages: write
@@ -218,16 +219,6 @@ jobs:
           ls -la dist/ || echo "No artifacts downloaded"
           
       # Add deployment steps here as needed
-        uses: actions/download-artifact@v4
-        with:
-          name: macos-build
-          path: dist
-      
-      # Debug: List downloaded artifacts
-      - name: List downloaded artifacts
-        run: |
-          echo "Current working directory: $(pwd)"
-          echo "---"
           echo "Contents of dist/:"
           ls -la dist/
           echo "---"
