@@ -311,7 +311,9 @@ jobs:
           echo "Website files are available in the _site/ directory"
           ls -la _site/ || echo "No _site directory found"
       
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-        timeout-minutes: 10
+      - name: Skip GitHub Pages deployment (no artifacts)
+        if: true == false  # Temporarily disabled due to no artifacts
+        run: |
+          echo "Skipping GitHub Pages deployment - no artifacts available"
+          echo "To enable deployment, first resolve the artifact storage limit issue"
+          echo "Then re-enable the artifact upload and deployment steps"
