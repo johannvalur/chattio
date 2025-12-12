@@ -128,8 +128,7 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: |
-          # Skip optional dependencies that might cause issues
-          npm config set optional false
+          # Configure npm to skip phantomjs downloads
           npm config set phantomjs_cdnurl ""
           npm config set phantomjs_disable_host_check true
           
@@ -209,8 +208,7 @@ jobs:
           nvm install 22
           nvm use 22
           
-          # Configure npm to skip optional dependencies
-          npm config set optional false
+          # Configure npm to skip phantomjs downloads
           npm config set phantomjs_cdnurl ""
           npm config set phantomjs_disable_host_check true
           
