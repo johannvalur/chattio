@@ -177,18 +177,47 @@ jobs:
       contents: write
       pages: write
       id-token: write
+      actions: read  # Needed to check for artifacts
     environment:
       name: production
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Download Windows artifacts
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Check for Windows build artifacts
+        id: check-windows-artifact
+        uses: actions/github-script@v7
+        with:
+          script: |
+            try {
+              const { data } = await github.rest.actions.listWorkflowRunArtifacts({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: ${{ github.run_id }}
+              });
+              const artifact = data.artifacts.find(a => a.name === 'windows-build');
+              return artifact ? artifact.id : 0;
+            } catch (error) {
+              core.warning(`Error checking for artifacts: ${error.message}`);
+              return 0;
+            }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Download Windows build (if available)
+        if: steps.check-windows-artifact.outputs.result != '0'
         uses: actions/download-artifact@v4
         with:
           name: windows-build
           path: dist
-      - name: Download macOS artifacts
+          merge-multiple: false
+          
+      - name: List downloaded artifacts
+        run: |
+          echo "Downloaded artifacts:"
+          ls -la dist/ || echo "No artifacts downloaded"
+          
+      # Add deployment steps here as needed
         uses: actions/download-artifact@v4
         with:
           name: macos-build
