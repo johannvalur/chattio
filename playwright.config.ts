@@ -23,43 +23,43 @@ export default defineConfig({
       maxDiffPixels: visualComparisons.maxDiffPixels,
     },
   },
-  
+
   // Run tests in files in parallel
   fullyParallel: true,
-  
+
   // Fail the build on CI if you accidentally left test.only in the source code
   forbidOnly: !!process.env.CI,
-  
+
   // Retry on CI only
   retries: process.env.CI ? 2 : 0,
-  
+
   // Opt out of parallel tests on CI
   workers: process.env.CI ? 1 : undefined,
-  
+
   // Reporter to use
   reporter: [
-    ['html', { outputFolder: 'test-results/html' }],
+    ['html', { outputFolder: 'playwright-report' }],
     ['list'],
     ['junit', { outputFile: 'test-results/junit/results.xml' }],
   ],
-  
+
   use: {
     // Base URL to use in actions like `await page.goto('/')`
     baseURL: BASE_URL,
-    
+
     // Screenshot settings
     screenshot: 'only-on-failure',
-    
+
     // Video settings
     video: 'on-first-retry',
-    
+
     // Trace settings
     trace: 'on-first-retry',
-    
+
     // Viewport settings
     viewport: { width: 1280, height: 800 },
   },
-  
+
   // Configure projects for different browsers
   projects: [
     {
@@ -75,7 +75,7 @@ export default defineConfig({
       use: { ...devices['Desktop Safari'] },
     },
   ],
-  
+
   // Web server for development
   webServer: {
     command: `node ./scripts/serve-chatterly.js ${PORT} chatterly`,
@@ -85,9 +85,8 @@ export default defineConfig({
     stderr: 'pipe',
     stdout: 'pipe',
   },
-  
+
   // Global setup and teardown
   globalSetup: require.resolve('./tests/e2e/global-setup'),
   globalTeardown: require.resolve('./tests/e2e/global-teardown'),
 });
-

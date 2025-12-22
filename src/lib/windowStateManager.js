@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const { promisify } = require('util');
-const accessAsync = promisify(fs.access);
 const readFileAsync = promisify(fs.readFile);
 const writeFileAsync = promisify(fs.writeFile);
 const mkdirAsync = promisify(fs.mkdir);
@@ -23,7 +22,7 @@ class WindowStateManager {
    */
   async ensureUserDataDir() {
     try {
-      await accessAsync(this.userDataPath, fs.constants.R_OK | fs.constants.W_OK);
+      await fs.promises.access(this.userDataPath, fs.constants.R_OK | fs.constants.W_OK);
     } catch (error) {
       if (error.code === 'ENOENT') {
         await mkdirAsync(this.userDataPath, { recursive: true });
@@ -39,7 +38,7 @@ class WindowStateManager {
   async load() {
     for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
       try {
-        await accessAsync(this.windowStateFile, fs.constants.R_OK);
+        await fs.promises.access(this.windowStateFile, fs.constants.R_OK);
         const data = await readFileAsync(this.windowStateFile, 'utf8');
 
         if (!data.trim()) {

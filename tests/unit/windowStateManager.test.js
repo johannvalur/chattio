@@ -210,13 +210,8 @@ describe('WindowStateManager', () => {
   describe('ensureUserDataDir', () => {
     it('should create directory if it does not exist', async () => {
       // Mock access to fail with ENOENT (directory doesn't exist)
-      // Since the code uses promisify, we need to mock the callback-based version
-      fsMocks.access.mockImplementationOnce((path, mode, callback) => {
-        if (callback) {
-          callback({ code: 'ENOENT' });
-        }
-        return Promise.reject({ code: 'ENOENT' });
-      });
+      const fs = require('fs');
+      fs.promises.access.mockRejectedValueOnce({ code: 'ENOENT' });
       fsMocks.mkdir.mockImplementationOnce((path, options, callback) => {
         if (callback) {
           callback(null);
@@ -234,19 +229,7 @@ describe('WindowStateManager', () => {
     });
 
     it('should not create directory if it exists', async () => {
-      // Mock access to succeed for both callback and promise APIs
-      fsMocks.access.mockImplementationOnce((path, mode, callback) => {
-        if (typeof mode === 'function') {
-          callback = mode;
-        }
-        if (callback) {
-          process.nextTick(callback, null);
-          return undefined;
-        }
-        return Promise.resolve();
-      });
-
-      // Also mock the promises API
+      // Mock access to succeed
       const fs = require('fs');
       fs.promises.access.mockResolvedValueOnce(undefined);
 
@@ -342,11 +325,6 @@ describe('WindowStateManager', () => {
         y: 100,
         isMaximized: false,
       });
-      expect(fsMocks.access).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.any(Number),
-        expect.any(Function)
-      );
       expect(fsMocks.readFile).toHaveBeenCalledWith(
         expect.any(String),
         'utf8',

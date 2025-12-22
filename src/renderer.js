@@ -1203,11 +1203,14 @@ window.openTab = openTab;
 window.openSettingsTab = openSettingsTab;
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports.__testables = {
+  module.exports = {
     applySidebarDensity,
     setupGlobalSettings,
     updateUnreadSummary,
     setTabUnread,
+    applyTheme,
+    openTab,
+    openExternalLink,
     unreadState,
     appState,
     resetUnreadStateForTests,
