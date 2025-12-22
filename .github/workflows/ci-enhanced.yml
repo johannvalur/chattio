@@ -149,6 +149,10 @@ jobs:
     needs: [test, security, accessibility]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     runs-on: macos-latest
+    env:
+      NOTARYTOOL_KEY: ${{ secrets.NOTARYTOOL_KEY }}
+      NOTARYTOOL_KEY_ID: ${{ secrets.NOTARYTOOL_KEY_ID }}
+      NOTARYTOOL_ISSUER: ${{ secrets.NOTARYTOOL_ISSUER }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
