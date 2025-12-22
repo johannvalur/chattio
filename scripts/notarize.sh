@@ -31,7 +31,7 @@ fi
 # Set up code signing
 export CSC_NAME="Jóhann Sævarsson (QD9KBHBRRZ)"
 export APPLE_TEAM_ID="QD9KBHBRRZ"
-export APPLE_APP_SPECIFIC_PASSWORD="$APPLE_APP_SPECIFIC_PASSWORD"
+export APPLE_ID_PASSWORD="$APPLE_APP_SPECIFIC_PASSWORD"
 
 echo "✓ Environment variables set:"
 echo "  APPLE_ID: $APPLE_ID"

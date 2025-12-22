@@ -138,7 +138,10 @@
       "gatekeeperAssess": false,
       "entitlements": "build/entitlements.mac.plist",
       "entitlementsInherit": "build/entitlements.mac.plist",
-      "identity": "Jóhann Sævarsson (QD9KBHBRRZ)"
+      "identity": "Jóhann Sævarsson (QD9KBHBRRZ)",
+      "notarize": {
+        "teamId": "QD9KBHBRRZ"
+      }
     },
     "win": {
       "target": [
