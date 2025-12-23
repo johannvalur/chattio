@@ -338,6 +338,15 @@ jobs:
           echo "---"
           echo "All files to be deployed:"
           find _site -type f | sort
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
       
       - name: Skip artifact upload (storage limit reached)
         if: true == false  # Temporarily disabled due to storage limits
