@@ -720,12 +720,29 @@ function setupGlobalSettings() {
       });
     }
 
-    // Sidebar density chips
+    // Theme chips
+    const themeChips = document.querySelectorAll('.settings-chip[data-theme]');
+    themeChips.forEach((chip) => {
+      const theme = chip.getAttribute('data-theme');
+      if (theme === (window.localStorage.getItem('chatterly-theme') || 'system')) {
+        chip.classList.add('active');
+      }
+
+      chip.addEventListener('click', () => {
+        window.localStorage.setItem('chatterly-theme', theme);
+        applyTheme(theme);
+        updateThemeChips(theme);
+        updateAppearanceThemeChips();
+        logger.log(`Theme set to ${theme}`);
+      });
+    });
+
+    // Density chips
     const densityChips = document.querySelectorAll('.settings-chip[data-density]');
     densityChips.forEach((chip) => {
       const density = chip.getAttribute('data-density');
       if (density === appState.settings.sidebarDensity) {
-        chip.classList.add('settings-chip-active');
+        chip.classList.add('active');
       }
 
       chip.addEventListener('click', () => {
@@ -734,8 +751,8 @@ function setupGlobalSettings() {
         applySidebarDensity(density);
 
         // Update chip states
-        densityChips.forEach((c) => c.classList.remove('settings-chip-active'));
-        chip.classList.add('settings-chip-active');
+        densityChips.forEach((c) => c.classList.remove('active'));
+        chip.classList.add('active');
 
         logger.log(`Sidebar density set to ${density}`);
       });
@@ -1148,13 +1165,19 @@ window.addEventListener('DOMContentLoaded', () => {
     Notification.requestPermission();
   }
 
-  const donateButton = document.querySelector('.settings-primary-button');
-  if (donateButton) {
-    donateButton.addEventListener('click', () => {
-      shell.openExternal('https://www.chatterly.com');
+  setupSupportDonations();
+  setupUpdatesCheck();
+});
+
+function setupUpdatesCheck() {
+  const checkUpdatesBtn = document.getElementById('check-updates-btn');
+  if (checkUpdatesBtn) {
+    checkUpdatesBtn.addEventListener('click', () => {
+      logger.log('Checking for updates...');
+      ipcRenderer.send('check-for-updates');
     });
   }
-});
+}
 
 function applyTheme(theme) {
   applyThemeToDocument(document, theme);
@@ -1172,6 +1195,19 @@ function updateThemeChips(theme) {
       chip.classList.add('settings-chip-active');
     } else {
       chip.classList.remove('settings-chip-active');
+    }
+  });
+}
+
+function updateAppearanceThemeChips() {
+  const themeChips = document.querySelectorAll('.settings-chip[data-theme]');
+  const currentTheme = window.localStorage.getItem('chatterly-theme') || 'system';
+  themeChips.forEach((chip) => {
+    const theme = chip.getAttribute('data-theme');
+    if (theme === currentTheme) {
+      chip.classList.add('active');
+    } else {
+      chip.classList.remove('active');
     }
   });
 }
@@ -1196,6 +1232,73 @@ function openSettingsTab(tabId) {
   if (activeTab) {
     activeTab.classList.add('active');
   }
+}
+
+function setupSupportDonations() {
+  const donateButtons = document.querySelectorAll('[data-donation-button]');
+  const modal = document.querySelector('[data-support-modal]');
+  const amountLabel = modal ? modal.querySelector('[data-donation-amount]') : null;
+  const paymentOptions = modal ? modal.querySelectorAll('[data-payment-provider]') : [];
+  const closeButtons = modal ? modal.querySelectorAll('.support-modal-close') : [];
+
+  if (!donateButtons.length || !modal || !paymentOptions.length) {
+    return;
+  }
+
+  const closeModal = () => {
+    modal.classList.remove('open');
+    document.body.classList.remove('support-modal-open');
+  };
+
+  const openModal = () => {
+    modal.classList.add('open');
+    document.body.classList.add('support-modal-open');
+  };
+
+  donateButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const amount = button.dataset.amount || '$5';
+      if (amountLabel) {
+        amountLabel.textContent = amount;
+      }
+
+      paymentOptions.forEach((option) => {
+        const provider = option.dataset.paymentProvider;
+        if (!provider) return;
+        const datasetKey = `${provider}Link`;
+        const link = button.dataset[datasetKey] || option.dataset.defaultHref;
+        const currentOption = option;
+        currentOption.dataset.targetHref = link;
+      });
+
+      openModal();
+    });
+  });
+
+  paymentOptions.forEach((option) => {
+    option.addEventListener('click', () => {
+      const link = option.dataset.targetHref || option.dataset.defaultHref;
+      if (link) {
+        openExternalLink(link);
+      }
+    });
+  });
+
+  closeButtons.forEach((button) => {
+    button.addEventListener('click', closeModal);
+  });
+
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modal.classList.contains('open')) {
+      closeModal();
+    }
+  });
 }
 
 // Make openTab available globally for onclick handlers

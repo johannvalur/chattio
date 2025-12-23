@@ -43,6 +43,7 @@
               <div class="welcome-logo">
                 <img src="../public/transparent.png" alt="Chattio Logo" class="welcome-logo-icon" />
               </div>
+
               <span class="welcome-brand-name">Chattio</span>
               <h1 class="welcome-title">
                 <span class="welcome-title-line">All Your Chats.</span>
@@ -106,134 +107,324 @@
 
             <div class="settings-content">
               <div id="settings-donate" class="settings-panel" style="display: block">
-                <div class="settings-header">
-                  <h1>Support Chattio</h1>
-                  <p class="settings-subtitle">
-                    Your support helps improve Chattio and add new features. Every contribution
-                    makes a difference in making unified messaging better for everyone.
-                  </p>
+                <div class="settings-shell">
+                  <div class="settings-hero">
+                    <p class="settings-eyebrow">Fuel the indie builder</p>
+                    <h2 class="settings-title">Donations keep the lights on</h2>
+                    <p class="settings-subtitle">
+                      Chattio is a nights-and-weekends passion project. If it saves you time or
+                      tabs, consider tossing a few coins in the digital guitar case so we can keep
+                      polishing pixels.
+                    </p>
+                  </div>
+
+                  <div class="settings-section-group">
+                    <h3 class="settings-section-title">Support Tiers</h3>
+                    <div class="settings-cards settings-donation-cards">
+                      <div class="settings-card-donation" data-tier="tip-jar">
+                        <div class="settings-donation-amount">$1</div>
+                        <h3>Tip Jar</h3>
+                        <p>Every single dollar tells us the app is worth keeping alive.</p>
+                        <button
+                          class="settings-donation-cta"
+                          type="button"
+                          data-donation-button
+                          data-amount="$1"
+                          data-stripe-link="https://buy.stripe.com/test_coffee_fund"
+                          data-paypal-link="https://www.paypal.com/donate?hosted_button_id=COFFEE123"
+                          data-apple-link="https://buy.stripe.com/test_coffee_fund?method=applepay"
+                          data-google-link="https://buy.stripe.com/test_coffee_fund?method=googlepay"
+                          data-card-link="https://buy.stripe.com/test_coffee_fund?method=card"
+                        >
+                          Donate
+                        </button>
+                      </div>
+
+                      <div
+                        class="settings-card-donation settings-card-featured"
+                        data-tier="servers"
+                      >
+                        <div class="settings-donation-amount">$10</div>
+                        <h3>Keep Servers Awake</h3>
+                        <p>Help pay for the Mac mini in the closet that runs our build pipeline.</p>
+                        <button
+                          class="settings-donation-cta"
+                          type="button"
+                          data-donation-button
+                          data-amount="$10"
+                          data-stripe-link="https://buy.stripe.com/test_server_boost"
+                          data-paypal-link="https://www.paypal.com/donate?hosted_button_id=SERVER123"
+                          data-apple-link="https://buy.stripe.com/test_server_boost?method=applepay"
+                          data-google-link="https://buy.stripe.com/test_server_boost?method=googlepay"
+                          data-card-link="https://buy.stripe.com/test_server_boost?method=card"
+                        >
+                          Donate
+                        </button>
+                      </div>
+
+                      <div class="settings-card-donation" data-tier="forward">
+                        <div class="settings-donation-amount">$100</div>
+                        <h3>Pay It Forward</h3>
+                        <p>Underwrite new features, snacks, and sanity for future releases.</p>
+                        <button
+                          class="settings-donation-cta"
+                          type="button"
+                          data-donation-button
+                          data-amount="$100"
+                          data-stripe-link="https://buy.stripe.com/test_custom_amount"
+                          data-paypal-link="https://www.paypal.com/donate?hosted_button_id=CUSTOM123"
+                          data-apple-link="https://buy.stripe.com/test_custom_amount?method=applepay"
+                          data-google-link="https://buy.stripe.com/test_custom_amount?method=googlepay"
+                          data-card-link="https://buy.stripe.com/test_custom_amount?method=card"
+                        >
+                          Donate
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="settings-info-box">
+                    <p>Payments run through Stripe or PayPal; we never see your card details.</p>
+                  </div>
                 </div>
-                <!-- Donation content here -->
+
+                <div class="support-modal" data-support-modal>
+                  <div class="support-modal-dialog">
+                    <div class="support-modal-header">
+                      <p class="support-eyebrow">Choose a payment method</p>
+                      <h3>Backing us with <span data-donation-amount>$10</span></h3>
+                      <p class="support-modal-subtitle">Select what works best for you.</p>
+                    </div>
+
+                    <div class="support-payments">
+                      <button
+                        class="support-payment-option"
+                        type="button"
+                        data-payment-provider="stripe"
+                        data-default-href="https://buy.stripe.com/test_custom_amount"
+                      >
+                        <div class="support-payment-icon">ST</div>
+                        <div class="support-payment-copy">
+                          <strong>Stripe</strong>
+                          <span>Cards, ACH, and wallets</span>
+                        </div>
+                        <div class="support-payment-arrow">Open</div>
+                      </button>
+
+                      <button
+                        class="support-payment-option"
+                        type="button"
+                        data-payment-provider="paypal"
+                        data-default-href="https://www.paypal.com/donate?hosted_button_id=CUSTOM123"
+                      >
+                        <div class="support-payment-icon">PP</div>
+                        <div class="support-payment-copy">
+                          <strong>PayPal</strong>
+                          <span>Use your PayPal balance</span>
+                        </div>
+                        <div class="support-payment-arrow">Open</div>
+                      </button>
+
+                      <button
+                        class="support-payment-option"
+                        type="button"
+                        data-payment-provider="apple"
+                        data-default-href="https://buy.stripe.com/test_custom_amount?method=applepay"
+                      >
+                        <div class="support-payment-icon">AP</div>
+                        <div class="support-payment-copy">
+                          <strong>Apple Pay</strong>
+                          <span>Instant on Apple devices</span>
+                        </div>
+                        <div class="support-payment-arrow">Open</div>
+                      </button>
+
+                      <button
+                        class="support-payment-option"
+                        type="button"
+                        data-payment-provider="google"
+                        data-default-href="https://buy.stripe.com/test_custom_amount?method=googlepay"
+                      >
+                        <div class="support-payment-icon">GP</div>
+                        <div class="support-payment-copy">
+                          <strong>Google Pay</strong>
+                          <span>Fast checkout on Android</span>
+                        </div>
+                        <div class="support-payment-arrow">Open</div>
+                      </button>
+
+                      <button
+                        class="support-payment-option"
+                        type="button"
+                        data-payment-provider="card"
+                        data-default-href="https://buy.stripe.com/test_custom_amount?method=card"
+                      >
+                        <div class="support-payment-icon">CC</div>
+                        <div class="support-payment-copy">
+                          <strong>Credit Card</strong>
+                          <span>Visa, Mastercard, Amex</span>
+                        </div>
+                        <div class="support-payment-arrow">Open</div>
+                      </button>
+                    </div>
+
+                    <div class="support-modal-footer">
+                      <button class="support-modal-close" type="button" aria-label="Close">
+                        Close
+                      </button>
+                      <p class="support-modal-note">
+                        Need another method? Email
+                        <a href="mailto:support@chatterly.app">support@chatterly.app</a>.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="settings-appearance" class="settings-panel">
+                <div class="settings-shell">
+                  <div class="settings-hero">
+                    <p class="settings-eyebrow">Make it yours</p>
+                    <h2 class="settings-title">Tune the vibe</h2>
+                    <p class="settings-subtitle">
+                      Choose a theme and sidebar density that matches how you work. Changes apply
+                      instantly across the app.
+                    </p>
+                  </div>
+
+                  <div class="settings-section-group">
+                    <h3 class="settings-section-title">Theme</h3>
+                    <div class="settings-chips">
+                      <button class="settings-chip" data-theme="system">System</button>
+                      <button class="settings-chip" data-theme="light">Light</button>
+                      <button class="settings-chip" data-theme="dark">Dark</button>
+                    </div>
+                  </div>
+
+                  <div class="settings-section-group">
+                    <h3 class="settings-section-title">Sidebar Density</h3>
+                    <div class="settings-chips">
+                      <button class="settings-chip" data-density="comfortable">Comfortable</button>
+                      <button class="settings-chip" data-density="compact">Compact</button>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div id="settings-notifications" class="settings-panel">
-                <div class="settings-header">
-                  <h1>Apps & Notifications</h1>
-                  <p class="settings-subtitle">
-                    Manage which apps appear in your sidebar and control how and when you're
-                    notified about new messages and updates.
-                  </p>
-                </div>
-
-                <div class="settings-section">
-                  <h2>Privacy & Data</h2>
-                  <p class="settings-section-description">
-                    Chattio is designed with privacy in mind. Here's how we handle your data:
-                  </p>
-                  <div class="settings-privacy-list">
-                    <div class="settings-privacy-item">
-                      <div class="settings-privacy-icon">🔒</div>
-                      <div class="settings-privacy-content">
-                        <h3>Direct Web Integration</h3>
-                        <p>
-                          Chattio embeds the official web apps directly in a webview. We don't
-                          intercept or modify your communications.
-                        </p>
-                      </div>
-                    </div>
-                    <div class="settings-privacy-item">
-                      <div class="settings-privacy-icon">🔑</div>
-                      <div class="settings-privacy-content">
-                        <h3>No Credential Storage</h3>
-                        <p>
-                          Your login credentials are handled entirely by each service. Chattio never
-                          stores your passwords or authentication tokens.
-                        </p>
-                      </div>
-                    </div>
-                    <div class="settings-privacy-item">
-                      <div class="settings-privacy-icon">🚫</div>
-                      <div class="settings-privacy-content">
-                        <h3>No Message Storage</h3>
-                        <p>
-                          Messages are never stored or transmitted through a custom server. All
-                          communication goes directly to the service providers.
-                        </p>
-                      </div>
-                    </div>
-                    <div class="settings-privacy-item">
-                      <div class="settings-privacy-icon">🏠</div>
-                      <div class="settings-privacy-content">
-                        <h3>Local Only</h3>
-                        <p>
-                          All app data and preferences are stored locally on your device. Nothing is
-                          synced to external servers.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="settings-section">
-                  <h2>Telemetry & Analytics</h2>
-                  <p class="settings-section-description">
-                    Help us improve Chattio by sharing anonymous usage data. You can opt out at any
-                    time.
-                  </p>
-                  <div class="settings-row">
-                    <div class="settings-label-group">
-                      <label class="settings-label">Anonymous usage analytics</label>
-                      <span class="settings-label-hint"
-                        >Help improve Chattio by sharing usage statistics</span
-                      >
-                    </div>
-                    <label class="switch">
-                      <input type="checkbox" id="analytics-toggle" checked />
-                      <span class="slider"></span>
-                    </label>
-                  </div>
-                  <div class="settings-info-box">
-                    <p>
-                      <strong>What we collect:</strong> Basic usage events like app launches,
-                      feature usage, and error reports.
-                      <strong>What we never collect:</strong> Message content, personal information,
-                      login credentials, or any data that could identify you.
+                <div class="settings-shell">
+                  <div class="settings-hero">
+                    <p class="settings-eyebrow">Privacy by design</p>
+                    <h2 class="settings-title">Apps & Notifications</h2>
+                    <p class="settings-subtitle">
+                      Your messages stay on your device. Chattio never stores your data or
+                      credentials—we just bridge the official web apps together.
                     </p>
+                  </div>
+
+                  <div class="settings-section-group">
+                    <h3 class="settings-section-title">Privacy & Data</h3>
+                    <div class="settings-cards">
+                      <div class="settings-card-mini">
+                        <div class="settings-card-icon">🔒</div>
+                        <div class="settings-card-content">
+                          <strong>Direct Web Integration</strong>
+                          <p>Official web apps embedded in a webview. No interception.</p>
+                        </div>
+                      </div>
+                      <div class="settings-card-mini">
+                        <div class="settings-card-icon">🔑</div>
+                        <div class="settings-card-content">
+                          <strong>No Credential Storage</strong>
+                          <p>Login handled entirely by each service. We never touch passwords.</p>
+                        </div>
+                      </div>
+                      <div class="settings-card-mini">
+                        <div class="settings-card-icon">🚫</div>
+                        <div class="settings-card-content">
+                          <strong>No Message Storage</strong>
+                          <p>All communication goes directly to service providers.</p>
+                        </div>
+                      </div>
+                      <div class="settings-card-mini">
+                        <div class="settings-card-icon">🏠</div>
+                        <div class="settings-card-content">
+                          <strong>Local Only</strong>
+                          <p>All app data stored locally on your device. Nothing synced.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="settings-section-group">
+                    <h3 class="settings-section-title">Telemetry & Analytics</h3>
+                    <div class="settings-toggle-item">
+                      <div class="settings-toggle-label">
+                        <label class="settings-label">Anonymous usage analytics</label>
+                        <p class="settings-label-hint">
+                          Help improve Chattio by sharing usage statistics
+                        </p>
+                      </div>
+                      <label class="switch">
+                        <input type="checkbox" id="analytics-toggle" checked />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                    <div class="settings-info-box">
+                      <p>
+                        <strong>What we collect:</strong> Basic usage events like app launches and
+                        feature usage. <strong>What we never collect:</strong> Message content,
+                        personal info, or credentials.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
 
               <div id="settings-about" class="settings-panel">
-                <div class="about-header">
-                  <h1 class="about-title">About Chattio</h1>
-                  <p class="about-subtitle">Unified messenger for your favorite services.</p>
-                </div>
+                <div class="settings-shell">
+                  <div class="settings-hero">
+                    <p class="settings-eyebrow">About Chattio</p>
+                    <h2 class="settings-title">Unified messenger</h2>
+                    <p class="settings-subtitle">
+                      All your favorite messaging apps in one clean, beautiful interface. Works with
+                      Messenger, WhatsApp, Instagram, LinkedIn, X, Slack, Telegram, Discord, and
+                      Teams.
+                    </p>
+                  </div>
 
-                <div class="about-app-info">
-                  <h2 class="about-section-title">App information</h2>
-                  <div class="about-info-list">
-                    <div class="about-info-item">
-                      <span class="about-info-label">Name:</span>
-                      <span class="about-info-value">Chattio</span>
-                    </div>
-                    <div class="about-info-item">
-                      <span class="about-info-label">Version:</span>
-                      <span class="about-info-value">1.0.0</span>
-                    </div>
-                    <div class="about-info-item">
-                      <span class="about-info-label">Platform:</span>
-                      <span class="about-info-value">macOS (Electron)</span>
+                  <div class="settings-section-group">
+                    <h3 class="settings-section-title">App Information</h3>
+                    <div class="settings-cards">
+                      <div class="settings-card-mini">
+                        <div class="settings-card-icon">📱</div>
+                        <div class="settings-card-content">
+                          <strong>Version</strong>
+                          <p>1.0.0</p>
+                        </div>
+                      </div>
+                      <div class="settings-card-mini">
+                        <div class="settings-card-icon">🖥️</div>
+                        <div class="settings-card-content">
+                          <strong>Platform</strong>
+                          <p>macOS (Electron)</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div class="about-credits">
-                  <h2 class="about-section-title">Credits</h2>
-                  <p class="about-credits-text">
-                    Built by bringing together the official web apps for Messenger, WhatsApp,
-                    Instagram, Linkedin, X, Slack, Telegram, Discord, and Teams into one clean
-                    interface.
-                  </p>
+                  <div class="settings-section-group">
+                    <h3 class="settings-section-title">Updates</h3>
+                    <div class="settings-update-box">
+                      <div class="settings-update-content">
+                        <strong>Check for updates</strong>
+                        <p>Make sure you're running the latest version of Chattio.</p>
+                      </div>
+                      <button class="settings-update-button" id="check-updates-btn">
+                        ✓ Check for Updates
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

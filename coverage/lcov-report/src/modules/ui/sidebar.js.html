@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/96</span>
+                <span class='fraction'>0/100</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/30</span>
+                <span class='fraction'>0/32</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/20</span>
+                <span class='fraction'>0/22</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/89</span>
+                <span class='fraction'>0/92</span>
             </div>
         
             
@@ -241,7 +241,10 @@
 <a name='L176'></a><a href='#L176'>176</a>
 <a name='L177'></a><a href='#L177'>177</a>
 <a name='L178'></a><a href='#L178'>178</a>
-<a name='L179'></a><a href='#L179'>179</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L179'></a><a href='#L179'>179</a>
+<a name='L180'></a><a href='#L180'>180</a>
+<a name='L181'></a><a href='#L181'>181</a>
+<a name='L182'></a><a href='#L182'>182</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -273,14 +276,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -371,13 +372,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -395,8 +396,13 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -419,11 +425,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const { ipcRenderer } = <span class="cstat-no" title="statement not covered" >require('electron');</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const { ipcRenderer: _ipcRenderer } = <span class="cstat-no" title="statement not covered" >require('electron');</span>
 const { PLATFORMS } = <span class="cstat-no" title="statement not covered" >require('../../lib/config');</span>
-const appState = <span class="cstat-no" title="statement not covered" >require('../state/appState');</span>
-const unreadState = <span class="cstat-no" title="statement not covered" >require('../state/unreadState');</span>
-const logger = <span class="cstat-no" title="statement not covered" >require('../../lib/logger');</span>
+const _appState = <span class="cstat-no" title="statement not covered" >require('../state/appState');</span>
+const _unreadState = <span class="cstat-no" title="statement not covered" >require('../state/unreadState');</span>
+const _logger = <span class="cstat-no" title="statement not covered" >require('../../lib/logger');</span>
 &nbsp;
 const PLATFORM_KEYS = <span class="cstat-no" title="statement not covered" >Object.keys(PLATFORMS);</span>
 const buttonRefs = <span class="cstat-no" title="statement not covered" >new Map();</span>
@@ -437,69 +443,67 @@ function <span class="fstat-no" title="function not covered" >createPlatformButt
     &lt;img src="../public/icons/${platform}.svg" alt="${config.name}" /&gt;
     &lt;span class="tooltip"&gt;${config.name}&lt;/span&gt;
   `;
-  
+&nbsp;
 <span class="cstat-no" title="statement not covered" >  button.addEventListener('click', <span class="fstat-no" title="function not covered" >(e</span>) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    e.preventDefault();</span>
 <span class="cstat-no" title="statement not covered" >    window.openTab(e, platform);</span>
   });
-  
+&nbsp;
   // Store reference for drag and drop
 <span class="cstat-no" title="statement not covered" >  buttonRefs.set(platform, button);</span>
-  
+&nbsp;
 <span class="cstat-no" title="statement not covered" >  return button;</span>
 }
 &nbsp;
 function <span class="fstat-no" title="function not covered" >updateButtonStates(</span>) {
-  const { apps, settings } = <span class="cstat-no" title="statement not covered" >appState.getState();</span>
-  
-<span class="cstat-no" title="statement not covered" >  buttonRefs.forEach(<span class="fstat-no" title="function not covered" >(b</span>utton, platform) =&gt; {</span>
-    const isActive = <span class="cstat-no" title="statement not covered" >settings.lastActiveTab === platform;</span>
-<span class="cstat-no" title="statement not covered" >    button.classList.toggle('active', isActive);</span>
-<span class="cstat-no" title="statement not covered" >    button.classList.toggle('disabled', !apps[platform]?.enabled);</span>
-  });}
+<span class="cstat-no" title="statement not covered" >  buttonRefs.forEach(<span class="fstat-no" title="function not covered" >(b</span>tn, platform) =&gt; {</span>
+    const isEnabled = <span class="cstat-no" title="statement not covered" >_appState.apps[platform]?.enabled !== false;</span>
+<span class="cstat-no" title="statement not covered" >    btn.style.display = isEnabled ? '' : 'none';</span>
+  });
+}
 &nbsp;
 function <span class="fstat-no" title="function not covered" >setupSidebarDragAndDrop(</span>) {
   let draggedButton = <span class="cstat-no" title="statement not covered" >null;</span>
   let dragOverTimeout = <span class="cstat-no" title="statement not covered" >null;</span>
-  
+&nbsp;
   const sidebar = <span class="cstat-no" title="statement not covered" >document.querySelector('.sidebar');</span>
 <span class="cstat-no" title="statement not covered" >  if (!sidebar) <span class="cstat-no" title="statement not covered" >return;</span></span>
-  
+&nbsp;
   const handleDragStart = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(e</span>) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    draggedButton = e.target.closest('.sidebar-button');</span>
 <span class="cstat-no" title="statement not covered" >    if (!draggedButton) <span class="cstat-no" title="statement not covered" >return;</span></span>
-    
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    e.dataTransfer.effectAllowed = 'move';</span>
 <span class="cstat-no" title="statement not covered" >    e.dataTransfer.setData('text/plain', draggedButton.dataset.platform);</span>
-    
+&nbsp;
     // Add visual feedback
 <span class="cstat-no" title="statement not covered" >    setTimeout(<span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      draggedButton.classList.add('dragging');</span>
     }, 0);
   };
-  
+&nbsp;
   const handleDragOver = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(e</span>) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    e.preventDefault();</span>
 <span class="cstat-no" title="statement not covered" >    e.dataTransfer.dropEffect = 'move';</span>
-    
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    if (!draggedButton) <span class="cstat-no" title="statement not covered" >return;</span></span>
-    
+&nbsp;
     const targetButton = <span class="cstat-no" title="statement not covered" >e.target.closest('.sidebar-button');</span>
 <span class="cstat-no" title="statement not covered" >    if (!targetButton || targetButton === draggedButton) <span class="cstat-no" title="statement not covered" >return;</span></span>
-    
+&nbsp;
     // Clear any existing timeout
 <span class="cstat-no" title="statement not covered" >    if (dragOverTimeout) {</span>
 <span class="cstat-no" title="statement not covered" >      clearTimeout(dragOverTimeout);</span>
 <span class="cstat-no" title="statement not covered" >      dragOverTimeout = null;</span>
     }
-    
+&nbsp;
     // Add visual feedback for drop target
     const rect = <span class="cstat-no" title="statement not covered" >targetButton.getBoundingClientRect();</span>
     const midpoint = <span class="cstat-no" title="statement not covered" >rect.top + rect.height / 2;</span>
     const isBefore = <span class="cstat-no" title="statement not covered" >e.clientY &lt; midpoint;</span>
-    
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    targetButton.classList.add(isBefore ? 'drop-before' : 'drop-after');</span>
-    
+&nbsp;
     // Set a timeout to actually move the item
 <span class="cstat-no" title="statement not covered" >    dragOverTimeout = setTimeout(<span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      if (isBefore) {</span>
@@ -511,25 +515,25 @@ function <span class="fstat-no" title="function not covered" >setupSidebarDragAn
 <span class="cstat-no" title="statement not covered" >      targetButton.classList.remove('drop-before', 'drop-after');</span>
     }, 300);
   };
-  
+&nbsp;
   const handleDragEnd = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    if (dragOverTimeout) {</span>
 <span class="cstat-no" title="statement not covered" >      clearTimeout(dragOverTimeout);</span>
 <span class="cstat-no" title="statement not covered" >      dragOverTimeout = null;</span>
     }
-    
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    if (draggedButton) {</span>
 <span class="cstat-no" title="statement not covered" >      draggedButton.classList.remove('dragging');</span>
-      
+&nbsp;
       // Remove any leftover drop indicators
-<span class="cstat-no" title="statement not covered" >      document.querySelectorAll('.sidebar-button').forEach(<span class="fstat-no" title="function not covered" >bt</span>n =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      document.querySelectorAll('.sidebar-button').forEach(<span class="fstat-no" title="function not covered" >(b</span>tn) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >        btn.classList.remove('drop-before', 'drop-after');</span>
       });
-      
+&nbsp;
 <span class="cstat-no" title="statement not covered" >      draggedButton = null;</span>
     }
   };
-  
+&nbsp;
   // Add event listeners
 <span class="cstat-no" title="statement not covered" >  sidebar.addEventListener('dragstart', handleDragStart);</span>
 <span class="cstat-no" title="statement not covered" >  sidebar.addEventListener('dragover', handleDragOver);</span>
@@ -539,48 +543,53 @@ function <span class="fstat-no" title="function not covered" >setupSidebarDragAn
     }
   });
 <span class="cstat-no" title="statement not covered" >  document.addEventListener('dragend', handleDragEnd);</span>
-  
+&nbsp;
   // Make buttons draggable
-<span class="cstat-no" title="statement not covered" >  document.querySelectorAll('.sidebar-button').forEach(<span class="fstat-no" title="function not covered" >bu</span>tton =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >  document.querySelectorAll('.sidebar-button').forEach(<span class="fstat-no" title="function not covered" >(b</span>utton) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    button.draggable = true;</span>
   });
 }
 &nbsp;
 function <span class="fstat-no" title="function not covered" >saveSidebarOrder(</span>) {
-  const buttons = <span class="cstat-no" title="statement not covered" >Array.from(document.querySelectorAll('.sidebar-button'));</span>
-  const order = <span class="cstat-no" title="statement not covered" >buttons.map(<span class="fstat-no" title="function not covered" >bu</span>tton =&gt; <span class="cstat-no" title="statement not covered" >button.dataset.platform)</span>;</span>
-  
-<span class="cstat-no" title="statement not covered" >  appState.updateState(<span class="fstat-no" title="function not covered" >st</span>ate =&gt; (<span class="cstat-no" title="statement not covered" >{</span></span>
-    ...state,
-    order: [...new Set([...order, ...PLATFORM_KEYS])].filter(<span class="fstat-no" title="function not covered" >pl</span>atform =&gt; 
-<span class="cstat-no" title="statement not covered" >      PLATFORM_KEYS.includes(platform)</span>
-    )
-  }));
+  const buttons = <span class="cstat-no" title="statement not covered" >Array.from(buttonRefs.values())</span>
+    .filter(<span class="fstat-no" title="function not covered" >(b</span>tn) =&gt; <span class="cstat-no" title="statement not covered" >btn.style.display !== 'none')</span>
+    .map(<span class="fstat-no" title="function not covered" >(b</span>tn) =&gt; <span class="cstat-no" title="statement not covered" >btn.dataset.platform)</span>;
+&nbsp;
+  // Update _appState with new order
+<span class="cstat-no" title="statement not covered" >  _appState.order = buttons;</span>
+&nbsp;
+  // Save to storage
+<span class="cstat-no" title="statement not covered" >  localStorage.setItem('chatterly-sidebar-order', JSON.stringify(buttons));</span>
 }
 &nbsp;
 function <span class="fstat-no" title="function not covered" >renderSidebar(</span>) {
   const sidebar = <span class="cstat-no" title="statement not covered" >document.querySelector('.sidebar');</span>
 <span class="cstat-no" title="statement not covered" >  if (!sidebar) <span class="cstat-no" title="statement not covered" >return;</span></span>
-  
-  // Clear existing buttons
-<span class="cstat-no" title="statement not covered" >  sidebar.innerHTML = '';</span>
-  
-  // Get current state
-  const { order, apps } = <span class="cstat-no" title="statement not covered" >appState.getState();</span>
-  
-  // Create buttons in the specified order
-<span class="cstat-no" title="statement not covered" >  order.forEach(<span class="fstat-no" title="function not covered" >pl</span>atform =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    if (PLATFORMS[platform]) {</span>
+&nbsp;
+  // Clear existing buttons (except welcome and settings)
+  const existingButtons = <span class="cstat-no" title="statement not covered" >sidebar.querySelectorAll(</span>
+    '.sidebar-button:not([data-platform="welcome"]):not([data-platform="settings"])'
+  );
+<span class="cstat-no" title="statement not covered" >  existingButtons.forEach(<span class="fstat-no" title="function not covered" >(b</span>tn) =&gt; <span class="cstat-no" title="statement not covered" >btn.remove())</span>;</span>
+&nbsp;
+  // Get saved order or use default
+  const savedOrder = <span class="cstat-no" title="statement not covered" >JSON.parse(localStorage.getItem('chatterly-sidebar-order') || '[]');</span>
+  const orderedPlatforms = <span class="cstat-no" title="statement not covered" >savedOrder.filter(<span class="fstat-no" title="function not covered" >(p</span>latform) =&gt; <span class="cstat-no" title="statement not covered" >PLATFORM_KEYS.includes(platform))</span>;</span>
+  const remainingPlatforms = <span class="cstat-no" title="statement not covered" >PLATFORM_KEYS.filter(<span class="fstat-no" title="function not covered" >(p</span>latform) =&gt; <span class="cstat-no" title="statement not covered" >!savedOrder.includes(platform))</span>;</span>
+  const finalOrder = <span class="cstat-no" title="statement not covered" >[...orderedPlatforms, ...remainingPlatforms];</span>
+&nbsp;
+  // Create and append buttons in order
+<span class="cstat-no" title="statement not covered" >  finalOrder.forEach(<span class="fstat-no" title="function not covered" >(p</span>latform) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    if (_appState.apps[platform]?.enabled !== false) {</span>
       const button = <span class="cstat-no" title="statement not covered" >createPlatformButton(platform, PLATFORMS[platform]);</span>
-<span class="cstat-no" title="statement not covered" >      if (apps[platform]?.enabled !== false) {</span>
-<span class="cstat-no" title="statement not covered" >        sidebar.appendChild(button);</span>
-      }
+<span class="cstat-no" title="statement not covered" >      sidebar.insertBefore(button, document.querySelector('.settings-button'));</span>
+<span class="cstat-no" title="statement not covered" >      buttonRefs.set(platform, button);</span>
     }
   });
-  
+&nbsp;
   // Set up drag and drop
 <span class="cstat-no" title="statement not covered" >  setupSidebarDragAndDrop();</span>
-  
+&nbsp;
   // Update button states
 <span class="cstat-no" title="statement not covered" >  updateButtonStates();</span>
 }
@@ -595,7 +604,7 @@ function <span class="fstat-no" title="function not covered" >renderSidebar(</sp
 <span class="cstat-no" title="statement not covered" >module.exports = {</span>
   renderSidebar,
   updateButtonStates,
-  getButtonRefs: <span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >buttonRefs</span>
+  getButtonRefs: <span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >buttonRefs,</span>
 };
 &nbsp;</pre></td></tr></table></pre>
 
@@ -604,7 +613,7 @@ function <span class="fstat-no" title="function not covered" >renderSidebar(</sp
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-09T22:23:43.640Z
+                at 2025-12-18T18:51:25.370Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
