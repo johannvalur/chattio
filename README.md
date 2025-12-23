@@ -284,3 +284,5 @@ MIT
 ## Credits
 
 Created with ❤️ using Electron
+
+<!-- Trigger CI/CD update -->
