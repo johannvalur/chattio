@@ -151,7 +151,7 @@ jobs:
     runs-on: macos-latest
     env:
       APPLE_ID: ${{ secrets.APPLE_ID }}
-      APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+      APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
       APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
       CSC_NAME: ${{ secrets.CSC_NAME }}
       CSC_LINK: ${{ secrets.CSC_LINK }}
