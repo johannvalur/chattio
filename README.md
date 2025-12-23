@@ -285,4 +285,4 @@ MIT
 
 Created with ❤️ using Electron
 
-<!-- Trigger CI/CD update -->
+<!-- Notarization configured -->
