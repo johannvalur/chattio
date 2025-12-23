@@ -170,12 +170,12 @@ jobs:
         run: npm run dist:mac
       - name: Run sync
         run: npm run sync:downloads
-      - name: Skip artifact upload (storage limit reached)
-        if: true == false  # Temporarily disabled due to storage limits
-        run: |
-          echo "Skipping artifact upload due to storage limits"
-          echo "Build artifacts are available in the 'dist' directory"
-          ls -la dist/
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac-build
+          path: dist/
+          retention-days: 1
 
   deploy:
     needs: [build-win, build-mac]
