@@ -16,6 +16,36 @@ let unreadState = PLATFORM_KEYS.reduce((state, platform) => {
 let lastNotificationTime = 0;
 let lastNotificationSnapshot = 0;
 
+// Check if Do Not Disturb is active
+function isDoNotDisturbActive(settings) {
+  // If DND is manually enabled, always active
+  if (settings.doNotDisturb) {
+    return true;
+  }
+
+  // Check scheduled DND
+  if (!settings.doNotDisturbSchedule) {
+    return false;
+  }
+
+  const now = new Date();
+  const currentTime = now.getHours() * 60 + now.getMinutes();
+
+  const [startHour, startMin] = (settings.doNotDisturbStart || '22:00').split(':').map(Number);
+  const [endHour, endMin] = (settings.doNotDisturbEnd || '08:00').split(':').map(Number);
+
+  const startTime = startHour * 60 + startMin;
+  const endTime = endHour * 60 + endMin;
+
+  // Handle overnight DND period (e.g., 22:00 to 08:00)
+  if (startTime > endTime) {
+    return currentTime >= startTime || currentTime < endTime;
+  }
+
+  // Handle same-day DND period (e.g., 12:00 to 14:00)
+  return currentTime >= startTime && currentTime < endTime;
+}
+
 function updateUnreadSummary() {
   try {
     const unreadEntries = Object.entries(unreadState).filter(
@@ -41,8 +71,12 @@ function updateUnreadSummary() {
       });
     }
 
+    // Check if notifications should be sent
+    const shouldNotify =
+      settings.globalNotifications && !isDoNotDisturbActive(settings) && totalMessages > 0;
+
     // Send native notification if enabled and there are unread messages
-    if (settings.globalNotifications && totalMessages > 0) {
+    if (shouldNotify) {
       if (totalMessages > lastNotificationSnapshot) {
         sendNativeNotification(unreadEntries, totalMessages);
         lastNotificationSnapshot = totalMessages;
@@ -66,12 +100,22 @@ function sendNativeNotification(unreadEntries, totalMessages) {
   lastNotificationTime = now;
 
   try {
-    const notification = new Notification('New Messages', {
-      body:
+    const { settings } = appState.getState();
+
+    // Prepare notification body based on preview setting
+    let body;
+    if (settings.notificationPreview !== false) {
+      body =
         unreadEntries.length === 1
           ? `${totalMessages} new message${totalMessages > 1 ? 's' : ''} in ${unreadEntries[0][0]}`
-          : `${totalMessages} new messages across ${unreadEntries.length} services`,
-      silent: true,
+          : `${totalMessages} new messages across ${unreadEntries.length} services`;
+    } else {
+      body = 'You have new messages';
+    }
+
+    const notification = new Notification('New Messages', {
+      body,
+      silent: settings.notificationSounds === false,
     });
 
     notification.onclick = () => {

@@ -1931,6 +1931,113 @@ body.theme-dark .support-modal-close {
   gap: 14px;
 }
 
+.settings-app-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.settings-app-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.settings-app-card:hover {
+  border-color: #0f6fff;
+  box-shadow: 0 4px 12px rgba(15, 111, 255, 0.1);
+}
+
+.settings-app-card.disabled {
+  opacity: 0.5;
+  background: #f9fafb;
+}
+
+.settings-app-card.disabled:hover {
+  border-color: #e5e7eb;
+  box-shadow: none;
+}
+
+.settings-app-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #f3f4f6;
+  padding: 6px;
+}
+
+.settings-app-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+body.theme-dark .settings-app-icon {
+  background: #374151;
+}
+
+.settings-app-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0a0a0a;
+  text-align: center;
+}
+
+.settings-app-toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.settings-app-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.settings-app-toggle-row .switch {
+  transform: scale(0.75);
+  transform-origin: right center;
+}
+
+body.theme-dark .settings-app-card {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+body.theme-dark .settings-app-card:hover {
+  border-color: #0f6fff;
+}
+
+body.theme-dark .settings-app-card.disabled {
+  background: #111827;
+  opacity: 0.6;
+}
+
+body.theme-dark .settings-app-name {
+  color: #f9fafb;
+}
+
+body.theme-dark .settings-app-toggle-row {
+  color: #9ca3af;
+}
+
 .settings-card-mini {
   background: #ffffff;
   border: 1px solid #e5e7eb;

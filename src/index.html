@@ -98,6 +98,13 @@
               </button>
               <button
                 class="settings-tab"
+                data-settings-tab="privacy"
+                onclick="openSettingsTab('privacy')"
+              >
+                Privacy
+              </button>
+              <button
+                class="settings-tab"
                 data-settings-tab="performance"
                 onclick="openSettingsTab('performance')"
               >
@@ -321,8 +328,81 @@
               <div id="settings-notifications" class="settings-panel">
                 <div class="settings-shell">
                   <div class="settings-hero">
-                    <p class="settings-eyebrow">Privacy by design</p>
+                    <p class="settings-eyebrow">Stay connected</p>
                     <h2 class="settings-title">Apps & Notifications</h2>
+                    <p class="settings-subtitle">
+                      Control which apps you use and how you get notified. Changes apply instantly.
+                    </p>
+                  </div>
+
+                  <div class="settings-section-group">
+                    <h3 class="settings-section-title">Notification Settings</h3>
+
+                    <div class="settings-toggle-item">
+                      <div class="settings-toggle-label">
+                        <label class="settings-label">Enable notifications</label>
+                        <p class="settings-label-hint">
+                          Show desktop notifications for new messages
+                        </p>
+                      </div>
+                      <label class="switch">
+                        <input type="checkbox" id="global-notifications-toggle" checked />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+
+                    <div class="settings-toggle-item">
+                      <div class="settings-toggle-label">
+                        <label class="settings-label">Badge dock icon</label>
+                        <p class="settings-label-hint">Show unread count badge</p>
+                      </div>
+                      <label class="switch">
+                        <input type="checkbox" id="badge-dock-icon-toggle" checked />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+
+                    <div class="settings-toggle-item">
+                      <div class="settings-toggle-label">
+                        <label class="settings-label">Sounds & preview</label>
+                        <p class="settings-label-hint">Play sounds and show message content</p>
+                      </div>
+                      <label class="switch">
+                        <input type="checkbox" id="notification-sounds-toggle" checked />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+
+                    <div class="settings-toggle-item">
+                      <div class="settings-toggle-label">
+                        <label class="settings-label">Do Not Disturb</label>
+                        <p class="settings-label-hint">Silence all notifications</p>
+                      </div>
+                      <label class="switch">
+                        <input type="checkbox" id="dnd-toggle" />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="settings-section-group">
+                    <h3 class="settings-section-title">Active Apps</h3>
+                    <p class="settings-label-hint" style="margin-bottom: 16px">
+                      Toggle apps on or off. Hidden apps won't appear in your sidebar.
+                    </p>
+
+                    <div id="app-settings-grid" class="settings-app-grid">
+                      <!-- Dynamically populated with app cards -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="settings-privacy" class="settings-panel">
+                <div class="settings-shell">
+                  <div class="settings-hero">
+                    <p class="settings-eyebrow">Privacy by design</p>
+                    <h2 class="settings-title">Privacy & Security</h2>
                     <p class="settings-subtitle">
                       Your messages stay on your device. Chattio never stores your data or
                       credentials—we just bridge the official web apps together.
@@ -330,7 +410,7 @@
                   </div>
 
                   <div class="settings-section-group">
-                    <h3 class="settings-section-title">Privacy & Data</h3>
+                    <h3 class="settings-section-title">How It Works</h3>
                     <div class="settings-cards">
                       <div class="settings-card-mini">
                         <div class="settings-card-icon">🔒</div>
@@ -364,7 +444,7 @@
                   </div>
 
                   <div class="settings-section-group">
-                    <h3 class="settings-section-title">Telemetry & Analytics</h3>
+                    <h3 class="settings-section-title">Analytics</h3>
                     <div class="settings-toggle-item">
                       <div class="settings-toggle-label">
                         <label class="settings-label">Anonymous usage analytics</label>

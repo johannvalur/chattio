@@ -712,6 +712,78 @@ function setupGlobalSettings() {
       });
     }
 
+    // Notification sounds toggle
+    const notificationSoundsToggle = document.getElementById('notification-sounds-toggle');
+    if (notificationSoundsToggle) {
+      notificationSoundsToggle.checked = appState.settings.notificationSounds !== false;
+      notificationSoundsToggle.addEventListener('change', (e) => {
+        appState.settings.notificationSounds = e.target.checked;
+        saveAppState();
+        logger.log(`Notification sounds ${e.target.checked ? 'enabled' : 'disabled'}`);
+      });
+    }
+
+    // Notification preview toggle
+    const notificationPreviewToggle = document.getElementById('notification-preview-toggle');
+    if (notificationPreviewToggle) {
+      notificationPreviewToggle.checked = appState.settings.notificationPreview !== false;
+      notificationPreviewToggle.addEventListener('change', (e) => {
+        appState.settings.notificationPreview = e.target.checked;
+        saveAppState();
+        logger.log(`Notification preview ${e.target.checked ? 'enabled' : 'disabled'}`);
+      });
+    }
+
+    // Do Not Disturb toggle
+    const dndToggle = document.getElementById('dnd-toggle');
+    if (dndToggle) {
+      dndToggle.checked = appState.settings.doNotDisturb === true;
+      dndToggle.addEventListener('change', (e) => {
+        appState.settings.doNotDisturb = e.target.checked;
+        saveAppState();
+        logger.log(`Do Not Disturb ${e.target.checked ? 'enabled' : 'disabled'}`);
+        updateUnreadSummary(); // Update notifications immediately
+      });
+    }
+
+    // Do Not Disturb schedule toggle
+    const dndScheduleToggle = document.getElementById('dnd-schedule-toggle');
+    const dndScheduleSettings = document.getElementById('dnd-schedule-settings');
+    if (dndScheduleToggle) {
+      dndScheduleToggle.checked = appState.settings.doNotDisturbSchedule === true;
+      if (dndScheduleSettings) {
+        dndScheduleSettings.style.display = dndScheduleToggle.checked ? 'block' : 'none';
+      }
+      dndScheduleToggle.addEventListener('change', (e) => {
+        appState.settings.doNotDisturbSchedule = e.target.checked;
+        saveAppState();
+        if (dndScheduleSettings) {
+          dndScheduleSettings.style.display = e.target.checked ? 'block' : 'none';
+        }
+        logger.log(`Do Not Disturb schedule ${e.target.checked ? 'enabled' : 'disabled'}`);
+      });
+    }
+
+    // DND schedule time pickers
+    const dndStartTime = document.getElementById('dnd-start-time');
+    const dndEndTime = document.getElementById('dnd-end-time');
+    if (dndStartTime) {
+      dndStartTime.value = appState.settings.doNotDisturbStart || '22:00';
+      dndStartTime.addEventListener('change', (e) => {
+        appState.settings.doNotDisturbStart = e.target.value;
+        saveAppState();
+        logger.log(`DND start time set to ${e.target.value}`);
+      });
+    }
+    if (dndEndTime) {
+      dndEndTime.value = appState.settings.doNotDisturbEnd || '08:00';
+      dndEndTime.addEventListener('change', (e) => {
+        appState.settings.doNotDisturbEnd = e.target.value;
+        saveAppState();
+        logger.log(`DND end time set to ${e.target.value}`);
+      });
+    }
+
     const telemetryToggle = document.getElementById('telemetry-toggle');
     if (telemetryToggle) {
       telemetryToggle.checked = appState.settings.telemetry;
@@ -721,6 +793,15 @@ function setupGlobalSettings() {
         logger.log(`Telemetry ${e.target.checked ? 'enabled' : 'disabled'}`);
       });
     }
+
+    // Initialize per-app notification settings
+    initializePerAppNotifications();
+
+    // Initialize app visibility settings
+    initializeAppVisibility();
+
+    // Initialize unified app settings grid
+    initializeAppSettings();
 
     // Theme chips
     const themeChips = document.querySelectorAll('.settings-chip[data-theme]');
@@ -817,6 +898,173 @@ function updateNotificationToggles() {
     if (notificationToggle && appToggle) {
       notificationToggle.disabled = !appToggle.checked;
     }
+  });
+}
+
+// Initialize per-app notification settings
+function initializePerAppNotifications() {
+  const container = document.getElementById('per-app-notifications-container');
+  if (!container) return;
+
+  container.innerHTML = '';
+
+  Object.keys(appState.apps).forEach((platform) => {
+    const app = appState.apps[platform];
+    const platformConfig = PLATFORMS[platform];
+
+    // Skip platforms that are not in the current PLATFORMS config
+    if (!platformConfig) {
+      return;
+    }
+
+    const platformName =
+      platformConfig.name || platform.charAt(0).toUpperCase() + platform.slice(1);
+
+    const toggleItem = document.createElement('div');
+    toggleItem.className = 'settings-toggle-item';
+    toggleItem.innerHTML = `
+      <div class="settings-toggle-label">
+        <label class="settings-label">${platformName}</label>
+        <p class="settings-label-hint">Enable notifications for ${platformName}</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" data-app="${platform}" data-toggle="notifications" ${app.notifications !== false ? 'checked' : ''} />
+        <span class="slider"></span>
+      </label>
+    `;
+
+    const toggle = toggleItem.querySelector('input');
+    toggle.addEventListener('change', (e) => {
+      appState.apps[platform].notifications = e.target.checked;
+      saveAppState();
+      logger.log(`${platformName} notifications ${e.target.checked ? 'enabled' : 'disabled'}`);
+      updateUnreadSummary(); // Update badge/notifications immediately
+    });
+
+    container.appendChild(toggleItem);
+  });
+}
+
+// Initialize app visibility settings
+function initializeAppVisibility() {
+  const container = document.getElementById('app-visibility-container');
+  if (!container) return;
+
+  container.innerHTML = '';
+
+  Object.keys(appState.apps).forEach((platform) => {
+    const app = appState.apps[platform];
+    const platformConfig = PLATFORMS[platform];
+
+    // Skip platforms that are not in the current PLATFORMS config
+    if (!platformConfig) {
+      return;
+    }
+
+    const platformName =
+      platformConfig.name || platform.charAt(0).toUpperCase() + platform.slice(1);
+
+    const toggleItem = document.createElement('div');
+    toggleItem.className = 'settings-toggle-item';
+    toggleItem.innerHTML = `
+      <div class="settings-toggle-label">
+        <label class="settings-label">${platformName}</label>
+        <p class="settings-label-hint">Show ${platformName} in sidebar</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" data-app="${platform}" data-toggle="visibility" ${app.enabled !== false ? 'checked' : ''} />
+        <span class="slider"></span>
+      </label>
+    `;
+
+    const toggle = toggleItem.querySelector('input');
+    toggle.addEventListener('change', (e) => {
+      appState.apps[platform].enabled = e.target.checked;
+      saveAppState();
+      logger.log(`${platformName} ${e.target.checked ? 'shown' : 'hidden'}`);
+      updateSidebarVisibility(); // Update sidebar immediately
+    });
+
+    container.appendChild(toggleItem);
+  });
+}
+
+// Initialize unified app settings grid
+function initializeAppSettings() {
+  const container = document.getElementById('app-settings-grid');
+  if (!container) return;
+
+  container.innerHTML = '';
+
+  Object.keys(appState.apps).forEach((platform) => {
+    const app = appState.apps[platform];
+    const platformConfig = PLATFORMS[platform];
+
+    // Skip platforms that are not in the current PLATFORMS config
+    if (!platformConfig) {
+      return;
+    }
+
+    const platformName =
+      platformConfig.name || platform.charAt(0).toUpperCase() + platform.slice(1);
+    const iconPath = platformConfig.icon
+      ? `../public/icons/${platformConfig.icon}`
+      : '../public/icons/messenger.png';
+
+    const card = document.createElement('div');
+    card.className = `settings-app-card ${app.enabled === false ? 'disabled' : ''}`;
+    card.setAttribute('data-platform', platform);
+
+    card.innerHTML = `
+      <div class="settings-app-icon"><img src="${iconPath}" alt="${platformName}" /></div>
+      <div class="settings-app-name">${platformName}</div>
+      <div class="settings-app-toggles">
+        <div class="settings-app-toggle-row">
+          <span>Show</span>
+          <label class="switch">
+            <input type="checkbox" data-app="${platform}" data-toggle="visibility" ${app.enabled !== false ? 'checked' : ''} />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="settings-app-toggle-row">
+          <span>Notify</span>
+          <label class="switch">
+            <input type="checkbox" data-app="${platform}" data-toggle="notifications" ${app.notifications !== false ? 'checked' : ''} />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    `;
+
+    // Add event listeners
+    const visibilityToggle = card.querySelector('[data-toggle="visibility"]');
+    const notificationToggle = card.querySelector('[data-toggle="notifications"]');
+
+    visibilityToggle.addEventListener('change', (e) => {
+      e.stopPropagation();
+      appState.apps[platform].enabled = e.target.checked;
+      saveAppState();
+      logger.log(`${platformName} ${e.target.checked ? 'shown' : 'hidden'}`);
+
+      // Update card appearance
+      if (e.target.checked) {
+        card.classList.remove('disabled');
+      } else {
+        card.classList.add('disabled');
+      }
+
+      updateSidebarVisibility(); // Update sidebar immediately
+    });
+
+    notificationToggle.addEventListener('change', (e) => {
+      e.stopPropagation();
+      appState.apps[platform].notifications = e.target.checked;
+      saveAppState();
+      logger.log(`${platformName} notifications ${e.target.checked ? 'enabled' : 'disabled'}`);
+      updateUnreadSummary(); // Update badge/notifications immediately
+    });
+
+    container.appendChild(card);
   });
 }
 
