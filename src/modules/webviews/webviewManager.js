@@ -1,14 +1,31 @@
 const { ipcRenderer } = require('electron');
 const { PLATFORMS: _PLATFORMS, CHROME_USER_AGENT } = require('../../lib/config');
 const logger = require('../../lib/logger');
+const telemetry = require('../../lib/telemetry');
+const performanceSettings = require('../../lib/performanceSettings');
 
 class WebviewManager {
   constructor() {
     this.webviews = new Map(); // Stores { instance, lastActive, config }
     this.activeWebview = null;
     this.inactivityTimeouts = new Map();
-    this.INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+    this.updateSettingsFromConfig();
     this.initialize();
+
+    // Listen for performance settings changes
+    performanceSettings.onChange((settings) => {
+      this.updateSettingsFromConfig();
+    });
+  }
+
+  updateSettingsFromConfig() {
+    const settings = performanceSettings.getAll();
+    this.MAX_ACTIVE_WEBVIEWS = settings.maxActiveWebviews || 3;
+    this.INACTIVITY_TIMEOUT = performanceSettings.getInactivityTimeoutMs();
+    logger.info('WebView manager settings updated:', {
+      maxActive: this.MAX_ACTIVE_WEBVIEWS,
+      timeout: this.INACTIVITY_TIMEOUT,
+    });
   }
 
   initialize() {
@@ -57,6 +74,12 @@ class WebviewManager {
 
   setupWebviewEvents(webview, platform, config) {
     const { url: _url, preloadScript, customCSS } = config;
+    let loadStartTime = null;
+
+    // Track when webview starts loading
+    webview.addEventListener('did-start-loading', () => {
+      loadStartTime = Date.now();
+    });
 
     // Load the webview when added to DOM
     webview.addEventListener('dom-ready', () => {
@@ -125,6 +148,11 @@ class WebviewManager {
     });
 
     webview.addEventListener('did-stop-loading', () => {
+      if (loadStartTime) {
+        const loadTime = Date.now() - loadStartTime;
+        telemetry.trackWebviewLoad(platform, loadTime, true);
+        loadStartTime = null;
+      }
       this.emit('loading', { platform, isLoading: false });
     });
 
@@ -132,13 +160,59 @@ class WebviewManager {
     webview.addEventListener('did-fail-load', (e) => {
       if (e.errorCode !== -3) {
         // Ignore aborted page loads
+        const loadTime = loadStartTime ? Date.now() - loadStartTime : 0;
+        telemetry.trackWebviewLoad(platform, loadTime, false);
+        telemetry.trackWebviewError(platform, 'load_failed', {
+          errorCode: e.errorCode,
+          errorDescription: e.errorDescription,
+          validatedURL: e.validatedURL,
+          isMainFrame: e.isMainFrame,
+        });
         logger.error(`Failed to load ${platform}:`, e);
         this.emit('error', {
           platform,
           error: e,
           isMainFrame: e.isMainFrame,
         });
+        loadStartTime = null;
       }
+    });
+
+    // Handle crashes
+    webview.addEventListener('crashed', (e) => {
+      telemetry.trackWebviewError(platform, 'crash', {
+        killed: e.killed,
+      });
+      logger.error(`WebView crashed for ${platform}:`, e);
+      this.emit('error', {
+        platform,
+        error: { type: 'crash', ...e },
+        isMainFrame: true,
+      });
+
+      // Attempt to reload after crash
+      setTimeout(() => {
+        if (webview && !webview.isDestroyed?.()) {
+          logger.info(`Attempting to reload ${platform} after crash`);
+          webview.reload();
+        }
+      }, 2000);
+    });
+
+    // Handle unresponsive webviews
+    webview.addEventListener('unresponsive', () => {
+      telemetry.trackWebviewError(platform, 'unresponsive', {});
+      logger.warn(`WebView unresponsive for ${platform}`);
+      this.emit('error', {
+        platform,
+        error: { type: 'unresponsive' },
+        isMainFrame: true,
+      });
+    });
+
+    // Handle when webview becomes responsive again
+    webview.addEventListener('responsive', () => {
+      logger.info(`WebView responsive again for ${platform}`);
     });
   }
 
@@ -237,6 +311,7 @@ class WebviewManager {
     }
 
     logger.info(`Unloading inactive webview: ${platform}`);
+    telemetry.trackWebviewRecycle(platform, 'inactivity');
 
     // Remove from DOM
     if (webviewData.instance.parentNode) {

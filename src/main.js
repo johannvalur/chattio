@@ -1,6 +1,27 @@
 const { app, BrowserWindow, ipcMain, Menu, dialog, shell } = require('electron');
 const path = require('path');
+const fs = require('fs');
 const WindowStateManager = require('./lib/windowStateManager');
+const telemetry = require('./lib/telemetry');
+
+// Load performance settings early to apply hardware acceleration
+let hardwareAcceleration = true;
+try {
+  const userDataPath = app.getPath('userData');
+  const settingsPath = path.join(userDataPath, 'performance-settings.json');
+  if (fs.existsSync(settingsPath)) {
+    const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+    hardwareAcceleration = settings.hardwareAcceleration !== false;
+  }
+} catch (error) {
+  console.error('Failed to load hardware acceleration setting:', error);
+}
+
+// Disable hardware acceleration if configured
+if (!hardwareAcceleration) {
+  console.log('Hardware acceleration disabled by user preference');
+  app.disableHardwareAcceleration();
+}
 
 // Safely require electron-updater
 let autoUpdater;
@@ -235,6 +256,10 @@ function initializeAutoUpdates() {
 
   autoUpdater.on('update-available', (info) => {
     updateCheckInProgress = false;
+    telemetry.trackUpdateEvent('available', {
+      version: info.version,
+      manual: manualUpdateRequested,
+    });
     const buttons = ['Download & Install', 'Later'];
     dialog
       .showMessageBox(getDialogParent(), {
@@ -248,8 +273,13 @@ function initializeAutoUpdates() {
       })
       .then(({ response }) => {
         if (response === 0) {
+          telemetry.trackUpdateEvent('download_started', { version: info.version });
           autoUpdater.downloadUpdate().catch((error) => {
             console.error('Failed to download update:', error);
+            telemetry.trackUpdateEvent('download_failed', {
+              version: info.version,
+              error: error.message,
+            });
             dialog.showMessageBox(getDialogParent(), {
               type: 'error',
               title: 'Update failed',
@@ -258,6 +288,7 @@ function initializeAutoUpdates() {
             });
           });
         } else {
+          telemetry.trackUpdateEvent('download_deferred', { version: info.version });
           manualUpdateRequested = false;
         }
       });
@@ -265,6 +296,7 @@ function initializeAutoUpdates() {
 
   autoUpdater.on('update-not-available', () => {
     updateCheckInProgress = false;
+    telemetry.trackUpdateEvent('not_available', { manual: manualUpdateRequested });
     if (manualUpdateRequested) {
       dialog.showMessageBox(getDialogParent(), {
         type: 'info',
@@ -277,6 +309,7 @@ function initializeAutoUpdates() {
 
   autoUpdater.on('update-downloaded', () => {
     manualUpdateRequested = false;
+    telemetry.trackUpdateEvent('downloaded', {});
     const buttons = ['Restart Now', 'Later'];
     dialog
       .showMessageBox(getDialogParent(), {
@@ -290,13 +323,21 @@ function initializeAutoUpdates() {
       })
       .then(({ response }) => {
         if (response === 0) {
+          telemetry.trackUpdateEvent('install_started', {});
           autoUpdater.quitAndInstall();
+        } else {
+          telemetry.trackUpdateEvent('install_deferred', {});
         }
       });
   });
 
   autoUpdater.on('error', (error) => {
     updateCheckInProgress = false;
+    telemetry.trackUpdateEvent('error', {
+      error: error?.message || 'Unknown error',
+      code: error?.code,
+      manual: manualUpdateRequested,
+    });
     // Suppress 404 errors (no releases yet) and network errors for automatic checks
     const is404 =
       error?.message?.includes('404') || error?.code === 'ERR_HTTP_RESPONSE_CODE_FAILURE';
@@ -382,6 +423,7 @@ function requestUpdateCheck(isManual) {
 
   manualUpdateRequested = Boolean(isManual);
   updateCheckInProgress = true;
+  telemetry.trackUpdateEvent('checking', { manual: manualUpdateRequested });
 
   autoUpdater.checkForUpdates().catch((error) => {
     updateCheckInProgress = false;
@@ -416,6 +458,21 @@ function requestUpdateCheck(isManual) {
 
 app.whenReady().then(async () => {
   try {
+    // Setup telemetry handlers
+    telemetry.setupMainHandlers();
+
+    // Setup performance settings handler
+    ipcMain.on('save-performance-settings', (_, settings) => {
+      try {
+        const userDataPath = app.getPath('userData');
+        const settingsPath = path.join(userDataPath, 'performance-settings.json');
+        fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
+        console.log('Performance settings saved to file');
+      } catch (error) {
+        console.error('Failed to save performance settings to file:', error);
+      }
+    });
+
     await createWindow();
     initializeAutoUpdates();
     // Handle unread message count updates

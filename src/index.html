@@ -98,6 +98,13 @@
               </button>
               <button
                 class="settings-tab"
+                data-settings-tab="performance"
+                onclick="openSettingsTab('performance')"
+              >
+                Performance
+              </button>
+              <button
+                class="settings-tab"
                 data-settings-tab="about"
                 onclick="openSettingsTab('about')"
               >
@@ -377,6 +384,133 @@
                         personal info, or credentials.
                       </p>
                     </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="settings-performance" class="settings-panel">
+                <div class="settings-shell">
+                  <div class="settings-hero">
+                    <p class="settings-eyebrow">Optimize resource usage</p>
+                    <h2 class="settings-title">Performance Controls</h2>
+                    <p class="settings-subtitle">
+                      Fine-tune how Chattio manages memory and resources. Adjust these settings if
+                      you experience slowdowns with multiple services or want to optimize for your
+                      hardware.
+                    </p>
+                  </div>
+
+                  <div class="settings-section-group">
+                    <h3 class="settings-section-title">WebView Management</h3>
+
+                    <div class="settings-toggle-item">
+                      <div class="settings-toggle-label">
+                        <label class="settings-label">Maximum active services</label>
+                        <p class="settings-label-hint">
+                          Number of services kept in memory at once (others unload after timeout)
+                        </p>
+                      </div>
+                      <div class="settings-number-input">
+                        <input
+                          type="number"
+                          id="max-webviews-input"
+                          class="settings-input-number"
+                          min="2"
+                          max="10"
+                          value="3"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="settings-toggle-item">
+                      <div class="settings-toggle-label">
+                        <label class="settings-label">Inactivity timeout</label>
+                        <p class="settings-label-hint">
+                          Minutes before inactive services are unloaded (1-30 minutes)
+                        </p>
+                      </div>
+                      <div class="settings-number-input">
+                        <input
+                          type="number"
+                          id="inactivity-timeout-input"
+                          class="settings-input-number"
+                          min="1"
+                          max="30"
+                          value="5"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="settings-section-group">
+                    <h3 class="settings-section-title">Graphics & Rendering</h3>
+
+                    <div class="settings-toggle-item">
+                      <div class="settings-toggle-label">
+                        <label class="settings-label">Hardware acceleration</label>
+                        <p class="settings-label-hint">
+                          Use GPU for rendering (restart required). Disable if you experience
+                          graphics issues.
+                        </p>
+                      </div>
+                      <label class="switch">
+                        <input type="checkbox" id="hardware-accel-toggle" checked />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="settings-section-group">
+                    <h3 class="settings-section-title">Diagnostics</h3>
+
+                    <div class="settings-cards">
+                      <div class="settings-card-mini">
+                        <div class="settings-card-icon">📊</div>
+                        <div class="settings-card-content">
+                          <strong>WebView Loads</strong>
+                          <p id="webview-loads-stat">Loading...</p>
+                        </div>
+                      </div>
+                      <div class="settings-card-mini">
+                        <div class="settings-card-icon">🔄</div>
+                        <div class="settings-card-content">
+                          <strong>Recycle Events</strong>
+                          <p id="recycle-events-stat">Loading...</p>
+                        </div>
+                      </div>
+                      <div class="settings-card-mini">
+                        <div class="settings-card-icon">⚠️</div>
+                        <div class="settings-card-content">
+                          <strong>Errors</strong>
+                          <p id="errors-stat">Loading...</p>
+                        </div>
+                      </div>
+                      <div class="settings-card-mini">
+                        <div class="settings-card-icon">⏱️</div>
+                        <div class="settings-card-content">
+                          <strong>Avg Load Time</strong>
+                          <p id="avg-load-time-stat">Loading...</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="settings-update-box">
+                      <div class="settings-update-content">
+                        <strong>Export diagnostics</strong>
+                        <p>Download telemetry data for troubleshooting or reporting issues.</p>
+                      </div>
+                      <button class="settings-update-button" id="export-diagnostics-btn">
+                        📥 Export Data
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="settings-info-box">
+                    <p>
+                      <strong>Recommended settings:</strong> Keep defaults unless you're running 5+
+                      services or experiencing performance issues. Lower values reduce memory but
+                      may cause more frequent reloads.
+                    </p>
                   </div>
                 </div>
               </div>

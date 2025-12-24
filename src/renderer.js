@@ -2,6 +2,8 @@ const { ipcRenderer, shell } = require('electron');
 const { applyThemeToDocument } = require('./lib/theme');
 const { CHROME_USER_AGENT, PLATFORMS } = require('./lib/config');
 const logger = require('./lib/logger');
+const telemetry = require('./lib/telemetry');
+const performanceSettings = require('./lib/performanceSettings');
 
 const { collectButtonRefs, applySidebarState } = require('./lib/sidebarManager');
 
@@ -1232,6 +1234,112 @@ function openSettingsTab(tabId) {
   if (activeTab) {
     activeTab.classList.add('active');
   }
+
+  // Initialize performance tab if selected
+  if (tabId === 'performance') {
+    initializePerformanceTab();
+  }
+}
+
+function initializePerformanceTab() {
+  // Load current settings
+  const settings = performanceSettings.getAll();
+
+  // Set input values
+  const maxWebviewsInput = document.getElementById('max-webviews-input');
+  const inactivityTimeoutInput = document.getElementById('inactivity-timeout-input');
+  const hardwareAccelToggle = document.getElementById('hardware-accel-toggle');
+
+  if (maxWebviewsInput) {
+    maxWebviewsInput.value = settings.maxActiveWebviews || 3;
+    maxWebviewsInput.addEventListener('change', (e) => {
+      const value = parseInt(e.target.value, 10);
+      if (value >= 2 && value <= 10) {
+        performanceSettings.set('maxActiveWebviews', value);
+      }
+    });
+  }
+
+  if (inactivityTimeoutInput) {
+    inactivityTimeoutInput.value = settings.inactivityTimeoutMinutes || 5;
+    inactivityTimeoutInput.addEventListener('change', (e) => {
+      const value = parseInt(e.target.value, 10);
+      if (value >= 1 && value <= 30) {
+        performanceSettings.set('inactivityTimeoutMinutes', value);
+      }
+    });
+  }
+
+  if (hardwareAccelToggle) {
+    hardwareAccelToggle.checked = settings.hardwareAcceleration !== false;
+    hardwareAccelToggle.addEventListener('change', (e) => {
+      performanceSettings.set('hardwareAcceleration', e.target.checked);
+      // Show restart required message
+      alert('Hardware acceleration changes require an app restart to take effect.');
+    });
+  }
+
+  // Update diagnostics stats
+  updateDiagnosticsStats();
+
+  // Setup export button
+  const exportBtn = document.getElementById('export-diagnostics-btn');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', exportDiagnostics);
+  }
+}
+
+async function updateDiagnosticsStats() {
+  try {
+    const summary = await telemetry.requestSummary();
+
+    const webviewLoadsEl = document.getElementById('webview-loads-stat');
+    const recycleEventsEl = document.getElementById('recycle-events-stat');
+    const errorsEl = document.getElementById('errors-stat');
+    const avgLoadTimeEl = document.getElementById('avg-load-time-stat');
+
+    if (webviewLoadsEl) {
+      const total = summary.webviewStats?.totalLoads || 0;
+      const successful = summary.webviewStats?.successfulLoads || 0;
+      webviewLoadsEl.textContent = `${successful}/${total}`;
+    }
+
+    if (recycleEventsEl) {
+      const count = summary.byType?.webview_recycle || 0;
+      recycleEventsEl.textContent = count;
+    }
+
+    if (errorsEl) {
+      const count = summary.webviewErrors?.total || 0;
+      errorsEl.textContent = count;
+    }
+
+    if (avgLoadTimeEl) {
+      const avgTime = summary.webviewStats?.averageLoadTime || 0;
+      avgLoadTimeEl.textContent = `${Math.round(avgTime)}ms`;
+    }
+  } catch (error) {
+    logger.error('Failed to update diagnostics stats:', error);
+  }
+}
+
+async function exportDiagnostics() {
+  try {
+    const data = await telemetry.requestExport();
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `chattio-diagnostics-${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    logger.info('Diagnostics exported successfully');
+  } catch (error) {
+    logger.error('Failed to export diagnostics:', error);
+    alert('Failed to export diagnostics data.');
+  }
 }
 
 function setupSupportDonations() {
@@ -1304,6 +1412,12 @@ function setupSupportDonations() {
 // Make openTab available globally for onclick handlers
 window.openTab = openTab;
 window.openSettingsTab = openSettingsTab;
+
+// Initialize app on load
+(function initializeApp() {
+  // Load performance settings
+  performanceSettings.load();
+})();
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {

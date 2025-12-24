@@ -1999,6 +1999,41 @@ body.theme-dark .support-modal-close {
   color: #4b5563;
 }
 
+.settings-number-input {
+  display: flex;
+  align-items: center;
+}
+
+.settings-input-number {
+  width: 80px;
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #0a0a0a;
+  background: #ffffff;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.settings-input-number:focus {
+  outline: none;
+  border-color: #0f6fff;
+  box-shadow: 0 0 0 3px rgba(15, 111, 255, 0.1);
+}
+
+body.theme-dark .settings-input-number {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f3f4f6;
+}
+
+body.theme-dark .settings-input-number:focus {
+  border-color: #0f6fff;
+  box-shadow: 0 0 0 3px rgba(15, 111, 255, 0.15);
+}
+
 body.theme-dark .settings-hero {
   background: linear-gradient(135deg, rgba(15, 111, 255, 0.25), rgba(15, 111, 255, 0.12));
   border-color: #1f2937;
