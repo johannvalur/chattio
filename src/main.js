@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Menu, dialog, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, dialog, shell, Notification } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const WindowStateManager = require('./lib/windowStateManager');
@@ -260,6 +260,17 @@ function initializeAutoUpdates() {
       version: info.version,
       manual: manualUpdateRequested,
     });
+
+    // Show native notification for automatic checks
+    if (!manualUpdateRequested && Notification.isSupported()) {
+      const notification = new Notification({
+        title: 'Update Available',
+        body: `Chattio ${info.version} is ready to download.`,
+        silent: false,
+      });
+      notification.show();
+    }
+
     const buttons = ['Download & Install', 'Later'];
     dialog
       .showMessageBox(getDialogParent(), {
@@ -310,6 +321,17 @@ function initializeAutoUpdates() {
   autoUpdater.on('update-downloaded', () => {
     manualUpdateRequested = false;
     telemetry.trackUpdateEvent('downloaded', {});
+
+    // Show native notification
+    if (Notification.isSupported()) {
+      const notification = new Notification({
+        title: 'Update Ready to Install',
+        body: 'Chattio has been updated. Restart to apply the changes.',
+        silent: false,
+      });
+      notification.show();
+    }
+
     const buttons = ['Restart Now', 'Later'];
     dialog
       .showMessageBox(getDialogParent(), {
