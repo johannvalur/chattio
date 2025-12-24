@@ -240,7 +240,20 @@ function getPlatformHost(platform) {
 function isInternalHost(targetHost, baseHost) {
   if (!targetHost || !baseHost) return false;
   if (targetHost === baseHost) return true;
-  return targetHost.endsWith(`.${baseHost}`);
+  if (targetHost.endsWith(`.${baseHost}`)) return true;
+
+  // Allow Microsoft authentication domains for Teams
+  if (baseHost === 'teams.microsoft.com') {
+    const msAuthDomains = [
+      'login.microsoftonline.com',
+      'login.live.com',
+      'account.microsoft.com',
+      'login.windows.net',
+    ];
+    if (msAuthDomains.includes(targetHost)) return true;
+  }
+
+  return false;
 }
 
 function openExternalLink(url) {
