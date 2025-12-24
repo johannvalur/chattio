@@ -1151,6 +1151,8 @@ function saveSidebarOrder() {
 // Simple drag-and-drop reordering for sidebar icons (excluding welcome)
 let draggedButton = null;
 const dragHandlers = new WeakMap();
+let isDragging = false;
+let dragStartTime = 0;
 
 function setupSidebarDragAndDrop() {
   const sidebarMain = document.querySelector('.sidebar-main');
@@ -1193,6 +1195,8 @@ function setupSidebarDragAndDrop() {
 
       const dragStartHandler = (e) => {
         draggedButton = button;
+        isDragging = true;
+        dragStartTime = Date.now();
         e.dataTransfer.effectAllowed = 'move';
         button.style.opacity = '0.5';
         button.style.cursor = 'grabbing';
@@ -1223,12 +1227,10 @@ function setupSidebarDragAndDrop() {
         button.style.backgroundColor = '';
 
         if (!draggedButton || draggedButton === button) {
-          draggedButton = null;
           return;
         }
 
         if (button.getAttribute('data-platform') === 'welcome') {
-          draggedButton = null;
           return;
         }
 
@@ -1251,11 +1253,10 @@ function setupSidebarDragAndDrop() {
           }
           saveSidebarOrder();
           logger.log('New order:', appState.order);
-          // Re-setup drag and drop after reordering
-          setTimeout(() => setupSidebarDragAndDrop(), 50);
+          // No need to re-setup drag and drop - insertBefore preserves all event listeners
         }
 
-        draggedButton = null;
+        // Don't reset draggedButton here - let dragEndHandler clean it up
       };
       button.addEventListener('drop', dropHandler);
       handlers.push({ event: 'drop', handler: dropHandler });
@@ -1265,7 +1266,12 @@ function setupSidebarDragAndDrop() {
           draggedButton.style.opacity = '';
           draggedButton.style.cursor = 'grab';
         }
-        draggedButton = null;
+        // Reset drag state after a short delay
+        setTimeout(() => {
+          isDragging = false;
+          draggedButton = null;
+          dragStartTime = 0;
+        }, 50);
       };
       button.addEventListener('dragend', dragEndHandler);
       handlers.push({ event: 'dragend', handler: dragEndHandler });

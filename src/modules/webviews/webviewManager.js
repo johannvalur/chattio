@@ -120,11 +120,56 @@ class WebviewManager {
       });
     });
 
-    // Handle new window events (e.g., external links)
+    // Handle new window events (e.g., external links, target="_blank")
     webview.addEventListener('new-window', (e) => {
       e.preventDefault();
       if (e.url) {
+        logger.info(`Opening new window link in browser: ${e.url}`);
         ipcRenderer.send('open-external', e.url);
+      }
+    });
+
+    // Handle navigation attempts - open external links in browser
+    webview.addEventListener('will-navigate', (e) => {
+      if (!e.url) return;
+
+      try {
+        const platformHost = this.getPlatformHost(platform);
+        if (!platformHost) {
+          // No base host defined, allow navigation within webview
+          return;
+        }
+
+        const targetHost = new URL(e.url).host;
+        const isExternal = !this.isInternalHost(targetHost, platformHost);
+
+        if (isExternal) {
+          e.preventDefault();
+          logger.info(`Opening external link in browser: ${e.url}`);
+          ipcRenderer.send('open-external', e.url);
+        }
+      } catch (error) {
+        logger.error(`Failed to handle navigation for ${platform}:`, error);
+      }
+    });
+
+    // Handle in-page navigation (e.g., anchor links, hash changes)
+    webview.addEventListener('did-navigate-in-page', (e) => {
+      if (!e.url || e.isMainFrame === false) return;
+
+      try {
+        const platformHost = this.getPlatformHost(platform);
+        if (!platformHost) return;
+
+        const targetHost = new URL(e.url).host;
+        const isExternal = !this.isInternalHost(targetHost, platformHost);
+
+        if (isExternal) {
+          logger.info(`Opening in-page navigation link in browser: ${e.url}`);
+          ipcRenderer.send('open-external', e.url);
+        }
+      } catch (error) {
+        logger.error(`Failed to handle in-page navigation for ${platform}:`, error);
       }
     });
 
@@ -416,6 +461,24 @@ class WebviewManager {
       }
     }
     return null;
+  }
+
+  getPlatformHost(platform) {
+    try {
+      const platformConfig = _PLATFORMS[platform];
+      if (!platformConfig || !platformConfig.url) return null;
+      const url = new URL(platformConfig.url);
+      return url.host;
+    } catch (error) {
+      logger.warn('Failed to get platform host', platform, error);
+      return null;
+    }
+  }
+
+  isInternalHost(targetHost, baseHost) {
+    if (!targetHost || !baseHost) return false;
+    if (targetHost === baseHost) return true;
+    return targetHost.endsWith(`.${baseHost}`);
   }
 
   // Event emitter pattern
