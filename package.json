@@ -1,6 +1,6 @@
 {
   "name": "chattio",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Chattio - all-in-one messaging client for Mac",
   "main": "src/main.js",
   "scripts": {
@@ -31,7 +31,13 @@
     "pack": "electron-builder --dir",
     "dist:mac": "npm run generate-icons && npm run build && electron-builder --mac --publish never",
     "postdist:mac": "npm run sync:downloads",
-    "dist:win": "npm run generate-icons && npm run build && electron-builder --win --x64 --publish never"
+    "dist:win": "npm run generate-icons && npm run build && electron-builder --win --x64 --publish never",
+    "postdist:win": "npm run sync:downloads",
+    "release:mac": "npm run generate-icons && npm run build && electron-builder --mac --publish always",
+    "release:win": "npm run generate-icons && npm run build && electron-builder --win --x64 --publish always",
+    "version:patch": "npm version patch",
+    "version:minor": "npm version minor",
+    "version:major": "npm version major"
   },
   "keywords": [
     "messenger",
@@ -152,7 +158,8 @@
           ]
         }
       ],
-      "icon": "public/icons/icon.ico"
+      "icon": "public/icons/icon.ico",
+      "publisherName": "Chattio"
     },
     "dmg": {
       "title": "Chattio",

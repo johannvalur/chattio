@@ -28,8 +28,12 @@ const fileMap = [
     target: 'Chattio-mac-arm64.zip',
   },
   {
-    pattern: /Chattio\.exe$/i,
-    target: 'Chattio.exe',
+    pattern: /Chattio Setup [\d.]+\.exe$/i,
+    target: 'Chattio-Setup.exe',
+  },
+  {
+    pattern: /Chattio-[\d.]+-win\.exe$/i,
+    target: 'Chattio-Setup.exe',
   },
 ];
 
