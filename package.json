@@ -1,6 +1,6 @@
 {
   "name": "chattio",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Chattio - all-in-one messaging client for Mac",
   "main": "src/main.js",
   "scripts": {
