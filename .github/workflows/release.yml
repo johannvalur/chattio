@@ -31,12 +31,14 @@ jobs:
       - name: Build and release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # For macOS code signing (optional)
-          # CSC_LINK: ${{ secrets.MAC_CERT }}
-          # CSC_KEY_PASSWORD: ${{ secrets.MAC_CERT_PASSWORD }}
-          # APPLE_ID: ${{ secrets.APPLE_ID }}
-          # APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
-          # APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          # Disable auto-discovery unless secrets are configured
+          CSC_IDENTITY_AUTO_DISCOVERY: ${{ secrets.MAC_CERT != '' && 'true' || 'false' }}
+          # macOS code signing (configure secrets in repo settings)
+          CSC_LINK: ${{ secrets.MAC_CERT }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CERT_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           if [ "$RUNNER_OS" == "macOS" ]; then
             npm run release:mac
