@@ -3,7 +3,7 @@
 /**
  * Minimal static file server for Playwright e2e tests.
  *
- * Usage: node scripts/serve-chatterly.js [port] [root]
+ * Usage: node scripts/serve-chattio.js [port] [root]
  */
 
 const http = require('http');
@@ -11,7 +11,7 @@ const fs = require('fs');
 const path = require('path');
 
 const port = parseInt(process.argv[2], 10) || 4173;
-const rootDir = path.resolve(process.argv[3] || path.join(__dirname, '../chatterly'));
+const rootDir = path.resolve(process.argv[3] || path.join(__dirname, '../chattio'));
 
 const mimeTypes = {
   '.html': 'text/html; charset=utf-8',

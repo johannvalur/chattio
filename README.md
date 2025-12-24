@@ -150,7 +150,7 @@ npm run test:e2e
 npm test
 ```
 
-Unit and integration suites run under Jest + jsdom. End-to-end tests use Playwright and exercise the marketing site located in `chatterly/`.
+Unit and integration suites run under Jest + jsdom. End-to-end tests use Playwright and exercise the marketing site located in `chattio/`.
 
 ### Test runner shim
 
@@ -158,13 +158,13 @@ macOS Ventura/Sonoma mark npm-installed packages with a provenance attribute tha
 
 ### Playwright web server
 
-The Playwright config starts a thin static server (`scripts/serve-chatterly.js`) that binds explicitly to `127.0.0.1`. This avoids the `uv_interface_addresses` errors that `http-server` triggers in sandboxed environments. If you need a different port or root, pass them to the script (e.g. `node scripts/serve-chatterly.js 5000 chatterly`).
+The Playwright config starts a thin static server (`scripts/serve-chattio.js`) that binds explicitly to `127.0.0.1`. This avoids the `uv_interface_addresses` errors that `http-server` triggers in sandboxed environments. If you need a different port or root, pass them to the script (e.g. `node scripts/serve-chattio.js 5000 chattio`).
 
 > **Note:** Some CI sandboxes block binding to loopback addresses entirely and will surface `EPERM: listen 127.0.0.1`. In that case run the e2e suite on a workstation or self-hosted runner with network permissions.
 
 ## Deployment
 
-GitHub Actions (`.github/workflows/ci.yml`) runs the full test matrix on every push/pull request. Successful pushes to `main` automatically publish the static `chatterly/` bundle to GitHub Pages.
+GitHub Actions (`.github/workflows/ci.yml`) runs the full test matrix on every push/pull request. Successful pushes to `main` automatically publish the static `chattio/` bundle to GitHub Pages.
 
 ## Performance Tips
 
@@ -204,7 +204,7 @@ After any successful `dist:*` run, publish the binaries to the marketing site so
 npm run sync:downloads
 ```
 
-This copies the latest `.dmg`, `.zip`, and `.exe` artifacts from `dist/` into `chatterly/downloads/`.
+This copies the latest `.dmg`, `.zip`, and `.exe` artifacts from `dist/` into `chattio/downloads/`.
 
 ### macOS code signing & notarization
 
@@ -223,7 +223,7 @@ Without code signing, Electron Builder will emit "skipped macOS application code
 
 ## Downloads
 
-Every successful deploy on `main`/`master` builds the macOS `.dmg/.zip` and Windows `.exe` installers and places them in the static `chatterly/downloads/` directory before pushing to GitHub Pages. Visit your Pages site (e.g. `https://<your-username>.github.io/chatterly/`) and grab the latest binaries under `/downloads/`.
+Every successful deploy on `main`/`master` builds the macOS `.dmg/.zip` and Windows `.exe` installers and places them in the static `chattio/downloads/` directory before pushing to GitHub Pages. Visit your Pages site (e.g. `https://<your-username>.github.io/chattio/`) and grab the latest binaries under `/downloads/`.
 
 ## Keyboard Shortcuts
 

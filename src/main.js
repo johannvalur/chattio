@@ -229,7 +229,7 @@ function buildMenu() {
         {
           label: 'Project Website',
           click: () => {
-            shell.openExternal('https://www.chatterly.com');
+            shell.openExternal('https://www.chattio.app');
           },
         },
       ],

@@ -9,7 +9,7 @@ const { collectButtonRefs, applySidebarState } = require('./lib/sidebarManager')
 
 const PLATFORM_KEYS = Object.keys(PLATFORMS);
 
-const UNREAD_STORAGE_KEY = 'chatterly-unread-state';
+const UNREAD_STORAGE_KEY = 'chattio-unread-state';
 
 // Extended unread state for all platforms (stores counts)
 const unreadState = PLATFORM_KEYS.reduce((state, platform) => {
@@ -635,7 +635,7 @@ function isNotificationsEnabled(platform) {
 // Load app state from localStorage
 function loadAppState() {
   try {
-    const savedState = localStorage.getItem('chatterly-app-state');
+    const savedState = localStorage.getItem('chattio-app-state');
     if (savedState) {
       const parsed = JSON.parse(savedState);
       if (parsed.apps) {
@@ -656,7 +656,7 @@ function loadAppState() {
 // Save app state to localStorage
 function saveAppState() {
   try {
-    localStorage.setItem('chatterly-app-state', JSON.stringify(appState));
+    localStorage.setItem('chattio-app-state', JSON.stringify(appState));
   } catch (e) {
     logger.error('Error saving app state:', e);
   }
@@ -807,12 +807,12 @@ function setupGlobalSettings() {
     const themeChips = document.querySelectorAll('.settings-chip[data-theme]');
     themeChips.forEach((chip) => {
       const theme = chip.getAttribute('data-theme');
-      if (theme === (window.localStorage.getItem('chatterly-theme') || 'system')) {
+      if (theme === (window.localStorage.getItem('chattio-theme') || 'system')) {
         chip.classList.add('active');
       }
 
       chip.addEventListener('click', () => {
-        window.localStorage.setItem('chatterly-theme', theme);
+        window.localStorage.setItem('chattio-theme', theme);
         applyTheme(theme);
         updateThemeChips(theme);
         updateAppearanceThemeChips();
@@ -1328,7 +1328,7 @@ window.addEventListener('DOMContentLoaded', () => {
   restoreUnreadState();
 
   // Initialize order if not saved (use current HTML order)
-  if (!localStorage.getItem('chatterly-app-state')) {
+  if (!localStorage.getItem('chattio-app-state')) {
     const sidebarMain = document.querySelector('.sidebar-main');
     if (sidebarMain) {
       const buttons = Array.from(
@@ -1365,7 +1365,7 @@ window.addEventListener('DOMContentLoaded', () => {
     messengerButton.classList.remove('active');
   }
 
-  const storedTheme = window.localStorage.getItem('chatterly-theme') || 'system';
+  const storedTheme = window.localStorage.getItem('chattio-theme') || 'system';
   applyTheme(storedTheme);
   updateThemeChips(storedTheme);
 
@@ -1373,7 +1373,7 @@ window.addEventListener('DOMContentLoaded', () => {
   if (window.matchMedia) {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleSystemThemeChange = (_e) => {
-      const currentTheme = window.localStorage.getItem('chatterly-theme') || 'system';
+      const currentTheme = window.localStorage.getItem('chattio-theme') || 'system';
       if (currentTheme === 'system') {
         applyTheme('system');
       }
@@ -1385,12 +1385,12 @@ window.addEventListener('DOMContentLoaded', () => {
   const themeChips = document.querySelectorAll('.settings-chip[data-theme]');
   themeChips.forEach((chip) => {
     const theme = chip.getAttribute('data-theme');
-    if (theme === (window.localStorage.getItem('chatterly-theme') || 'system')) {
+    if (theme === (window.localStorage.getItem('chattio-theme') || 'system')) {
       chip.classList.add('settings-chip-active');
     }
 
     chip.addEventListener('click', () => {
-      window.localStorage.setItem('chatterly-theme', theme);
+      window.localStorage.setItem('chattio-theme', theme);
       applyTheme(theme);
       updateThemeChips(theme);
 
@@ -1451,7 +1451,7 @@ function updateThemeChips(theme) {
 
 function updateAppearanceThemeChips() {
   const themeChips = document.querySelectorAll('.settings-chip[data-theme]');
-  const currentTheme = window.localStorage.getItem('chatterly-theme') || 'system';
+  const currentTheme = window.localStorage.getItem('chattio-theme') || 'system';
   themeChips.forEach((chip) => {
     const theme = chip.getAttribute('data-theme');
     if (theme === currentTheme) {

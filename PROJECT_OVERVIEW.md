@@ -30,7 +30,7 @@ Chattio is a unified messaging application for Mac that combines multiple messag
 ```
 .
 ├── build/               # Build configuration and assets
-├── chatterly/          # Web assets and downloads
+├── chattio/          # Web assets and downloads
 │   └── downloads/      # Platform-specific builds
 ├── public/             # Static assets and icons
 ├── scripts/            # Build and utility scripts

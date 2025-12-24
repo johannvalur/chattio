@@ -78,7 +78,7 @@ export default defineConfig({
 
   // Web server for development
   webServer: {
-    command: `node ./scripts/serve-chatterly.js ${PORT} chatterly`,
+    command: `node ./scripts/serve-chattio.js ${PORT} chattio`,
     url: BASE_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000, // Increased timeout for server startup

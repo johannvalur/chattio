@@ -233,7 +233,7 @@ describe('appState', () => {
 
       // Check if state was saved to localStorage
       expect(localStorage.setItem).toHaveBeenCalledWith(
-        'chatterly-app-state',
+        'chattio-app-state',
         expect.stringContaining('"theme":"dark"')
       );
     });

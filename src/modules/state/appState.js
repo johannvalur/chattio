@@ -4,7 +4,7 @@ const logger = require('../../lib/logger');
 const { produce } = require('immer');
 
 const PLATFORM_KEYS = Object.keys(PLATFORMS);
-const STORAGE_KEY = 'chatterly-app-state';
+const STORAGE_KEY = 'chattio-app-state';
 
 function buildDefaultAppsState() {
   return PLATFORM_KEYS.reduce((state, platform) => {

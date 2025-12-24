@@ -290,8 +290,8 @@ jobs:
                 *Chattio-*-arm64-mac.zip)
                   cp "$file" "_site/downloads/Chattio-mac-arm64.zip"
                   ;;
-                *Chatterly.exe)
-                  cp "$file" "_site/downloads/Chatterly.exe"
+                *Chattio.exe)
+                  cp "$file" "_site/downloads/Chattio.exe"
                   ;;
                 *)
                   # Copy other files but skip directories

@@ -4,7 +4,7 @@ const appState = require('./appState');
 const logger = require('../../lib/logger');
 
 const PLATFORM_KEYS = Object.keys(PLATFORMS);
-const UNREAD_STORAGE_KEY = 'chatterly-unread-state';
+const UNREAD_STORAGE_KEY = 'chattio-unread-state';
 const NOTIFICATION_COOLDOWN = 5000; // 5 seconds between notifications
 
 // Extended unread state for all platforms (stores counts)

@@ -132,7 +132,7 @@ function saveSidebarOrder() {
   _appState.order = buttons;
 
   // Save to storage
-  localStorage.setItem('chatterly-sidebar-order', JSON.stringify(buttons));
+  localStorage.setItem('chattio-sidebar-order', JSON.stringify(buttons));
 }
 
 function renderSidebar() {
@@ -146,7 +146,7 @@ function renderSidebar() {
   existingButtons.forEach((btn) => btn.remove());
 
   // Get saved order or use default
-  const savedOrder = JSON.parse(localStorage.getItem('chatterly-sidebar-order') || '[]');
+  const savedOrder = JSON.parse(localStorage.getItem('chattio-sidebar-order') || '[]');
   const orderedPlatforms = savedOrder.filter((platform) => PLATFORM_KEYS.includes(platform));
   const remainingPlatforms = PLATFORM_KEYS.filter((platform) => !savedOrder.includes(platform));
   const finalOrder = [...orderedPlatforms, ...remainingPlatforms];

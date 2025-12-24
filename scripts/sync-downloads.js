@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Copies the latest build artifacts from dist/ into chatterly/downloads/
+ * Copies the latest build artifacts from dist/ into chattio/downloads/
  * so the marketing site can link to real installers.
  */
 
@@ -9,7 +9,7 @@ const fs = require('fs');
 const path = require('path');
 
 const distDir = path.resolve(__dirname, '../dist');
-const downloadsDir = path.resolve(__dirname, '../chatterly/downloads');
+const downloadsDir = path.resolve(__dirname, '../chattio/downloads');
 
 if (!fs.existsSync(distDir)) {
   console.error(`dist directory not found at ${distDir}`);
@@ -28,8 +28,8 @@ const fileMap = [
     target: 'Chattio-mac-arm64.zip',
   },
   {
-    pattern: /Chatterly\.exe$/i,
-    target: 'Chatterly.exe',
+    pattern: /Chattio\.exe$/i,
+    target: 'Chattio.exe',
   },
 ];
 
