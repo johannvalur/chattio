@@ -253,12 +253,23 @@ ul {
   transition: color 0.3s ease;
 }
 
+.platform-item svg.teams-icon {
+  width: 3rem;
+  height: 3rem;
+  fill: #b2bec3;
+  transition: fill 0.3s ease;
+}
+
 .platform-item:hover {
   color: var(--text-primary);
 }
 
 .platform-item:hover i {
   color: var(--accent-primary);
+}
+
+.platform-item:hover svg.teams-icon {
+  fill: var(--accent-primary);
 }
 
 /* Features Section */
