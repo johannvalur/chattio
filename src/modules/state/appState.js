@@ -19,7 +19,7 @@ const defaultState = {
   lastActiveApp: 'whatsapp',
   windowBounds: { width: 1200, height: 800, x: 0, y: 0, isMaximized: false },
   isFirstRun: false,
-  version: '1.0.3',
+  version: '1.0.4',
   settings: {
     theme: 'system',
     fontSize: 'medium',
