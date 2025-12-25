@@ -495,6 +495,11 @@ app.whenReady().then(async () => {
       }
     });
 
+    // Setup check for updates handler
+    ipcMain.on('check-for-updates', () => {
+      requestUpdateCheck(true);
+    });
+
     await createWindow();
     initializeAutoUpdates();
     // Handle unread message count updates
