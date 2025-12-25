@@ -923,6 +923,64 @@ body:not(.theme-dark) .welcome-logo-icon {
   transition: transform 0.3s ease;
 }
 
+/* Welcome Platforms Section */
+.welcome-platforms {
+  margin-top: 48px;
+  width: 100%;
+  opacity: 0;
+  animation: welcome-fade-in-slide 1s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+}
+
+.welcome-platforms-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-align: center;
+  margin: 0 0 24px 0;
+}
+
+.welcome-platforms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.welcome-platform-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 12px;
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  border-radius: 16px;
+  border: 1.5px solid #374151;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: default;
+}
+
+.welcome-platform-badge:hover {
+  transform: translateY(-2px);
+  border-color: #4b5563;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.platform-badge-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.welcome-platform-badge span {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
 .welcome-summary {
   display: flex;
   flex-direction: column;
@@ -1035,6 +1093,24 @@ body.theme-dark .welcome-feature {
   box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+body.theme-dark .welcome-platforms-title {
+  color: #9ca3af;
+}
+
+body.theme-dark .welcome-platform-badge {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  border-color: #374151;
+}
+
+body.theme-dark .welcome-platform-badge:hover {
+  border-color: #4b5563;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+body.theme-dark .welcome-platform-badge span {
+  color: #e5e7eb;
 }
 
 body.theme-dark .welcome-summary-label {
