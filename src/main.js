@@ -500,6 +500,11 @@ app.whenReady().then(async () => {
       requestUpdateCheck(true);
     });
 
+    // Handle get app version request
+    ipcMain.handle('get-app-version', () => {
+      return app.getVersion();
+    });
+
     await createWindow();
     initializeAutoUpdates();
     // Handle unread message count updates

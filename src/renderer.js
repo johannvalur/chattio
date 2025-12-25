@@ -1436,7 +1436,20 @@ window.addEventListener('DOMContentLoaded', () => {
 
   setupSupportDonations();
   setupUpdatesCheck();
+  loadAppVersion();
 });
+
+async function loadAppVersion() {
+  try {
+    const version = await ipcRenderer.invoke('get-app-version');
+    const versionElement = document.getElementById('app-version');
+    if (versionElement && version) {
+      versionElement.textContent = version;
+    }
+  } catch (error) {
+    logger.error('Failed to load app version:', error);
+  }
+}
 
 function setupUpdatesCheck() {
   const checkUpdatesBtn = document.getElementById('check-updates-btn');
