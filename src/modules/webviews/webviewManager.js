@@ -13,7 +13,7 @@ class WebviewManager {
     this.initialize();
 
     // Listen for performance settings changes
-    performanceSettings.onChange((settings) => {
+    performanceSettings.onChange(() => {
       this.updateSettingsFromConfig();
     });
   }

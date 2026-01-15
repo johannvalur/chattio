@@ -1,6 +1,6 @@
 const { ipcRenderer, shell } = require('electron');
 const { applyThemeToDocument } = require('./lib/theme');
-const { CHROME_USER_AGENT, PLATFORMS } = require('./lib/config');
+const { CHROME_USER_AGENT, PLATFORMS, IS_DEV } = require('./lib/config');
 const logger = require('./lib/logger');
 const telemetry = require('./lib/telemetry');
 const performanceSettings = require('./lib/performanceSettings');
@@ -452,7 +452,9 @@ function setupWebviews() {
     }
 
     webview.addEventListener('new-window', (event) => {
-      console.log(`[webview][${platform}] new-window event:`, event.url);
+      if (IS_DEV) {
+        logger.info(`[webview][${platform}] new-window event:`, event.url);
+      }
       if (event.url) {
         event.preventDefault();
         openExternalLink(event.url);
@@ -460,7 +462,9 @@ function setupWebviews() {
     });
 
     webview.addEventListener('will-navigate', (event) => {
-      console.log(`[webview][${platform}] will-navigate event:`, event.url);
+      if (IS_DEV) {
+        logger.info(`[webview][${platform}] will-navigate event:`, event.url);
+      }
       if (!event.url) return;
       try {
         if (!platformHost) {
@@ -481,7 +485,9 @@ function setupWebviews() {
 
     // Additional event for SPA navigation
     webview.addEventListener('did-navigate-in-page', (event) => {
-      console.log(`[webview][${platform}] did-navigate-in-page event:`, event.url);
+      if (IS_DEV) {
+        logger.info(`[webview][${platform}] did-navigate-in-page event:`, event.url);
+      }
       // Optionally, handle external navigation here if needed
     });
 
@@ -490,7 +496,9 @@ function setupWebviews() {
       // Listen for our custom console messages
       if (e.message && e.message.startsWith('CHATTIO_OPEN_EXTERNAL:')) {
         const url = e.message.replace('CHATTIO_OPEN_EXTERNAL:', '');
-        console.log(`[webview][${platform}] Opening external link from console message:`, url);
+        if (IS_DEV) {
+          logger.info(`[webview][${platform}] Opening external link from console message:`, url);
+        }
         openExternalLink(url);
       }
     });
@@ -499,7 +507,9 @@ function setupWebviews() {
     webview.addEventListener('ipc-message', (event) => {
       if (event.channel === 'open-external-link') {
         const url = event.args[0];
-        console.log(`[webview][${platform}] Opening external link from IPC message:`, url);
+        if (IS_DEV) {
+          logger.info(`[webview][${platform}] Opening external link from IPC message:`, url);
+        }
         openExternalLink(url);
       }
     });
@@ -1341,7 +1351,9 @@ function saveSidebarOrder() {
 // Simple drag-and-drop reordering for sidebar icons (excluding welcome)
 let draggedButton = null;
 const dragHandlers = new WeakMap();
+// eslint-disable-next-line no-unused-vars
 let isDragging = false;
+// eslint-disable-next-line no-unused-vars
 let dragStartTime = 0;
 
 function setupSidebarDragAndDrop() {

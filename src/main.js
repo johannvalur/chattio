@@ -132,24 +132,33 @@ async function createWindow() {
   });
 
   // Handle webview attachment - configure webview security and navigation
+  // eslint-disable-next-line no-unused-vars
   mainWindow.webContents.on('will-attach-webview', (event, webPreferences, params) => {
     // Strip away preload scripts if present
+    // eslint-disable-next-line no-param-reassign
     delete webPreferences.preload;
 
     // Disable Node.js integration in webviews for security
+    // eslint-disable-next-line no-param-reassign
     webPreferences.nodeIntegration = false;
+    // eslint-disable-next-line no-param-reassign
     webPreferences.contextIsolation = true;
 
     // Enable web security
+    // eslint-disable-next-line no-param-reassign
     webPreferences.webSecurity = true;
 
     // Allow navigation to platform URLs
-    console.log('Webview attaching with URL:', params.src);
+    if (isDev) {
+      console.log('Webview attaching with URL:', params.src);
+    }
   });
 
   // Handle new window events from webviews (backup handler)
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    console.log('Window open handler called for:', url);
+    if (isDev) {
+      console.log('Window open handler called for:', url);
+    }
     // Open in external browser
     shell.openExternal(url).catch((error) => {
       console.error('Failed to open URL in external browser:', url, error);
