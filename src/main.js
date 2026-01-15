@@ -131,6 +131,32 @@ async function createWindow() {
     }
   });
 
+  // Handle webview attachment - configure webview security and navigation
+  mainWindow.webContents.on('will-attach-webview', (event, webPreferences, params) => {
+    // Strip away preload scripts if present
+    delete webPreferences.preload;
+
+    // Disable Node.js integration in webviews for security
+    webPreferences.nodeIntegration = false;
+    webPreferences.contextIsolation = true;
+
+    // Enable web security
+    webPreferences.webSecurity = true;
+
+    // Allow navigation to platform URLs
+    console.log('Webview attaching with URL:', params.src);
+  });
+
+  // Handle new window events from webviews (backup handler)
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    console.log('Window open handler called for:', url);
+    // Open in external browser
+    shell.openExternal(url).catch((error) => {
+      console.error('Failed to open URL in external browser:', url, error);
+    });
+    return { action: 'deny' };
+  });
+
   // Open DevTools in development
   if (isDev) {
     mainWindow.webContents.openDevTools();
@@ -503,6 +529,15 @@ app.whenReady().then(async () => {
     // Handle get app version request
     ipcMain.handle('get-app-version', () => {
       return app.getVersion();
+    });
+
+    // Handle opening external links
+    ipcMain.on('open-external', (event, url) => {
+      if (url && typeof url === 'string') {
+        shell.openExternal(url).catch((error) => {
+          console.error('Failed to open external URL:', url, error);
+        });
+      }
     });
 
     await createWindow();

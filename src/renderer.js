@@ -206,8 +206,8 @@ const WEBVIEW_DEFAULTS = {
 
 // Secure webview attributes
 const SECURE_WEBVIEW_ATTRIBUTES = {
-  // Disable popups
-  allowpopups: 'false',
+  // Enable popups so new-window events fire properly
+  allowpopups: 'true',
   // Disable web security (use with caution, only if absolutely necessary)
   webpreferences: Object.entries(WEBVIEW_DEFAULTS)
     .map(([key, value]) => `${key}=${value}`)
@@ -253,15 +253,37 @@ function isInternalHost(targetHost, baseHost) {
     if (msAuthDomains.includes(targetHost)) return true;
   }
 
+  // Allow Facebook authentication domains for Messenger
+  if (baseHost === 'www.messenger.com' || baseHost === 'messenger.com') {
+    const fbAuthDomains = [
+      'www.facebook.com',
+      'facebook.com',
+      'accountscenter.facebook.com',
+      'www.accountscenter.facebook.com',
+      'm.facebook.com',
+      'mbasic.facebook.com',
+    ];
+    if (fbAuthDomains.includes(targetHost)) return true;
+    // Also allow any facebook.com subdomain for auth flows
+    if (targetHost.endsWith('.facebook.com')) return true;
+  }
+
   return false;
 }
 
 function openExternalLink(url) {
   if (!url) return;
   try {
-    shell.openExternal(url);
+    // Use IPC to send to main process (more reliable and secure)
+    ipcRenderer.send('open-external', url);
   } catch (error) {
     logger.error('Failed to open external link:', url, error);
+    // Fallback to direct shell method if IPC fails
+    try {
+      shell.openExternal(url);
+    } catch (fallbackError) {
+      logger.error('Fallback shell.openExternal also failed:', url, fallbackError);
+    }
   }
 }
 
@@ -317,6 +339,10 @@ function createPlatformTab(platform, config) {
   webview.src = config.url;
   webview.style.width = '100%';
   webview.style.height = '100vh';
+
+  // Set persistent partition for each platform to maintain sessions/cookies
+  webview.setAttribute('partition', `persist:${platform}`);
+
   if (config.needsUserAgent) {
     webview.setAttribute('useragent', CHROME_USER_AGENT);
   }
@@ -365,25 +391,42 @@ function setupWebviews() {
     webview.setAttribute('allowpopups', 'true');
     webview.setAttribute('webpreferences', 'contextIsolation=no,nodeIntegration=no');
 
-    // Set user agent attribute (this works before webview is ready)
-    if (!webview.getAttribute('useragent')) {
-      webview.setAttribute('useragent', chromeUserAgent);
-    }
-
-    // Set user agent via method only after webview is ready (avoids errors)
-    webview.addEventListener(
-      'dom-ready',
-      () => {
-        if (typeof webview.setUserAgent === 'function') {
-          try {
-            webview.setUserAgent(chromeUserAgent);
-          } catch (_e) {
-            // Silently ignore - useragent attribute is already set
+    // Always set latest Chrome user agent for Messenger and Teams
+    if (platform === 'messenger' || platform === 'teams') {
+      webview.setAttribute('useragent', CHROME_USER_AGENT);
+      webview.addEventListener(
+        'dom-ready',
+        () => {
+          if (typeof webview.setUserAgent === 'function') {
+            try {
+              webview.setUserAgent(CHROME_USER_AGENT);
+            } catch (_e) {
+              // Silently ignore - useragent attribute is already set
+            }
           }
-        }
-      },
-      { once: true }
-    );
+        },
+        { once: true }
+      );
+    } else {
+      // Set user agent attribute (this works before webview is ready)
+      if (!webview.getAttribute('useragent')) {
+        webview.setAttribute('useragent', chromeUserAgent);
+      }
+      // Set user agent via method only after webview is ready (avoids errors)
+      webview.addEventListener(
+        'dom-ready',
+        () => {
+          if (typeof webview.setUserAgent === 'function') {
+            try {
+              webview.setUserAgent(chromeUserAgent);
+            } catch (_e) {
+              // Silently ignore - useragent attribute is already set
+            }
+          }
+        },
+        { once: true }
+      );
+    }
 
     // For Slack and WhatsApp, set user agent before navigation
     if (platform === 'slack' || platform === 'whatsapp' || platform === 'teams') {
@@ -409,6 +452,7 @@ function setupWebviews() {
     }
 
     webview.addEventListener('new-window', (event) => {
+      console.log(`[webview][${platform}] new-window event:`, event.url);
       if (event.url) {
         event.preventDefault();
         openExternalLink(event.url);
@@ -416,6 +460,7 @@ function setupWebviews() {
     });
 
     webview.addEventListener('will-navigate', (event) => {
+      console.log(`[webview][${platform}] will-navigate event:`, event.url);
       if (!event.url) return;
       try {
         if (!platformHost) {
@@ -432,6 +477,138 @@ function setupWebviews() {
       } catch (error) {
         logger.error('Failed to handle navigation for', platform, error);
       }
+    });
+
+    // Additional event for SPA navigation
+    webview.addEventListener('did-navigate-in-page', (event) => {
+      console.log(`[webview][${platform}] did-navigate-in-page event:`, event.url);
+      // Optionally, handle external navigation here if needed
+    });
+
+    // Listen for console messages from webview to handle external links
+    webview.addEventListener('console-message', (e) => {
+      // Listen for our custom console messages
+      if (e.message && e.message.startsWith('CHATTIO_OPEN_EXTERNAL:')) {
+        const url = e.message.replace('CHATTIO_OPEN_EXTERNAL:', '');
+        console.log(`[webview][${platform}] Opening external link from console message:`, url);
+        openExternalLink(url);
+      }
+    });
+
+    // Additional backup: listen for ipc-message events
+    webview.addEventListener('ipc-message', (event) => {
+      if (event.channel === 'open-external-link') {
+        const url = event.args[0];
+        console.log(`[webview][${platform}] Opening external link from IPC message:`, url);
+        openExternalLink(url);
+      }
+    });
+
+    // Inject script to intercept link clicks that might be handled by JavaScript
+    webview.addEventListener('dom-ready', () => {
+      const platformHost = getPlatformHost(platform);
+      if (typeof webview.executeJavaScript !== 'function') return;
+
+      webview
+        .executeJavaScript(
+          `
+        (function() {
+          // Check if we already injected this script
+          if (window.__chattioLinkHandlerInjected) return;
+          window.__chattioLinkHandlerInjected = true;
+
+          const platformHost = '${platformHost}';
+
+          function isInternalHost(targetHost, baseHost) {
+            if (!targetHost || !baseHost) return false;
+            if (targetHost === baseHost) return true;
+            if (targetHost.endsWith('.' + baseHost)) return true;
+
+            // Allow Facebook auth for Messenger
+            if (baseHost === 'www.messenger.com' || baseHost === 'messenger.com') {
+              if (targetHost.endsWith('.facebook.com') || targetHost === 'facebook.com' || targetHost === 'www.facebook.com') {
+                return true;
+              }
+            }
+
+            // Allow Microsoft auth for Teams
+            if (baseHost === 'teams.microsoft.com') {
+              const msAuthDomains = ['login.microsoftonline.com', 'login.live.com', 'account.microsoft.com', 'login.windows.net'];
+              if (msAuthDomains.includes(targetHost)) return true;
+            }
+
+            return false;
+          }
+
+          // Override window.open to intercept programmatic link opens
+          const originalWindowOpen = window.open;
+          window.open = function(url, target, features) {
+            if (!url) return originalWindowOpen.call(window, url, target, features);
+
+            try {
+              const linkUrl = new URL(url, window.location.href);
+              const currentHost = window.location.host;
+
+              // If opening external link
+              if (linkUrl.host !== currentHost && !isInternalHost(linkUrl.host, platformHost)) {
+                console.log('CHATTIO_OPEN_EXTERNAL:' + linkUrl.href);
+                return null; // Don't open in this window
+              }
+            } catch (err) {
+              console.error('[Chattio] Error in window.open override:', err);
+            }
+
+            // Allow internal links to open normally
+            return originalWindowOpen.call(window, url, target, features);
+          };
+
+          // Intercept link clicks
+          document.addEventListener('click', function(e) {
+            let target = e.target;
+
+            // Find the closest anchor tag
+            while (target && target.tagName !== 'A') {
+              target = target.parentElement;
+            }
+
+            if (!target || target.tagName !== 'A') return;
+
+            const href = target.href;
+            if (!href) return;
+
+            // Skip javascript: and mailto: links
+            if (href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+
+            // Check if link is external
+            try {
+              const linkUrl = new URL(href);
+              const currentHost = window.location.host;
+
+              // If link is to a different host and not internal
+              if (linkUrl.host !== currentHost && !isInternalHost(linkUrl.host, platformHost)) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+
+                // Use console.log to communicate with parent (will be caught by console-message event)
+                console.log('CHATTIO_OPEN_EXTERNAL:' + href);
+
+                // Also try direct navigation which might trigger will-navigate
+                // window.location.href = href;
+              }
+            } catch (err) {
+              // Invalid URL, let it proceed normally
+              console.error('[Chattio] Error parsing link:', err);
+            }
+          }, true); // Use capture phase to intercept before app handlers
+
+          console.log('[Chattio] Link click interceptor and window.open override installed for platform:', platformHost);
+        })();
+      `
+        )
+        .catch((err) => {
+          console.error(`[webview][${platform}] Failed to inject link handler:`, err);
+        });
     });
 
     const updateUnreadFromTitle = (title) => {
@@ -1435,6 +1612,14 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   setupSupportDonations();
+  // Open all external links in the default browser
+  document.addEventListener('click', function (e) {
+    const anchor = e.target.closest('a[href]');
+    if (anchor && anchor.getAttribute('href') && !anchor.getAttribute('href').startsWith('#')) {
+      e.preventDefault();
+      shell.openExternal(anchor.getAttribute('href'));
+    }
+  });
   setupUpdatesCheck();
   loadAppVersion();
 });
