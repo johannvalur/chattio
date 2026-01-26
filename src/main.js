@@ -556,13 +556,12 @@ app.whenReady().then(async () => {
       if (process.platform !== 'darwin') return;
 
       try {
-        // Ensure the badge value is a string or number
+        // Extract totalMessages from summary object
         let badgeText = '';
-        if (typeof summary === 'number' && !isNaN(summary) && summary > 0) {
-          badgeText = summary > 99 ? '99+' : summary.toString();
-        } else if (typeof summary === 'string') {
-          // Only allow alphanumeric characters and a few safe symbols
-          badgeText = summary.replace(/[^a-zA-Z0-9+!?\- ]/g, '').substring(0, 10);
+        const totalMessages = summary?.totalMessages || 0;
+
+        if (totalMessages > 0) {
+          badgeText = totalMessages > 99 ? '99+' : totalMessages.toString();
         }
 
         if (app.dock && typeof app.dock.setBadge === 'function') {
