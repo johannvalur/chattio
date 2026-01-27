@@ -2,7 +2,7 @@ const { execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-exports.default = async function(context) {
+exports.default = async function (context) {
   const appPath = path.join(context.appOutDir, `${context.packager.appInfo.productName}.app`);
   const frameworksPath = path.join(appPath, 'Contents', 'Frameworks');
 
@@ -25,7 +25,7 @@ exports.default = async function(context) {
         'Chattio Helper (GPU).app',
         'Chattio Helper (Renderer).app',
         'Chattio Helper (Plugin).app',
-        'Chattio Helper.app'
+        'Chattio Helper.app',
       ];
 
       for (const helper of helpers) {

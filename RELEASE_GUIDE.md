@@ -80,6 +80,7 @@ resource fork, Finder information, or similar detritus not allowed
    ```
 
    Find your certificate ID with:
+
    ```bash
    security find-identity -v -p codesigning | grep "Developer ID"
    ```
