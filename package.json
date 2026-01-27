@@ -130,6 +130,7 @@
   "build": {
     "appId": "com.unified.messenger",
     "productName": "Chattio",
+    "afterPack": "./scripts/afterPack.js",
     "directories": {
       "output": "dist"
     },

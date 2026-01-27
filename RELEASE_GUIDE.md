@@ -4,7 +4,7 @@ This guide explains how to release new versions of Chattio with automatic update
 
 ## Quick Release Process
 
-### Option 1: Automated Release (Recommended)
+### Option 1: Automated Release via GitHub Actions (Recommended)
 
 1. **Bump the version:**
 
@@ -31,30 +31,131 @@ This guide explains how to release new versions of Chattio with automatic update
    - The release workflow will automatically build and publish to GitHub Releases
    - Monitor progress at: https://github.com/johannvalur/chattio/actions
 
-### Option 2: Manual Release
+### Option 2: Manual Local Release
 
-1. **Bump version in package.json:**
+If GitHub Actions fails or you need to build locally, follow these steps.
+
+#### Important: iCloud Drive Workaround
+
+If your project is in an iCloud-synced folder (like `~/Documents`), you **must** build to a non-iCloud location to avoid codesigning errors. iCloud adds extended attributes that cause the error:
+
+```
+resource fork, Finder information, or similar detritus not allowed
+```
+
+#### Step-by-Step Manual Release
+
+1. **Bump version and commit:**
 
    ```bash
    npm run version:patch
-   ```
-
-2. **Build the app:**
-
-   ```bash
-   npm run release:mac
-   ```
-
-   This requires a GitHub token:
-
-   ```bash
-   export GITHUB_TOKEN=your_github_token
-   npm run release:mac
-   ```
-
-3. **Push changes:**
-   ```bash
    git push && git push --tags
+   ```
+
+2. **Build the application:**
+
+   ```bash
+   npm run build
+   ```
+
+3. **Build unsigned Mac app to /tmp:**
+
+   ```bash
+   npx electron-builder --mac --publish never \
+     -c.mac.identity=null \
+     -c.directories.output=/tmp/chattio-dist
+   ```
+
+4. **Clean extended attributes and sign:**
+
+   ```bash
+   # Clear any extended attributes
+   xattr -cr /tmp/chattio-dist/mac-arm64/Chattio.app
+
+   # Sign with your Developer ID certificate
+   codesign --sign "YOUR_CERTIFICATE_ID" \
+     --force --timestamp --options runtime \
+     --entitlements build/entitlements.mac.plist \
+     --deep /tmp/chattio-dist/mac-arm64/Chattio.app
+   ```
+
+   Find your certificate ID with:
+   ```bash
+   security find-identity -v -p codesigning | grep "Developer ID"
+   ```
+
+5. **Create DMG from signed app:**
+
+   ```bash
+   hdiutil create -volname "Chattio" \
+     -srcfolder /tmp/chattio-dist/mac-arm64/Chattio.app \
+     -ov -format UDZO \
+     /tmp/chattio-dist/Chattio-X.X.X-arm64.dmg
+
+   # Sign the DMG
+   codesign --sign "YOUR_CERTIFICATE_ID" --timestamp \
+     /tmp/chattio-dist/Chattio-X.X.X-arm64.dmg
+   ```
+
+6. **Create ZIP for auto-updater:**
+
+   ```bash
+   cd /tmp/chattio-dist/mac-arm64
+   ditto -c -k --keepParent Chattio.app \
+     /tmp/chattio-dist/Chattio-X.X.X-arm64-mac.zip
+   ```
+
+7. **Generate latest-mac.yml:**
+
+   ```bash
+   cd /tmp/chattio-dist
+   SHA512=$(shasum -a 512 Chattio-X.X.X-arm64-mac.zip | cut -d' ' -f1 | xxd -r -p | base64)
+   SIZE=$(stat -f%z Chattio-X.X.X-arm64-mac.zip)
+
+   cat > latest-mac.yml << EOF
+   version: X.X.X
+   files:
+     - url: Chattio-X.X.X-arm64-mac.zip
+       sha512: ${SHA512}
+       size: ${SIZE}
+   path: Chattio-X.X.X-arm64-mac.zip
+   sha512: ${SHA512}
+   releaseDate: '$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")'
+   EOF
+   ```
+
+8. **Upload to GitHub Release:**
+
+   ```bash
+   # If release doesn't exist, create it
+   gh release create vX.X.X --title "vX.X.X" --draft \
+     --repo johannvalur/chattio
+
+   # Upload assets
+   gh release upload vX.X.X \
+     /tmp/chattio-dist/Chattio-X.X.X-arm64.dmg \
+     /tmp/chattio-dist/Chattio-X.X.X-arm64-mac.zip \
+     /tmp/chattio-dist/latest-mac.yml \
+     --repo johannvalur/chattio --clobber
+
+   # Publish the release
+   gh release edit vX.X.X --draft=false --repo johannvalur/chattio
+   ```
+
+9. **Optional: Notarize the app:**
+
+   ```bash
+   # First, store credentials (one-time setup)
+   xcrun notarytool store-credentials "notarytool-password" \
+     --apple-id "your@email.com" \
+     --team-id "YOUR_TEAM_ID"
+
+   # Notarize the DMG
+   xcrun notarytool submit /tmp/chattio-dist/Chattio-X.X.X-arm64.dmg \
+     --keychain-profile "notarytool-password" --wait
+
+   # Staple the notarization ticket
+   xcrun stapler staple /tmp/chattio-dist/Chattio-X.X.X-arm64.dmg
    ```
 
 ## How Auto-Updates Work
@@ -157,6 +258,40 @@ Install and relaunch
    # Needs 'repo' scope
    export GITHUB_TOKEN=your_token_here
    ```
+
+### macOS Codesigning Errors
+
+**Error:** `resource fork, Finder information, or similar detritus not allowed`
+
+**Cause:** Your project folder is synced with iCloud Drive, which adds extended attributes (`com.apple.fileprovider.fpfs#P`, `com.apple.FinderInfo`) that macOS codesign rejects.
+
+**Solution:** Build to a non-iCloud location like `/tmp`:
+
+```bash
+# Build unsigned to /tmp
+npx electron-builder --mac --publish never \
+  -c.mac.identity=null \
+  -c.directories.output=/tmp/chattio-dist
+
+# Clean attributes
+xattr -cr /tmp/chattio-dist/mac-arm64/Chattio.app
+
+# Sign manually
+codesign --sign "YOUR_CERT_ID" --force --timestamp \
+  --options runtime --entitlements build/entitlements.mac.plist \
+  --deep /tmp/chattio-dist/mac-arm64/Chattio.app
+```
+
+See "Option 2: Manual Local Release" above for the complete process.
+
+**Alternative:** Temporarily move the project outside of iCloud:
+
+```bash
+mv ~/Documents/Chattio /tmp/Chattio-build
+cd /tmp/Chattio-build
+npm run release:mac
+mv /tmp/Chattio-build ~/Documents/Chattio
+```
 
 ## Version Numbering Guidelines
 
