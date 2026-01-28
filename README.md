@@ -277,6 +277,52 @@ xattr -d com.apple.quarantine /path/to/Chattio.app
 
 **Option 4:** For proper distribution, code sign the app with an Apple Developer ID certificate (see "macOS code signing & notarization" section above). This is required for distributing to users without them seeing this error.
 
+## Release Process
+
+For maintainers releasing new versions:
+
+- **Quick Reference:** [docs/RELEASE_PROCESS.md](./docs/RELEASE_PROCESS.md) - TL;DR and common issues
+- **Detailed Guide:** [RELEASE_GUIDE.md](./RELEASE_GUIDE.md) - Complete release instructions
+- **Checklist:** [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md) - Pre-release verification steps
+
+### Quick Release
+
+```bash
+# 1. Create feature branch, make changes, bump version
+npm version patch
+# Edit chattio/index.html download links
+
+# 2. Create PR and merge to main
+gh pr create --base main
+gh pr merge --merge --delete-branch
+
+# 3. Tag and push (triggers automated build)
+git checkout main && git pull
+git tag v1.0.9 && git push origin v1.0.9
+
+# 4. Publish draft release after build completes
+gh release edit v1.0.9 --draft=false --title "v1.0.9 - Title" --notes "..." --latest
+```
+
+The automated workflow:
+
+- ✅ Builds and signs apps for macOS and Windows
+- ✅ Notarizes macOS app with Apple
+- ✅ Creates draft release with all artifacts
+- ✅ Deploys website to GitHub Pages
+- ✅ Enables auto-updates for users
+
+## Documentation
+
+- [RELEASE_GUIDE.md](./RELEASE_GUIDE.md) - How to create releases
+- [docs/RELEASE_PROCESS.md](./docs/RELEASE_PROCESS.md) - Release process quick reference
+- [docs/MESSENGER_BADGE_DETECTION.md](./docs/MESSENGER_BADGE_DETECTION.md) - Messenger notification system
+- [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md) - Pre-release verification
+- [CODE_SIGNING.md](./CODE_SIGNING.md) - macOS code signing setup
+- [INSTALL_INSTRUCTIONS.md](./INSTALL_INSTRUCTIONS.md) - Installation guide for users
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - System architecture
+- [PLANNER.md](./PLANNER.md) - Development planning
+
 ## License
 
 MIT

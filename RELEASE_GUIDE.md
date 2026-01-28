@@ -14,7 +14,7 @@ This guide explains how to release new versions of Chattio with automatic update
 
 ### Option 1: Automated Release via GitHub Actions (Recommended)
 
-This is the **preferred method** as it handles code signing and notarization automatically.
+This is the **preferred method** as it handles code signing, notarization, and website deployment automatically.
 
 #### Prerequisites
 
@@ -28,72 +28,173 @@ Ensure the following GitHub secrets are configured (already set up):
 
 #### Steps
 
-1. **Bump the version in package.json and chattio/index.html:**
+1. **Create feature branch and make changes:**
 
    ```bash
-   # Update package.json version
-   npm version patch  # for 1.0.1 -> 1.0.2
+   git checkout -b feature-branch-name
+   # Make your changes
+   git add .
+   git commit -m "feat: Your feature description"
+   git push origin feature-branch-name
+   ```
+
+2. **Bump the version in package.json:**
+
+   ```bash
+   # In your feature branch
+   npm version patch  # for 1.0.8 -> 1.0.9
    # OR
-   npm version minor  # for 1.0.1 -> 1.1.0
+   npm version minor  # for 1.0.8 -> 1.1.0
    # OR
-   npm version major  # for 1.0.1 -> 2.0.0
+   npm version major  # for 1.0.8 -> 2.0.0
    ```
 
-2. **Update website download links:**
+   This automatically updates `package.json` and creates a git commit.
 
-   Edit `chattio/index.html` and update both version numbers:
-   - Windows download link (line ~412)
-   - macOS download link (line ~425)
-   - Version text for both (lines ~419 and ~432)
+3. **Update website download links:**
 
-3. **Commit and push changes:**
+   Edit `chattio/index.html` and update the version numbers in:
+   - Windows download link (line ~412): Update URL from `v1.0.8` to `v1.0.9`
+   - Windows version text (line ~419): Update display text
+   - macOS download link (line ~425): Update URL from `v1.0.8` to `v1.0.9`
+   - macOS version text (line ~432): Update display text
 
    ```bash
-   git add package.json chattio/index.html
-   git commit -m "chore: Bump version to vX.X.X"
-   git push
+   git add chattio/index.html package.json
+   git commit -m "chore: Bump version to v1.0.9"
+   git push origin feature-branch-name
    ```
 
-4. **Create and push the release tag:**
+4. **Create and merge Pull Request:**
 
    ```bash
-   git tag vX.X.X
-   git push origin vX.X.X
+   gh pr create --base main --title "feat: Your feature (v1.0.9)" \
+     --body "Description of changes and release notes"
+
+   # Wait for CI to pass, then merge
+   gh pr merge --merge --delete-branch
    ```
 
-5. **Monitor GitHub Actions:**
-   - The release workflow will automatically trigger
-   - Monitor progress at: https://github.com/johannvalur/chattio/actions
-   - The workflow will:
-     - Build for both macOS and Windows
-     - **Code sign** the macOS app with your Developer ID
-     - **Notarize** the macOS app with Apple
-     - Sign the Windows installer
-     - Create a draft release with all artifacts
+   The PR will automatically run CI/CD checks including linting, tests, and builds.
 
-6. **Publish the release:**
+5. **Create and push the release tag:**
 
-   Once the workflow completes, publish the draft release:
+   After the PR is merged to `main`:
 
    ```bash
-   gh release edit vX.X.X --draft=false --title "vX.X.X - Release Title" \
-     --notes "Release notes here..." --repo johannvalur/chattio
+   git checkout main
+   git pull origin main
+   git tag v1.0.9
+   git push origin v1.0.9
    ```
 
-7. **Merge to main branch:**
+   **Important:** Pushing the tag triggers the release workflow.
 
-   If you created the release from a feature branch, merge it to `main`:
+6. **Monitor GitHub Actions:**
+
+   The release workflow automatically:
+   - Builds for both macOS (arm64) and Windows (x64)
+   - **Code signs** the macOS app with your Developer ID
+   - **Notarizes** the macOS app with Apple
+   - **Signs** the Windows installer
+   - **Creates a DRAFT release** with all artifacts
+   - Generates auto-update metadata files (`latest-mac.yml`, `latest.yml`)
+
+   Monitor progress:
 
    ```bash
-   # Create PR to main (if not already merged)
-   gh pr create --base main --head YOUR_BRANCH --title "chore: Release vX.X.X" \
-     --body "Release version X.X.X" --repo johannvalur/chattio
-
-   # Merge it
-   gh pr merge --merge --repo johannvalur/chattio
+   gh run watch
+   # Or visit: https://github.com/johannvalur/chattio/actions
    ```
 
-   **Note:** The repository uses `main` as the default branch. All releases should be merged to `main`.
+   The workflow typically takes 3-4 minutes to complete.
+
+7. **Publish the release:**
+
+   Once the workflow completes successfully, the draft release is ready. Publish it with release notes:
+
+   ```bash
+   gh release edit v1.0.9 --draft=false \
+     --title "v1.0.9 - Release Title" \
+     --notes "$(cat <<'EOF'
+   ## What's New
+   - Feature 1
+   - Feature 2
+
+   ## Bug Fixes
+   - Fix 1
+   - Fix 2
+
+   ## Technical Details
+   - Update 1
+   - Update 2
+   EOF
+   )" --latest
+   ```
+
+   **Note:** The `--latest` flag marks this as the latest release for auto-updates.
+
+8. **Verify deployment:**
+
+   The CI/CD pipeline automatically deploys the website to GitHub Pages. Verify:
+   - **Release artifacts:** https://github.com/johannvalur/chattio/releases/tag/v1.0.9
+   - **Website updated:** Check download links point to new version
+   - **CI/CD status:** https://github.com/johannvalur/chattio/actions
+
+   The website deployment happens automatically when changes are pushed to `main`.
+
+#### What Gets Built
+
+The release workflow produces:
+
+**macOS (arm64):**
+
+- `Chattio-1.0.9-arm64.dmg` - Signed and notarized DMG for distribution
+- `Chattio-1.0.9-arm64-mac.zip` - ZIP for auto-updates (required)
+- `Chattio-1.0.9-arm64-mac.zip.blockmap` - Differential update support
+- `Chattio-1.0.9-arm64.dmg.blockmap` - Differential update support
+- `latest-mac.yml` - Auto-update metadata
+
+**Windows (x64):**
+
+- `Chattio-Setup-1.0.9.exe` - Signed NSIS installer
+- `Chattio-Setup-1.0.9.exe.blockmap` - Differential update support
+- `latest.yml` - Auto-update metadata
+
+#### Troubleshooting Release Workflow
+
+**If the workflow fails to upload artifacts:**
+
+This can happen if you create the GitHub release manually before the tag workflow runs. The workflow expects to create a DRAFT release itself.
+
+Solution:
+
+1. Delete the manually created release and tag
+2. Recreate and push the tag to trigger the workflow again
+
+```bash
+# Delete release
+gh release delete v1.0.9 --yes
+
+# Delete local and remote tag
+git tag -d v1.0.9
+git push origin :refs/tags/v1.0.9
+
+# Recreate and push tag
+git tag v1.0.9
+git push origin v1.0.9
+```
+
+**If CI/CD fails with Prettier errors:**
+
+Run Prettier locally to fix formatting:
+
+```bash
+npm run format
+git add .
+git commit -m "style: Fix Prettier formatting"
+git push
+```
 
 ### Option 2: Manual Local Release
 
