@@ -149,14 +149,25 @@ function setTabUnread(platform, count, options = {}) {
   unreadState[platform] = unreadCount;
   const tabButton = document.querySelector(`.tablinks[data-platform="${platform}"]`);
   const notificationsEnabled = isNotificationsEnabled(platform);
+
+  if (IS_DEV && platform === 'messenger') {
+    console.log(`[DEBUG] setTabUnread for ${platform}: count=${count}, unreadCount=${unreadCount}, notificationsEnabled=${notificationsEnabled}, tabButton exists=${!!tabButton}`);
+  }
+
   if (tabButton) {
     if (notificationsEnabled && unreadCount > 0) {
       tabButton.classList.add('has-unread');
       const displayCount = unreadCount > 99 ? '99+' : String(unreadCount);
       tabButton.setAttribute('data-unread-count', displayCount);
+      if (IS_DEV && platform === 'messenger') {
+        console.log(`[DEBUG] Added badge to ${platform} button: ${displayCount}`);
+      }
     } else {
       tabButton.classList.remove('has-unread');
       tabButton.removeAttribute('data-unread-count');
+      if (IS_DEV && platform === 'messenger') {
+        console.log(`[DEBUG] Removed badge from ${platform} button (enabled=${notificationsEnabled}, count=${unreadCount})`);
+      }
     }
   }
   if (!skipPersist) {
@@ -178,7 +189,10 @@ function openTab(evt, platform) {
     tablinks[i].className = tablinks[i].className.replace(' active', '');
   }
 
-  document.getElementById(platform).style.display = 'block';
+  const tabElement = document.getElementById(platform);
+  if (tabElement) {
+    tabElement.style.display = 'block';
+  }
   evt.currentTarget.className += ' active';
 
   // Do not reset unread count immediately; rely on service title updates
@@ -334,11 +348,26 @@ function createPlatformTab(platform, config) {
   tab.className = 'tabcontent';
   tab.style.display = 'none';
 
+  // Create container for webview and loading state
+  const container = document.createElement('div');
+  container.className = 'webview-container';
+
+  // Create loading indicator
+  const loadingDiv = document.createElement('div');
+  loadingDiv.className = 'webview-loading';
+  loadingDiv.id = `${platform}-loading`;
+  loadingDiv.innerHTML = `
+    <div class="loading-spinner"></div>
+    <p>Loading ${config.name}...</p>
+    ${IS_DEV ? `<p style="font-size: 12px; margin-top: 8px;" id="${platform}-debug-status">Waiting for webview...</p>` : ''}
+  `;
+
   const webview = document.createElement('webview');
   webview.id = `${platform}-webview`;
   webview.src = config.url;
   webview.style.width = '100%';
   webview.style.height = '100vh';
+  // Don't hide webview - let it load in background, loading indicator will overlay it
 
   // Set persistent partition for each platform to maintain sessions/cookies
   webview.setAttribute('partition', `persist:${platform}`);
@@ -347,7 +376,9 @@ function createPlatformTab(platform, config) {
     webview.setAttribute('useragent', CHROME_USER_AGENT);
   }
 
-  tab.appendChild(webview);
+  container.appendChild(loadingDiv);
+  container.appendChild(webview);
+  tab.appendChild(container);
   return tab;
 }
 
@@ -451,6 +482,70 @@ function setupWebviews() {
       });
     }
 
+    // Handle loading states - show/hide loading indicator
+    const loadingDiv = document.getElementById(`${platform}-loading`);
+    let loadingTimeout = null;
+
+    webview.addEventListener('did-start-loading', () => {
+      if (IS_DEV) {
+        logger.info(`[webview][${platform}] did-start-loading`);
+        console.log(`[DEBUG] ${platform} webview started loading`);
+        const debugStatus = document.getElementById(`${platform}-debug-status`);
+        if (debugStatus) debugStatus.textContent = 'Event: did-start-loading fired';
+      }
+      // Set a timeout for stuck loading states (especially for messenger)
+      if (loadingTimeout) clearTimeout(loadingTimeout);
+      loadingTimeout = setTimeout(() => {
+        if (loadingDiv && loadingDiv.style.display !== 'none') {
+          logger.warn(`[webview][${platform}] Loading timeout exceeded - hiding spinner`);
+          console.log(`[DEBUG] ${platform} loading timeout - hiding spinner`);
+          const debugStatus = document.getElementById(`${platform}-debug-status`);
+          if (debugStatus) debugStatus.textContent = 'TIMEOUT: 30s exceeded, hiding spinner';
+          if (loadingDiv) loadingDiv.style.display = 'none';
+        }
+      }, 30000); // 30 second timeout
+    });
+
+    webview.addEventListener('did-stop-loading', () => {
+      if (IS_DEV) {
+        logger.info(`[webview][${platform}] did-stop-loading`);
+        console.log(`[DEBUG] ${platform} webview stopped loading - hiding spinner`);
+      }
+      if (loadingTimeout) {
+        clearTimeout(loadingTimeout);
+        loadingTimeout = null;
+      }
+      if (loadingDiv) {
+        loadingDiv.style.display = 'none';
+        console.log(`[DEBUG] ${platform} loading indicator hidden`);
+        // Update the loading text to show it fired
+        if (IS_DEV) {
+          loadingDiv.innerHTML = `<p>did-stop-loading fired for ${platform}</p>`;
+        }
+      }
+    });
+
+    webview.addEventListener('dom-ready', () => {
+      if (IS_DEV) {
+        logger.info(`[webview][${platform}] dom-ready`);
+        console.log(`[DEBUG] ${platform} DOM ready`);
+        const debugStatus = document.getElementById(`${platform}-debug-status`);
+        if (debugStatus) debugStatus.textContent = 'Event: dom-ready fired';
+      }
+      // For messenger, be more aggressive about hiding loading
+      if (platform === 'messenger') {
+        console.log('[DEBUG] messenger DOM ready - will hide spinner in 2s');
+        const debugStatus = document.getElementById(`${platform}-debug-status`);
+        if (debugStatus) debugStatus.textContent = 'Messenger DOM ready - hiding in 2s...';
+        setTimeout(() => {
+          if (loadingDiv) {
+            loadingDiv.style.display = 'none';
+            console.log('[DEBUG] messenger loading indicator hidden after timeout');
+          }
+        }, 2000);
+      }
+    });
+
     webview.addEventListener('new-window', (event) => {
       if (IS_DEV) {
         logger.info(`[webview][${platform}] new-window event:`, event.url);
@@ -474,7 +569,13 @@ function setupWebviews() {
           return;
         }
         const targetHost = new URL(event.url).host;
-        if (!isInternalHost(targetHost, platformHost)) {
+        const isInternal = isInternalHost(targetHost, platformHost);
+
+        if (IS_DEV && platform === 'messenger') {
+          logger.info(`[webview][messenger] Navigation check: ${targetHost} -> internal: ${isInternal}`);
+        }
+
+        if (!isInternal) {
           event.preventDefault();
           openExternalLink(event.url);
         }
@@ -625,6 +726,9 @@ function setupWebviews() {
       const trimmedTitle = (title || '').trim();
       const match = trimmedTitle.match(/^\((\d+)\)/);
       const unreadCount = match ? parseInt(match[1], 10) : 0;
+      if (IS_DEV && platform === 'messenger') {
+        console.log(`[DEBUG] ${platform} title: "${trimmedTitle}", match: ${match}, count: ${unreadCount}`);
+      }
       setTabUnread(platform, unreadCount);
     };
 
@@ -671,21 +775,83 @@ function setupWebviews() {
             `
 					(() => {
 						try {
-							const badge = document.querySelector('[data-testid="mwthreadlist_unread_badge_count"], [data-testid="unread_indicator_badge"]');
-							if (badge && badge.textContent) {
-								return badge.textContent.trim();
+							// Check document title first (most reliable for Messenger)
+							if (document.title) {
+								const titleMatch = document.title.match(/\((\d+)\)/);
+								if (titleMatch) {
+									const count = parseInt(titleMatch[1]);
+									console.log('[Chattio Messenger] Found count in title:', document.title, 'count:', count);
+									return count;
+								}
 							}
-							const unreadRows = Array.from(document.querySelectorAll('[role="row"], [data-testid="mwthreadlist-row"]')).filter(row => {
+
+							// Try multiple badge selectors (Facebook changes these frequently)
+							const badgeSelectors = [
+								'[data-testid="mwthreadlist_unread_badge_count"]',
+								'[data-testid="unread_indicator_badge"]',
+								'[aria-label*="unread message"]',
+								'[aria-label*="new message"]',
+								'span[class*="badge"]',
+								'div[role="navigation"] span',
+								// Try finding any element with just a number in it (risky but useful)
+								'div[role="navigation"] div[class*="x"] > span'
+							];
+
+							for (const selector of badgeSelectors) {
+								const badges = document.querySelectorAll(selector);
+								for (const badge of badges) {
+									if (badge && badge.textContent) {
+										const text = badge.textContent.trim();
+										// Look for any number
+										const match = text.match(/^(\d+)$/);
+										if (match && parseInt(match[1]) > 0 && parseInt(match[1]) < 1000) {
+											const count = parseInt(match[1]);
+											console.log('[Chattio Messenger] Found badge with selector:', selector, 'text:', text, 'count:', count);
+											return count;
+										}
+									}
+								}
+							}
+
+							// Scan navigation area for any standalone numbers
+							const navArea = document.querySelector('[role="navigation"]') || document.querySelector('nav');
+							if (navArea) {
+								const allSpans = navArea.querySelectorAll('span, div');
+								for (const span of allSpans) {
+									const text = span.textContent?.trim();
+									if (text && /^\d+$/.test(text)) {
+										const num = parseInt(text);
+										if (num > 0 && num < 100) {
+											console.log('[Chattio Messenger] Found number in nav:', text);
+											return num;
+										}
+									}
+								}
+							}
+
+							// Fallback: count unread indicators
+							const unreadRows = Array.from(document.querySelectorAll('[role="row"], [data-testid="mwthreadlist-row"], [role="listitem"]')).filter(row => {
 								const label = (row.getAttribute('aria-label') || '').toLowerCase();
+								const text = (row.textContent || '').toLowerCase();
 								return label.includes('unread') || label.includes('new message');
 							});
-							const unreadDots = document.querySelectorAll('[aria-label="Unread"], [aria-label="Unread dot"], [aria-label="Mark as read"], [data-testid="mwthreadlist_row_unread_indicator"]');
+
+							const unreadDots = document.querySelectorAll(
+								'[aria-label="Unread"], [aria-label="Unread dot"], [aria-label="Mark as read"], ' +
+								'[data-testid="mwthreadlist_row_unread_indicator"], ' +
+								'div[style*="background"][style*="rgb(0"]'
+							);
+
 							const counts = [
 								unreadRows.length,
 								unreadDots ? unreadDots.length : 0
 							].filter(Boolean);
-							return counts.length ? Math.max(...counts) : 0;
+
+							const finalCount = counts.length ? Math.max(...counts) : 0;
+							console.log('[Chattio Messenger] Fallback count - rows:', unreadRows.length, 'dots:', unreadDots.length, 'final:', finalCount);
+							return finalCount;
 						} catch (err) {
+							console.error('[Chattio Messenger] Error polling unread:', err);
 							return 0;
 						}
 					})()
@@ -693,15 +859,24 @@ function setupWebviews() {
           )
           .then((result) => {
             const count = parseInt(result, 10);
+            if (IS_DEV) {
+              console.log(`[DEBUG] Messenger unread poll result: ${result} -> parsed: ${count}`);
+            }
             if (!Number.isNaN(count)) {
               setTabUnread(platform, count);
             }
           })
-          .catch(() => {});
+          .catch((err) => {
+            if (IS_DEV) {
+              console.log(`[DEBUG] Messenger unread poll failed:`, err);
+            }
+          });
       };
       const messengerInterval = setInterval(pollMessengerUnread, 4000);
       webview.addEventListener('destroyed', () => clearInterval(messengerInterval));
       webview.addEventListener('close', () => clearInterval(messengerInterval));
+      // Poll immediately once
+      setTimeout(pollMessengerUnread, 2000);
     }
 
     webview.addEventListener(
@@ -709,7 +884,7 @@ function setupWebviews() {
       (event) => {
         // Only log errors that we don't explicitly ignore
         if (![-3, -102, -105, -106, -107, -109].includes(event.errorCode)) {
-          logger.error('WebView failed to load:', {
+          logger.error(`WebView [${platform}] failed to load:`, {
             errorCode: event.errorCode,
             errorDescription: event.errorDescription,
             validatedURL: event.validatedURL,
@@ -717,10 +892,21 @@ function setupWebviews() {
           });
         }
 
+        // Hide loading indicator on error
+        if (loadingTimeout) {
+          clearTimeout(loadingTimeout);
+          loadingTimeout = null;
+        }
+        if (loadingDiv) loadingDiv.style.display = 'none';
+
         // For certain error codes, we can try to recover
         if (event.errorCode === -105) {
           // CONNECTION_REFUSED
+          logger.info(`[webview][${platform}] Connection refused, retrying in 2s...`);
           setTimeout(() => webview.reload(), 2000);
+        } else if (event.errorCode === -3 && platform === 'messenger') {
+          // ERR_ABORTED - common for messenger redirects
+          logger.info(`[webview][${platform}] Navigation aborted (likely auth redirect)`);
         }
       },
       { passive: true }
