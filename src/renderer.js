@@ -149,29 +149,14 @@ function setTabUnread(platform, count, options = {}) {
   unreadState[platform] = unreadCount;
   const tabButton = document.querySelector(`.tablinks[data-platform="${platform}"]`);
   const notificationsEnabled = isNotificationsEnabled(platform);
-
-  if (IS_DEV && platform === 'messenger') {
-    console.log(
-      `[DEBUG] setTabUnread for ${platform}: count=${count}, unreadCount=${unreadCount}, notificationsEnabled=${notificationsEnabled}, tabButton exists=${!!tabButton}`
-    );
-  }
-
   if (tabButton) {
     if (notificationsEnabled && unreadCount > 0) {
       tabButton.classList.add('has-unread');
       const displayCount = unreadCount > 99 ? '99+' : String(unreadCount);
       tabButton.setAttribute('data-unread-count', displayCount);
-      if (IS_DEV && platform === 'messenger') {
-        console.log(`[DEBUG] Added badge to ${platform} button: ${displayCount}`);
-      }
     } else {
       tabButton.classList.remove('has-unread');
       tabButton.removeAttribute('data-unread-count');
-      if (IS_DEV && platform === 'messenger') {
-        console.log(
-          `[DEBUG] Removed badge from ${platform} button (enabled=${notificationsEnabled}, count=${unreadCount})`
-        );
-      }
     }
   }
   if (!skipPersist) {
@@ -193,10 +178,7 @@ function openTab(evt, platform) {
     tablinks[i].className = tablinks[i].className.replace(' active', '');
   }
 
-  const tabElement = document.getElementById(platform);
-  if (tabElement) {
-    tabElement.style.display = 'block';
-  }
+  document.getElementById(platform).style.display = 'block';
   evt.currentTarget.className += ' active';
 
   // Do not reset unread count immediately; rely on service title updates
@@ -352,26 +334,11 @@ function createPlatformTab(platform, config) {
   tab.className = 'tabcontent';
   tab.style.display = 'none';
 
-  // Create container for webview and loading state
-  const container = document.createElement('div');
-  container.className = 'webview-container';
-
-  // Create loading indicator
-  const loadingDiv = document.createElement('div');
-  loadingDiv.className = 'webview-loading';
-  loadingDiv.id = `${platform}-loading`;
-  loadingDiv.innerHTML = `
-    <div class="loading-spinner"></div>
-    <p>Loading ${config.name}...</p>
-    ${IS_DEV ? `<p style="font-size: 12px; margin-top: 8px;" id="${platform}-debug-status">Waiting for webview...</p>` : ''}
-  `;
-
   const webview = document.createElement('webview');
   webview.id = `${platform}-webview`;
   webview.src = config.url;
   webview.style.width = '100%';
   webview.style.height = '100vh';
-  // Don't hide webview - let it load in background, loading indicator will overlay it
 
   // Set persistent partition for each platform to maintain sessions/cookies
   webview.setAttribute('partition', `persist:${platform}`);
@@ -380,9 +347,7 @@ function createPlatformTab(platform, config) {
     webview.setAttribute('useragent', CHROME_USER_AGENT);
   }
 
-  container.appendChild(loadingDiv);
-  container.appendChild(webview);
-  tab.appendChild(container);
+  tab.appendChild(webview);
   return tab;
 }
 
@@ -486,70 +451,6 @@ function setupWebviews() {
       });
     }
 
-    // Handle loading states - show/hide loading indicator
-    const loadingDiv = document.getElementById(`${platform}-loading`);
-    let loadingTimeout = null;
-
-    webview.addEventListener('did-start-loading', () => {
-      if (IS_DEV) {
-        logger.info(`[webview][${platform}] did-start-loading`);
-        console.log(`[DEBUG] ${platform} webview started loading`);
-        const debugStatus = document.getElementById(`${platform}-debug-status`);
-        if (debugStatus) debugStatus.textContent = 'Event: did-start-loading fired';
-      }
-      // Set a timeout for stuck loading states (especially for messenger)
-      if (loadingTimeout) clearTimeout(loadingTimeout);
-      loadingTimeout = setTimeout(() => {
-        if (loadingDiv && loadingDiv.style.display !== 'none') {
-          logger.warn(`[webview][${platform}] Loading timeout exceeded - hiding spinner`);
-          console.log(`[DEBUG] ${platform} loading timeout - hiding spinner`);
-          const debugStatus = document.getElementById(`${platform}-debug-status`);
-          if (debugStatus) debugStatus.textContent = 'TIMEOUT: 30s exceeded, hiding spinner';
-          if (loadingDiv) loadingDiv.style.display = 'none';
-        }
-      }, 30000); // 30 second timeout
-    });
-
-    webview.addEventListener('did-stop-loading', () => {
-      if (IS_DEV) {
-        logger.info(`[webview][${platform}] did-stop-loading`);
-        console.log(`[DEBUG] ${platform} webview stopped loading - hiding spinner`);
-      }
-      if (loadingTimeout) {
-        clearTimeout(loadingTimeout);
-        loadingTimeout = null;
-      }
-      if (loadingDiv) {
-        loadingDiv.style.display = 'none';
-        console.log(`[DEBUG] ${platform} loading indicator hidden`);
-        // Update the loading text to show it fired
-        if (IS_DEV) {
-          loadingDiv.innerHTML = `<p>did-stop-loading fired for ${platform}</p>`;
-        }
-      }
-    });
-
-    webview.addEventListener('dom-ready', () => {
-      if (IS_DEV) {
-        logger.info(`[webview][${platform}] dom-ready`);
-        console.log(`[DEBUG] ${platform} DOM ready`);
-        const debugStatus = document.getElementById(`${platform}-debug-status`);
-        if (debugStatus) debugStatus.textContent = 'Event: dom-ready fired';
-      }
-      // For messenger, be more aggressive about hiding loading
-      if (platform === 'messenger') {
-        console.log('[DEBUG] messenger DOM ready - will hide spinner in 2s');
-        const debugStatus = document.getElementById(`${platform}-debug-status`);
-        if (debugStatus) debugStatus.textContent = 'Messenger DOM ready - hiding in 2s...';
-        setTimeout(() => {
-          if (loadingDiv) {
-            loadingDiv.style.display = 'none';
-            console.log('[DEBUG] messenger loading indicator hidden after timeout');
-          }
-        }, 2000);
-      }
-    });
-
     webview.addEventListener('new-window', (event) => {
       if (IS_DEV) {
         logger.info(`[webview][${platform}] new-window event:`, event.url);
@@ -573,15 +474,7 @@ function setupWebviews() {
           return;
         }
         const targetHost = new URL(event.url).host;
-        const isInternal = isInternalHost(targetHost, platformHost);
-
-        if (IS_DEV && platform === 'messenger') {
-          logger.info(
-            `[webview][messenger] Navigation check: ${targetHost} -> internal: ${isInternal}`
-          );
-        }
-
-        if (!isInternal) {
+        if (!isInternalHost(targetHost, platformHost)) {
           event.preventDefault();
           openExternalLink(event.url);
         }
@@ -732,11 +625,6 @@ function setupWebviews() {
       const trimmedTitle = (title || '').trim();
       const match = trimmedTitle.match(/^\((\d+)\)/);
       const unreadCount = match ? parseInt(match[1], 10) : 0;
-      if (IS_DEV && platform === 'messenger') {
-        console.log(
-          `[DEBUG] ${platform} title: "${trimmedTitle}", match: ${match}, count: ${unreadCount}`
-        );
-      }
       setTabUnread(platform, unreadCount);
     };
 
@@ -783,107 +671,114 @@ function setupWebviews() {
             `
 					(() => {
 						try {
-							// Check document title first (most reliable for Messenger)
-							if (document.title) {
-								const titleMatch = document.title.match(/(\\d+)/);
-								if (titleMatch) {
-									const count = parseInt(titleMatch[1]);
-									console.log('[Chattio Messenger] Found count in title:', document.title, 'count:', count);
-									return count;
+							let detectionMethod = 'failed';
+							let count = 0;
+
+							// Method 1: Direct badge count element (most reliable)
+							const badge = document.querySelector('[data-testid="mwthreadlist_unread_badge_count"], [data-testid="unread_indicator_badge"]');
+							if (badge && badge.textContent) {
+								const text = badge.textContent.trim();
+								// Handle "99+" format
+								count = text === '99+' ? 99 : parseInt(text, 10);
+								if (!isNaN(count) && count > 0) {
+									detectionMethod = 'badge_element';
+									return { count, detectionMethod };
 								}
 							}
 
-							// Try multiple badge selectors (Facebook changes these frequently)
-							const badgeSelectors = [
-								'[data-testid="mwthreadlist_unread_badge_count"]',
-								'[data-testid="unread_indicator_badge"]',
-								'[aria-label*="unread message"]',
-								'[aria-label*="new message"]',
-								'span[class*="badge"]',
-								'div[role="navigation"] span',
-								// Try finding any element with just a number in it (risky but useful)
-								'div[role="navigation"] div[class*="x"] > span'
-							];
-
-							for (const selector of badgeSelectors) {
-								const badges = document.querySelectorAll(selector);
-								for (const badge of badges) {
-									if (badge && badge.textContent) {
-										const text = badge.textContent.trim();
-										// Look for any number
-										const match = text.match(/^(\\d+)$/);
-										if (match && parseInt(match[1]) > 0 && parseInt(match[1]) < 1000) {
-											const count = parseInt(match[1]);
-											console.log('[Chattio Messenger] Found badge with selector:', selector, 'text:', text, 'count:', count);
-											return count;
-										}
-									}
-								}
+							// Method 2: Count unread indicator badges in the thread list
+							const unreadBadges = document.querySelectorAll(
+								'[data-testid="mwthreadlist_row_unread_indicator"],' +
+								'[aria-label*="unread" i]:not([role="row"]),' +
+								'.notranslate > span[style*="background"]'
+							);
+							if (unreadBadges.length > 0) {
+								count = unreadBadges.length;
+								detectionMethod = 'unread_badges';
+								return { count, detectionMethod };
 							}
 
-							// Scan navigation area for any standalone numbers
-							const navArea = document.querySelector('[role="navigation"]') || document.querySelector('nav');
-							if (navArea) {
-								const allSpans = navArea.querySelectorAll('span, div');
-								for (const span of allSpans) {
-									const text = span.textContent?.trim();
-									if (text && /^\\d+$/.test(text)) {
-										const num = parseInt(text);
-										if (num > 0 && num < 100) {
-											console.log('[Chattio Messenger] Found number in nav:', text);
-											return num;
-										}
-									}
-								}
-							}
-
-							// Fallback: count unread indicators
-							const unreadRows = Array.from(document.querySelectorAll('[role="row"], [data-testid="mwthreadlist-row"], [role="listitem"]')).filter(row => {
+							// Method 3: Count rows with unread indicators via aria-label
+							const unreadRows = Array.from(document.querySelectorAll('[role="row"], [data-testid="mwthreadlist-row"]')).filter(row => {
 								const label = (row.getAttribute('aria-label') || '').toLowerCase();
-								const text = (row.textContent || '').toLowerCase();
 								return label.includes('unread') || label.includes('new message');
 							});
+							if (unreadRows.length > 0) {
+								count = unreadRows.length;
+								detectionMethod = 'unread_rows';
+								return { count, detectionMethod };
+							}
 
+							// Method 4: Count unread dots by aria-label
 							const unreadDots = document.querySelectorAll(
-								'[aria-label="Unread"], [aria-label="Unread dot"], [aria-label="Mark as read"], ' +
-								'[data-testid="mwthreadlist_row_unread_indicator"], ' +
-								'div[style*="background"][style*="rgb(0"]'
+								'[aria-label="Unread"],' +
+								'[aria-label="Unread dot"],' +
+								'[aria-label="Mark as read"]'
 							);
+							if (unreadDots.length > 0) {
+								count = unreadDots.length;
+								detectionMethod = 'unread_dots';
+								return { count, detectionMethod };
+							}
 
-							const counts = [
-								unreadRows.length,
-								unreadDots ? unreadDots.length : 0
-							].filter(Boolean);
+							// Method 5: Check for notification badge in navigation (fallback for mobile view)
+							const navBadge = document.querySelector('[data-testid="navigation_badge"]');
+							if (navBadge && navBadge.textContent) {
+								const text = navBadge.textContent.trim();
+								count = text === '99+' ? 99 : parseInt(text, 10);
+								if (!isNaN(count) && count > 0) {
+									detectionMethod = 'nav_badge';
+									return { count, detectionMethod };
+								}
+							}
 
-							const finalCount = counts.length ? Math.max(...counts) : 0;
-							console.log('[Chattio Messenger] Fallback count - rows:', unreadRows.length, 'dots:', unreadDots.length, 'final:', finalCount);
-							return finalCount;
+							// No unread messages detected
+							return { count: 0, detectionMethod: 'none' };
 						} catch (err) {
-							console.error('[Chattio Messenger] Error polling unread:', err);
-							return 0;
+							return { count: 0, detectionMethod: 'error', error: err.message };
 						}
 					})()
 				`
           )
           .then((result) => {
-            const count = parseInt(result, 10);
-            if (IS_DEV) {
-              console.log(`[DEBUG] Messenger unread poll result: ${result} -> parsed: ${count}`);
-            }
-            if (!Number.isNaN(count)) {
-              setTabUnread(platform, count);
+            if (result && typeof result === 'object') {
+              const count = parseInt(result.count, 10);
+              const method = result.detectionMethod || 'unknown';
+
+              if (!Number.isNaN(count)) {
+                // Track badge detection for telemetry
+                telemetry.trackBadgeDetection(platform, method, count, {
+                  error: result.error,
+                });
+
+                // Update unread count
+                setTabUnread(platform, count);
+
+                // Log detection method for debugging (only when count changes or method changes)
+                if (count > 0 || method === 'error') {
+                  logger.debug(`[Messenger] Badge detected via ${method}: ${count}`);
+                }
+              }
+            } else {
+              // Legacy response format (just a number)
+              const count = parseInt(result, 10);
+              if (!Number.isNaN(count)) {
+                telemetry.trackBadgeDetection(platform, 'legacy', count);
+                setTabUnread(platform, count);
+              }
             }
           })
           .catch((err) => {
-            if (IS_DEV) {
-              console.log(`[DEBUG] Messenger unread poll failed:`, err);
-            }
+            logger.warn(`[Messenger] Badge detection failed:`, err);
+            telemetry.trackBadgeDetection(platform, 'exception', 0, {
+              error: err.message,
+            });
           });
       };
       const messengerInterval = setInterval(pollMessengerUnread, 4000);
       webview.addEventListener('destroyed', () => clearInterval(messengerInterval));
       webview.addEventListener('close', () => clearInterval(messengerInterval));
-      // Poll immediately once
+      // Poll immediately on load for faster initial detection
       setTimeout(pollMessengerUnread, 2000);
     }
 
@@ -892,7 +787,7 @@ function setupWebviews() {
       (event) => {
         // Only log errors that we don't explicitly ignore
         if (![-3, -102, -105, -106, -107, -109].includes(event.errorCode)) {
-          logger.error(`WebView [${platform}] failed to load:`, {
+          logger.error('WebView failed to load:', {
             errorCode: event.errorCode,
             errorDescription: event.errorDescription,
             validatedURL: event.validatedURL,
@@ -900,21 +795,10 @@ function setupWebviews() {
           });
         }
 
-        // Hide loading indicator on error
-        if (loadingTimeout) {
-          clearTimeout(loadingTimeout);
-          loadingTimeout = null;
-        }
-        if (loadingDiv) loadingDiv.style.display = 'none';
-
         // For certain error codes, we can try to recover
         if (event.errorCode === -105) {
           // CONNECTION_REFUSED
-          logger.info(`[webview][${platform}] Connection refused, retrying in 2s...`);
           setTimeout(() => webview.reload(), 2000);
-        } else if (event.errorCode === -3 && platform === 'messenger') {
-          // ERR_ABORTED - common for messenger redirects
-          logger.info(`[webview][${platform}] Navigation aborted (likely auth redirect)`);
         }
       },
       { passive: true }

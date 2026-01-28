@@ -117,6 +117,24 @@ class TelemetryService {
   }
 
   /**
+   * Track notification badge detection
+   * @param {string} platform - Platform name
+   * @param {string} detectionMethod - Method used to detect badge (e.g., 'badge_element', 'unread_rows', 'unread_dots', 'title', 'failed')
+   * @param {number} count - Detected unread count
+   * @param {object} details - Additional details
+   */
+  trackBadgeDetection(platform, detectionMethod, count, details = {}) {
+    this.recordEvent({
+      type: 'badge_detection',
+      platform,
+      detectionMethod,
+      count,
+      details,
+      timestamp: Date.now(),
+    });
+  }
+
+  /**
    * Record a generic event
    * @param {object} event - Event data
    */
@@ -206,6 +224,47 @@ class TelemetryService {
         }
         summary.updateStats.byStage[e.stage]++;
       });
+    }
+
+    // Badge detection statistics
+    const badgeEvents = this.events.filter((e) => e.type === 'badge_detection');
+    if (badgeEvents.length > 0) {
+      summary.badgeStats = {
+        total: badgeEvents.length,
+        byPlatform: {},
+        byMethod: {},
+        successRate: 0,
+      };
+
+      badgeEvents.forEach((e) => {
+        // Count by platform
+        if (!summary.badgeStats.byPlatform[e.platform]) {
+          summary.badgeStats.byPlatform[e.platform] = {
+            total: 0,
+            byMethod: {},
+          };
+        }
+        summary.badgeStats.byPlatform[e.platform].total++;
+
+        // Count by method (overall)
+        if (!summary.badgeStats.byMethod[e.detectionMethod]) {
+          summary.badgeStats.byMethod[e.detectionMethod] = 0;
+        }
+        summary.badgeStats.byMethod[e.detectionMethod]++;
+
+        // Count by method (per platform)
+        if (!summary.badgeStats.byPlatform[e.platform].byMethod[e.detectionMethod]) {
+          summary.badgeStats.byPlatform[e.platform].byMethod[e.detectionMethod] = 0;
+        }
+        summary.badgeStats.byPlatform[e.platform].byMethod[e.detectionMethod]++;
+      });
+
+      // Calculate success rate (non-error, non-exception methods)
+      const successfulDetections = badgeEvents.filter(
+        (e) => e.detectionMethod !== 'error' && e.detectionMethod !== 'exception'
+      );
+      summary.badgeStats.successRate =
+        badgeEvents.length > 0 ? successfulDetections.length / badgeEvents.length : 0;
     }
 
     return summary;
