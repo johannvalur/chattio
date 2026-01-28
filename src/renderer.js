@@ -777,7 +777,7 @@ function setupWebviews() {
 						try {
 							// Check document title first (most reliable for Messenger)
 							if (document.title) {
-								const titleMatch = document.title.match(/\((\d+)\)/);
+								const titleMatch = document.title.match(/(\\d+)/);
 								if (titleMatch) {
 									const count = parseInt(titleMatch[1]);
 									console.log('[Chattio Messenger] Found count in title:', document.title, 'count:', count);
@@ -803,7 +803,7 @@ function setupWebviews() {
 									if (badge && badge.textContent) {
 										const text = badge.textContent.trim();
 										// Look for any number
-										const match = text.match(/^(\d+)$/);
+										const match = text.match(/^(\\d+)$/);
 										if (match && parseInt(match[1]) > 0 && parseInt(match[1]) < 1000) {
 											const count = parseInt(match[1]);
 											console.log('[Chattio Messenger] Found badge with selector:', selector, 'text:', text, 'count:', count);
@@ -819,7 +819,7 @@ function setupWebviews() {
 								const allSpans = navArea.querySelectorAll('span, div');
 								for (const span of allSpans) {
 									const text = span.textContent?.trim();
-									if (text && /^\d+$/.test(text)) {
+									if (text && /^\\d+$/.test(text)) {
 										const num = parseInt(text);
 										if (num > 0 && num < 100) {
 											console.log('[Chattio Messenger] Found number in nav:', text);
