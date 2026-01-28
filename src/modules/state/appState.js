@@ -8,7 +8,7 @@ const STORAGE_KEY = 'chattio-app-state';
 
 function buildDefaultAppsState() {
   return PLATFORM_KEYS.reduce((state, platform) => {
-    state[platform] = { enabled: true, notifications: true };
+    state[platform] = { enabled: true, notifications: true, soundEnabled: true };
     return state;
   }, {});
 }

@@ -884,7 +884,7 @@ function setupWebviews() {
 // App state management
 function buildDefaultAppsState() {
   return PLATFORM_KEYS.reduce((acc, platform) => {
-    acc[platform] = { enabled: true, notifications: true };
+    acc[platform] = { enabled: true, notifications: true, soundEnabled: true };
     return acc;
   }, {});
 }
@@ -991,24 +991,20 @@ function setupGlobalSettings() {
     }
 
     // Notification sounds toggle
+    // Sounds & preview toggle - controls both sound and preview content
     const notificationSoundsToggle = document.getElementById('notification-sounds-toggle');
     if (notificationSoundsToggle) {
-      notificationSoundsToggle.checked = appState.settings.notificationSounds !== false;
-      notificationSoundsToggle.addEventListener('change', (e) => {
-        appState.settings.notificationSounds = e.target.checked;
-        saveAppState();
-        logger.log(`Notification sounds ${e.target.checked ? 'enabled' : 'disabled'}`);
-      });
-    }
+      // Checked if BOTH sound and preview are enabled
+      notificationSoundsToggle.checked =
+        appState.settings.notificationSounds !== false &&
+        appState.settings.notificationPreview !== false;
 
-    // Notification preview toggle
-    const notificationPreviewToggle = document.getElementById('notification-preview-toggle');
-    if (notificationPreviewToggle) {
-      notificationPreviewToggle.checked = appState.settings.notificationPreview !== false;
-      notificationPreviewToggle.addEventListener('change', (e) => {
+      notificationSoundsToggle.addEventListener('change', (e) => {
+        // Toggle both sound and preview together
+        appState.settings.notificationSounds = e.target.checked;
         appState.settings.notificationPreview = e.target.checked;
         saveAppState();
-        logger.log(`Notification preview ${e.target.checked ? 'enabled' : 'disabled'}`);
+        logger.log(`Notification sounds and preview ${e.target.checked ? 'enabled' : 'disabled'}`);
       });
     }
 
@@ -1311,12 +1307,20 @@ function initializeAppSettings() {
             <span class="slider"></span>
           </label>
         </div>
+        <div class="settings-app-toggle-row">
+          <span>Sound</span>
+          <label class="switch">
+            <input type="checkbox" data-app="${platform}" data-toggle="sound" ${app.soundEnabled !== false ? 'checked' : ''} />
+            <span class="slider"></span>
+          </label>
+        </div>
       </div>
     `;
 
     // Add event listeners
     const visibilityToggle = card.querySelector('[data-toggle="visibility"]');
     const notificationToggle = card.querySelector('[data-toggle="notifications"]');
+    const soundToggle = card.querySelector('[data-toggle="sound"]');
 
     visibilityToggle.addEventListener('change', (e) => {
       e.stopPropagation();
@@ -1340,6 +1344,13 @@ function initializeAppSettings() {
       saveAppState();
       logger.log(`${platformName} notifications ${e.target.checked ? 'enabled' : 'disabled'}`);
       updateUnreadSummary(); // Update badge/notifications immediately
+    });
+
+    soundToggle.addEventListener('change', (e) => {
+      e.stopPropagation();
+      appState.apps[platform].soundEnabled = e.target.checked;
+      saveAppState();
+      logger.log(`${platformName} sound ${e.target.checked ? 'enabled' : 'disabled'}`);
     });
 
     container.appendChild(card);
