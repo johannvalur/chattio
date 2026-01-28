@@ -17,9 +17,9 @@ jobs:
       
       - name: Update dependencies
         run: |
-          npx npm-check-updates --upgrade
-          npm install
-          npm audit fix
+          npx npm-check-updates --upgrade --reject eslint
+          npm install --legacy-peer-deps
+          npm audit fix --legacy-peer-deps
       
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5

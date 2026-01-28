@@ -1,6 +1,6 @@
 {
   "name": "chattio",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "Chattio - all-in-one messaging client for Mac",
   "main": "src/main.js",
   "scripts": {
@@ -130,6 +130,7 @@
   "build": {
     "appId": "com.unified.messenger",
     "productName": "Chattio",
+    "afterPack": "./scripts/afterPack.js",
     "directories": {
       "output": "dist"
     },
