@@ -120,12 +120,14 @@ gh pr merge --merge --repo johannvalur/chattio
 ### Build Fails in CI/CD
 
 **Check GitHub Actions logs:**
+
 ```bash
 gh run list --repo johannvalur/chattio --limit 5
 gh run view <run-id> --log-failed
 ```
 
 **Common issues:**
+
 - Missing secrets: Verify all GitHub secrets are set
 - Linting errors: Run `npm run lint:fix` locally
 - Format errors: Run `npm run format` locally
@@ -135,6 +137,7 @@ gh run view <run-id> --log-failed
 This means notarization failed or wasn't performed. Check:
 
 1. **Verify secrets are set:**
+
    ```bash
    gh secret list --repo johannvalur/chattio
    ```
@@ -150,6 +153,7 @@ This means notarization failed or wasn't performed. Check:
 ### Auto-Update Not Working
 
 **Verify release structure:**
+
 - DMG and ZIP must both be present
 - `latest-mac.yml` must have correct SHA512 and size
 - Release must be published (not draft)
@@ -159,23 +163,25 @@ This means notarization failed or wasn't performed. Check:
 
 Required secrets (already configured):
 
-| Secret | Description |
-|--------|-------------|
-| `MAC_CERT` | Base64-encoded P12 certificate |
-| `MAC_CERT_PASSWORD` | Certificate password |
-| `APPLE_ID` | Apple ID email |
+| Secret               | Description                                  |
+| -------------------- | -------------------------------------------- |
+| `MAC_CERT`           | Base64-encoded P12 certificate               |
+| `MAC_CERT_PASSWORD`  | Certificate password                         |
+| `APPLE_ID`           | Apple ID email                               |
 | `APPLE_APP_PASSWORD` | App-specific password from appleid.apple.com |
-| `APPLE_TEAM_ID` | Team ID (QD9KBHBRRZ) |
+| `APPLE_TEAM_ID`      | Team ID (QD9KBHBRRZ)                         |
 
 ## Automated vs Manual
 
 ### ✅ Use Automated (CI/CD) When:
+
 - Making regular releases
 - Want proper code signing and notarization
 - Need both macOS and Windows builds
 - Have GitHub secrets configured
 
 ### ⚠️ Use Manual When:
+
 - CI/CD is broken
 - Testing release process
 - Need immediate local build
