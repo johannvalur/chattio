@@ -6,30 +6,81 @@ This guide explains how to release new versions of Chattio with automatic update
 
 ### Option 1: Automated Release via GitHub Actions (Recommended)
 
-1. **Bump the version:**
+This is the **preferred method** as it handles code signing and notarization automatically.
+
+#### Prerequisites
+
+Ensure the following GitHub secrets are configured (already set up):
+- `MAC_CERT` - Base64-encoded P12 certificate
+- `MAC_CERT_PASSWORD` - Certificate password
+- `APPLE_ID` - Your Apple ID email
+- `APPLE_APP_PASSWORD` - App-specific password
+- `APPLE_TEAM_ID` - Your Apple Developer Team ID
+
+#### Steps
+
+1. **Bump the version in package.json and chattio/index.html:**
 
    ```bash
-   npm run version:patch  # for 1.0.1 -> 1.0.2
+   # Update package.json version
+   npm version patch  # for 1.0.1 -> 1.0.2
    # OR
-   npm run version:minor  # for 1.0.1 -> 1.1.0
+   npm version minor  # for 1.0.1 -> 1.1.0
    # OR
-   npm run version:major  # for 1.0.1 -> 2.0.0
+   npm version major  # for 1.0.1 -> 2.0.0
    ```
 
-   This will:
-   - Update the version in `package.json`
-   - Create a git commit
-   - Create a git tag
+2. **Update website download links:**
 
-2. **Push the tag to GitHub:**
+   Edit `chattio/index.html` and update both version numbers:
+   - Windows download link (line ~412)
+   - macOS download link (line ~425)
+   - Version text for both (lines ~419 and ~432)
+
+3. **Commit and push changes:**
 
    ```bash
-   git push && git push --tags
+   git add package.json chattio/index.html
+   git commit -m "chore: Bump version to vX.X.X"
+   git push
    ```
 
-3. **Wait for GitHub Actions:**
-   - The release workflow will automatically build and publish to GitHub Releases
+4. **Create and push the release tag:**
+
+   ```bash
+   git tag vX.X.X
+   git push origin vX.X.X
+   ```
+
+5. **Monitor GitHub Actions:**
+   - The release workflow will automatically trigger
    - Monitor progress at: https://github.com/johannvalur/chattio/actions
+   - The workflow will:
+     - Build for both macOS and Windows
+     - **Code sign** the macOS app with your Developer ID
+     - **Notarize** the macOS app with Apple
+     - Sign the Windows installer
+     - Create a draft release with all artifacts
+
+6. **Publish the release:**
+
+   Once the workflow completes, publish the draft release:
+   ```bash
+   gh release edit vX.X.X --draft=false --title "vX.X.X - Release Title" \
+     --notes "Release notes here..." --repo johannvalur/chattio
+   ```
+
+7. **Merge to main branch:**
+
+   The version changes need to be synced to the `main` branch for website deployment:
+   ```bash
+   # Create PR from master to main
+   gh pr create --base main --head master --title "chore: Sync vX.X.X to main" \
+     --body "Syncing version X.X.X release" --repo johannvalur/chattio
+
+   # Merge it
+   gh pr merge --merge --repo johannvalur/chattio
+   ```
 
 ### Option 2: Manual Local Release
 
@@ -143,21 +194,28 @@ resource fork, Finder information, or similar detritus not allowed
    gh release edit vX.X.X --draft=false --repo johannvalur/chattio
    ```
 
-9. **Optional: Notarize the app:**
+9. **Notarize the app (Required for distribution):**
 
    ```bash
    # First, store credentials (one-time setup)
    xcrun notarytool store-credentials "notarytool-password" \
      --apple-id "your@email.com" \
-     --team-id "YOUR_TEAM_ID"
+     --team-id "YOUR_TEAM_ID" \
+     --password "app-specific-password"
+
+   # Notarize the ZIP file (required for auto-updates)
+   xcrun notarytool submit /tmp/chattio-dist/Chattio-X.X.X-arm64-mac.zip \
+     --keychain-profile "notarytool-password" --wait
 
    # Notarize the DMG
    xcrun notarytool submit /tmp/chattio-dist/Chattio-X.X.X-arm64.dmg \
      --keychain-profile "notarytool-password" --wait
 
-   # Staple the notarization ticket
+   # Staple the notarization ticket to the DMG
    xcrun stapler staple /tmp/chattio-dist/Chattio-X.X.X-arm64.dmg
    ```
+
+   **Note:** Without notarization, users will see "app is damaged" errors on macOS.
 
 ## How Auto-Updates Work
 
