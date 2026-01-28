@@ -151,7 +151,9 @@ function setTabUnread(platform, count, options = {}) {
   const notificationsEnabled = isNotificationsEnabled(platform);
 
   if (IS_DEV && platform === 'messenger') {
-    console.log(`[DEBUG] setTabUnread for ${platform}: count=${count}, unreadCount=${unreadCount}, notificationsEnabled=${notificationsEnabled}, tabButton exists=${!!tabButton}`);
+    console.log(
+      `[DEBUG] setTabUnread for ${platform}: count=${count}, unreadCount=${unreadCount}, notificationsEnabled=${notificationsEnabled}, tabButton exists=${!!tabButton}`
+    );
   }
 
   if (tabButton) {
@@ -166,7 +168,9 @@ function setTabUnread(platform, count, options = {}) {
       tabButton.classList.remove('has-unread');
       tabButton.removeAttribute('data-unread-count');
       if (IS_DEV && platform === 'messenger') {
-        console.log(`[DEBUG] Removed badge from ${platform} button (enabled=${notificationsEnabled}, count=${unreadCount})`);
+        console.log(
+          `[DEBUG] Removed badge from ${platform} button (enabled=${notificationsEnabled}, count=${unreadCount})`
+        );
       }
     }
   }
@@ -572,7 +576,9 @@ function setupWebviews() {
         const isInternal = isInternalHost(targetHost, platformHost);
 
         if (IS_DEV && platform === 'messenger') {
-          logger.info(`[webview][messenger] Navigation check: ${targetHost} -> internal: ${isInternal}`);
+          logger.info(
+            `[webview][messenger] Navigation check: ${targetHost} -> internal: ${isInternal}`
+          );
         }
 
         if (!isInternal) {
@@ -727,7 +733,9 @@ function setupWebviews() {
       const match = trimmedTitle.match(/^\((\d+)\)/);
       const unreadCount = match ? parseInt(match[1], 10) : 0;
       if (IS_DEV && platform === 'messenger') {
-        console.log(`[DEBUG] ${platform} title: "${trimmedTitle}", match: ${match}, count: ${unreadCount}`);
+        console.log(
+          `[DEBUG] ${platform} title: "${trimmedTitle}", match: ${match}, count: ${unreadCount}`
+        );
       }
       setTabUnread(platform, unreadCount);
     };
