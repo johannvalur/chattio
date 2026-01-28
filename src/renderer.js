@@ -671,37 +671,115 @@ function setupWebviews() {
             `
 					(() => {
 						try {
+							let detectionMethod = 'failed';
+							let count = 0;
+
+							// Method 1: Direct badge count element (most reliable)
 							const badge = document.querySelector('[data-testid="mwthreadlist_unread_badge_count"], [data-testid="unread_indicator_badge"]');
 							if (badge && badge.textContent) {
-								return badge.textContent.trim();
+								const text = badge.textContent.trim();
+								// Handle "99+" format
+								count = text === '99+' ? 99 : parseInt(text, 10);
+								if (!isNaN(count) && count > 0) {
+									detectionMethod = 'badge_element';
+									return { count, detectionMethod };
+								}
 							}
+
+							// Method 2: Count unread indicator badges in the thread list
+							const unreadBadges = document.querySelectorAll(
+								'[data-testid="mwthreadlist_row_unread_indicator"],' +
+								'[aria-label*="unread" i]:not([role="row"]),' +
+								'.notranslate > span[style*="background"]'
+							);
+							if (unreadBadges.length > 0) {
+								count = unreadBadges.length;
+								detectionMethod = 'unread_badges';
+								return { count, detectionMethod };
+							}
+
+							// Method 3: Count rows with unread indicators via aria-label
 							const unreadRows = Array.from(document.querySelectorAll('[role="row"], [data-testid="mwthreadlist-row"]')).filter(row => {
 								const label = (row.getAttribute('aria-label') || '').toLowerCase();
 								return label.includes('unread') || label.includes('new message');
 							});
-							const unreadDots = document.querySelectorAll('[aria-label="Unread"], [aria-label="Unread dot"], [aria-label="Mark as read"], [data-testid="mwthreadlist_row_unread_indicator"]');
-							const counts = [
-								unreadRows.length,
-								unreadDots ? unreadDots.length : 0
-							].filter(Boolean);
-							return counts.length ? Math.max(...counts) : 0;
+							if (unreadRows.length > 0) {
+								count = unreadRows.length;
+								detectionMethod = 'unread_rows';
+								return { count, detectionMethod };
+							}
+
+							// Method 4: Count unread dots by aria-label
+							const unreadDots = document.querySelectorAll(
+								'[aria-label="Unread"],' +
+								'[aria-label="Unread dot"],' +
+								'[aria-label="Mark as read"]'
+							);
+							if (unreadDots.length > 0) {
+								count = unreadDots.length;
+								detectionMethod = 'unread_dots';
+								return { count, detectionMethod };
+							}
+
+							// Method 5: Check for notification badge in navigation (fallback for mobile view)
+							const navBadge = document.querySelector('[data-testid="navigation_badge"]');
+							if (navBadge && navBadge.textContent) {
+								const text = navBadge.textContent.trim();
+								count = text === '99+' ? 99 : parseInt(text, 10);
+								if (!isNaN(count) && count > 0) {
+									detectionMethod = 'nav_badge';
+									return { count, detectionMethod };
+								}
+							}
+
+							// No unread messages detected
+							return { count: 0, detectionMethod: 'none' };
 						} catch (err) {
-							return 0;
+							return { count: 0, detectionMethod: 'error', error: err.message };
 						}
 					})()
 				`
           )
           .then((result) => {
-            const count = parseInt(result, 10);
-            if (!Number.isNaN(count)) {
-              setTabUnread(platform, count);
+            if (result && typeof result === 'object') {
+              const count = parseInt(result.count, 10);
+              const method = result.detectionMethod || 'unknown';
+
+              if (!Number.isNaN(count)) {
+                // Track badge detection for telemetry
+                telemetry.trackBadgeDetection(platform, method, count, {
+                  error: result.error,
+                });
+
+                // Update unread count
+                setTabUnread(platform, count);
+
+                // Log detection method for debugging (only when count changes or method changes)
+                if (count > 0 || method === 'error') {
+                  logger.debug(`[Messenger] Badge detected via ${method}: ${count}`);
+                }
+              }
+            } else {
+              // Legacy response format (just a number)
+              const count = parseInt(result, 10);
+              if (!Number.isNaN(count)) {
+                telemetry.trackBadgeDetection(platform, 'legacy', count);
+                setTabUnread(platform, count);
+              }
             }
           })
-          .catch(() => {});
+          .catch((err) => {
+            logger.warn(`[Messenger] Badge detection failed:`, err);
+            telemetry.trackBadgeDetection(platform, 'exception', 0, {
+              error: err.message,
+            });
+          });
       };
       const messengerInterval = setInterval(pollMessengerUnread, 4000);
       webview.addEventListener('destroyed', () => clearInterval(messengerInterval));
       webview.addEventListener('close', () => clearInterval(messengerInterval));
+      // Poll immediately on load for faster initial detection
+      setTimeout(pollMessengerUnread, 2000);
     }
 
     webview.addEventListener(
