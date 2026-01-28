@@ -2,6 +2,14 @@
 
 This guide explains how to release new versions of Chattio with automatic updates.
 
+## Branch Strategy
+
+- **Default branch:** `main`
+- **Development:** Work on feature branches, merge to `main` via PR
+- **Releases:** Tag from `main` to trigger automated builds
+- **CI/CD:** Runs on pushes to `main` and all PRs to `main`
+- **Website:** Deployed from `main` branch
+
 ## Quick Release Process
 
 ### Option 1: Automated Release via GitHub Actions (Recommended)
@@ -74,16 +82,18 @@ Ensure the following GitHub secrets are configured (already set up):
 
 7. **Merge to main branch:**
 
-   The version changes need to be synced to the `main` branch for website deployment:
+   If you created the release from a feature branch, merge it to `main`:
 
    ```bash
-   # Create PR from master to main
-   gh pr create --base main --head master --title "chore: Sync vX.X.X to main" \
-     --body "Syncing version X.X.X release" --repo johannvalur/chattio
+   # Create PR to main (if not already merged)
+   gh pr create --base main --head YOUR_BRANCH --title "chore: Release vX.X.X" \
+     --body "Release version X.X.X" --repo johannvalur/chattio
 
    # Merge it
    gh pr merge --merge --repo johannvalur/chattio
    ```
+
+   **Note:** The repository uses `main` as the default branch. All releases should be merged to `main`.
 
 ### Option 2: Manual Local Release
 

@@ -85,18 +85,20 @@ EOF
 )"
 ```
 
-### 7. Sync to Main Branch
+### 7. Merge to Main (if needed)
 
 ```bash
-# Create PR from master to main
-gh pr create --base main --head master \
-  --title "chore: Sync v1.0.X to main" \
-  --body "Syncing version 1.0.X release for website deployment" \
+# If you worked on a feature branch, merge to main
+gh pr create --base main --head YOUR_BRANCH \
+  --title "chore: Release v1.0.X" \
+  --body "Release version 1.0.X" \
   --repo johannvalur/chattio
 
 # Merge the PR
 gh pr merge --merge --repo johannvalur/chattio
 ```
+
+**Note:** If you're working directly on `main`, this step is not needed.
 
 ### 8. Verify Deployment
 
