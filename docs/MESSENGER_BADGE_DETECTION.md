@@ -9,18 +9,23 @@ The Facebook Messenger notification badge detection system uses a multi-layered 
 The system attempts detection methods in order of reliability and specificity:
 
 ### 1. Badge Element (Primary) - `badge_element`
+
 **Selectors:**
+
 - `[data-testid="mwthreadlist_unread_badge_count"]`
 - `[data-testid="unread_indicator_badge"]`
 
 **Description:** Direct badge count element that Facebook displays in the UI. This is the most reliable method as it reflects the actual count Facebook shows to users.
 
 **Handles:**
+
 - Numeric counts (e.g., "5")
 - High count format (e.g., "99+")
 
 ### 2. Unread Badges - `unread_badges`
+
 **Selectors:**
+
 - `[data-testid="mwthreadlist_row_unread_indicator"]`
 - `[aria-label*="unread" i]:not([role="row"])`
 - `.notranslate > span[style*="background"]`
@@ -28,7 +33,9 @@ The system attempts detection methods in order of reliability and specificity:
 **Description:** Counts individual unread indicator badges displayed next to conversation threads. Excludes row elements to avoid double-counting.
 
 ### 3. Unread Rows - `unread_rows`
+
 **Selectors:**
+
 - `[role="row"]`
 - `[data-testid="mwthreadlist-row"]`
 
@@ -37,7 +44,9 @@ The system attempts detection methods in order of reliability and specificity:
 **Description:** Counts conversation rows marked as unread via accessibility labels.
 
 ### 4. Unread Dots - `unread_dots`
+
 **Selectors:**
+
 - `[aria-label="Unread"]`
 - `[aria-label="Unread dot"]`
 - `[aria-label="Mark as read"]`
@@ -45,18 +54,22 @@ The system attempts detection methods in order of reliability and specificity:
 **Description:** Counts individual unread indicator dots by their accessibility labels.
 
 ### 5. Navigation Badge - `nav_badge`
+
 **Selectors:**
+
 - `[data-testid="navigation_badge"]`
 
 **Description:** Fallback for mobile or alternative views where the main thread list might not be visible.
 
 **Handles:**
+
 - Numeric counts
 - High count format ("99+")
 
 ## Telemetry
 
 All badge detection attempts are tracked via telemetry with the following data:
+
 - Platform (always "messenger")
 - Detection method used
 - Count detected
@@ -65,6 +78,7 @@ All badge detection attempts are tracked via telemetry with the following data:
 ### Telemetry Statistics
 
 The telemetry system provides:
+
 - **Total detections:** Count of all badge detection attempts
 - **By platform:** Breakdown per messaging platform
 - **By method:** Which detection methods are succeeding
@@ -80,6 +94,7 @@ The detection system includes comprehensive error handling:
 4. **Exception handling:** Catches JavaScript execution errors in the webview
 
 ### Error Types
+
 - `error`: Detection logic error
 - `exception`: JavaScript execution error
 - `failed`: All methods failed
@@ -108,6 +123,7 @@ Comprehensive test coverage in `tests/unit/messengerBadgeDetection.test.js`:
 ## Implementation Details
 
 ### Location
+
 - Main implementation: `src/renderer.js:664-766`
 - Telemetry tracking: `src/lib/telemetry.js`
 - Tests: `tests/unit/messengerBadgeDetection.test.js`
@@ -152,14 +168,17 @@ If badge detection stops working:
 ### Common Issues
 
 **Issue:** Badge count always shows 0
+
 - **Cause:** Facebook changed primary badge element
 - **Solution:** Update Method 1 selectors
 
 **Issue:** Count is lower than expected
+
 - **Cause:** Some unread indicators not being detected
 - **Solution:** Add additional selectors to Method 2 or 3
 
 **Issue:** Count is higher than expected
+
 - **Cause:** Double-counting (e.g., counting both badge and rows)
 - **Solution:** Adjust method priority or add exclusion filters
 
@@ -173,6 +192,7 @@ If badge detection stops working:
 ## Future Improvements
 
 Potential enhancements:
+
 1. **Adaptive polling:** Increase frequency when user is active, decrease when idle
 2. **Mutation observers:** React to DOM changes instead of polling
 3. **Machine learning:** Learn which selectors are most reliable over time
