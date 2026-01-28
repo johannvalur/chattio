@@ -2429,6 +2429,11 @@ body.theme-dark .settings-update-button:hover {
 }
 
 .webview-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2436,10 +2441,13 @@ body.theme-dark .settings-update-button:hover {
   height: 100vh;
   gap: 16px;
   color: #666;
+  background-color: #ffffff;
+  z-index: 1000;
 }
 
 body.theme-dark .webview-loading {
   color: #d1d5db;
+  background-color: #111827;
 }
 
 .loading-spinner {
