@@ -11,6 +11,7 @@ This is the **preferred method** as it handles code signing and notarization aut
 #### Prerequisites
 
 Ensure the following GitHub secrets are configured (already set up):
+
 - `MAC_CERT` - Base64-encoded P12 certificate
 - `MAC_CERT_PASSWORD` - Certificate password
 - `APPLE_ID` - Your Apple ID email
@@ -65,6 +66,7 @@ Ensure the following GitHub secrets are configured (already set up):
 6. **Publish the release:**
 
    Once the workflow completes, publish the draft release:
+
    ```bash
    gh release edit vX.X.X --draft=false --title "vX.X.X - Release Title" \
      --notes "Release notes here..." --repo johannvalur/chattio
@@ -73,6 +75,7 @@ Ensure the following GitHub secrets are configured (already set up):
 7. **Merge to main branch:**
 
    The version changes need to be synced to the `main` branch for website deployment:
+
    ```bash
    # Create PR from master to main
    gh pr create --base main --head master --title "chore: Sync vX.X.X to main" \
