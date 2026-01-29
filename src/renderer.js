@@ -41,19 +41,15 @@ function updateUnreadSummary() {
       });
     }
 
-    // Send native notification if enabled and there are unread messages
-    if (appState.settings.globalNotifications && totalMessages > 0) {
+    // Send native notification if there are unread messages (DND check happens in sendNativeNotification)
+    if (totalMessages > 0) {
       if (totalMessages > lastNotificationSnapshot) {
         sendNativeNotification(unreadEntries, totalMessages);
         lastNotificationSnapshot = totalMessages;
       }
     } else {
-      // When notifications disabled or no unread, keep snapshot in sync to avoid noise when re-enabled
-      if (totalMessages === 0) {
-        lastNotificationSnapshot = 0;
-      } else {
-        lastNotificationSnapshot = totalMessages;
-      }
+      // Reset snapshot when no unread messages
+      lastNotificationSnapshot = 0;
     }
   } catch (error) {
     logger.error('Error updating unread summary:', error);
@@ -65,9 +61,44 @@ let lastNotificationTime = 0;
 const NOTIFICATION_COOLDOWN = 5000; // 5 seconds between notifications
 let lastNotificationSnapshot = 0;
 
+// Check if Do Not Disturb is active
+function isDoNotDisturbActive(settings) {
+  // If DND is manually enabled, always active
+  if (settings.doNotDisturb) {
+    return true;
+  }
+
+  // Check scheduled DND
+  if (!settings.doNotDisturbSchedule) {
+    return false;
+  }
+
+  const now = new Date();
+  const currentTime = now.getHours() * 60 + now.getMinutes();
+
+  const [startHour, startMin] = (settings.doNotDisturbStart || '22:00').split(':').map(Number);
+  const [endHour, endMin] = (settings.doNotDisturbEnd || '08:00').split(':').map(Number);
+
+  const startTime = startHour * 60 + startMin;
+  const endTime = endHour * 60 + endMin;
+
+  // Handle overnight DND period (e.g., 22:00 to 08:00)
+  if (startTime > endTime) {
+    return currentTime >= startTime || currentTime < endTime;
+  }
+
+  // Handle same-day DND period (e.g., 12:00 to 14:00)
+  return currentTime >= startTime && currentTime < endTime;
+}
+
 // Send native macOS notification
 function sendNativeNotification(unreadEntries, totalMessages) {
   try {
+    // Check Do Not Disturb mode first
+    if (isDoNotDisturbActive(appState.settings)) {
+      return; // DND is active, don't send notification
+    }
+
     // Check if Notification API is available
     if ('Notification' in window) {
       // Request permission if not already granted
@@ -84,6 +115,7 @@ function sendNativeNotification(unreadEntries, totalMessages) {
         }
         lastNotificationTime = now;
 
+        // Prepare notification body with message details
         const platformNames = unreadEntries.map(([platform]) => {
           const names = {
             messenger: 'Messenger',
@@ -99,7 +131,7 @@ function sendNativeNotification(unreadEntries, totalMessages) {
           return names[platform] || platform;
         });
 
-        let message = '';
+        let message;
         if (platformNames.length === 1) {
           message = `${totalMessages} new ${totalMessages === 1 ? 'message' : 'messages'} in ${platformNames[0]}`;
         } else {
@@ -111,6 +143,7 @@ function sendNativeNotification(unreadEntries, totalMessages) {
           icon: '../public/transparent.png',
           tag: 'chattio-unread',
           requireInteraction: false,
+          silent: false, // Always play sound (unless DND is active)
         });
       }
     }
@@ -961,22 +994,6 @@ function applySidebarDensity(density) {
 // Setup global settings toggles
 function setupGlobalSettings() {
   try {
-    // Global notifications toggle
-    const globalNotificationsToggle = document.getElementById('global-notifications-toggle');
-    if (globalNotificationsToggle) {
-      globalNotificationsToggle.checked = appState.settings.globalNotifications;
-      globalNotificationsToggle.addEventListener('change', (e) => {
-        appState.settings.globalNotifications = e.target.checked;
-        saveAppState();
-        logger.log(`Global notifications ${e.target.checked ? 'enabled' : 'disabled'}`);
-
-        // Request notification permission if enabling
-        if (e.target.checked && 'Notification' in window && Notification.permission === 'default') {
-          Notification.requestPermission();
-        }
-      });
-    }
-
     // Badge dock icon toggle
     const badgeDockIconToggle = document.getElementById('badge-dock-icon-toggle');
     if (badgeDockIconToggle) {
@@ -987,24 +1004,6 @@ function setupGlobalSettings() {
         logger.log(`Badge dock icon ${e.target.checked ? 'enabled' : 'disabled'}`);
         // Update badge immediately
         updateUnreadSummary();
-      });
-    }
-
-    // Notification sounds toggle
-    // Sounds & preview toggle - controls both sound and preview content
-    const notificationSoundsToggle = document.getElementById('notification-sounds-toggle');
-    if (notificationSoundsToggle) {
-      // Checked if BOTH sound and preview are enabled
-      notificationSoundsToggle.checked =
-        appState.settings.notificationSounds !== false &&
-        appState.settings.notificationPreview !== false;
-
-      notificationSoundsToggle.addEventListener('change', (e) => {
-        // Toggle both sound and preview together
-        appState.settings.notificationSounds = e.target.checked;
-        appState.settings.notificationPreview = e.target.checked;
-        saveAppState();
-        logger.log(`Notification sounds and preview ${e.target.checked ? 'enabled' : 'disabled'}`);
       });
     }
 
