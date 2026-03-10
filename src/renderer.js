@@ -9,52 +9,14 @@ const { collectButtonRefs, applySidebarState } = require('./lib/sidebarManager')
 
 const PLATFORM_KEYS = Object.keys(PLATFORMS);
 
+// Unread state and notification handling
+// Keep a local snapshot for UI badges, but drive logic from app settings.
 const UNREAD_STORAGE_KEY = 'chattio-unread-state';
 
-// Extended unread state for all platforms (stores counts)
 const unreadState = PLATFORM_KEYS.reduce((state, platform) => {
   state[platform] = 0;
   return state;
 }, {});
-
-function updateUnreadSummary() {
-  try {
-    const unreadEntries = Object.entries(unreadState).filter(
-      ([platform, count]) => count > 0 && isNotificationsEnabled(platform)
-    );
-    const hasUnreadServices = unreadEntries.length;
-    const totalMessages = unreadEntries.reduce((sum, [_, count]) => sum + count, 0);
-
-    // Only send badge update if badge is enabled
-    if (appState.settings.badgeDockIcon) {
-      ipcRenderer.send('unread-summary', {
-        ...unreadState,
-        totalUnreadServices: hasUnreadServices,
-        totalMessages: totalMessages,
-      });
-    } else {
-      // Clear badge if disabled
-      ipcRenderer.send('unread-summary', {
-        ...unreadState,
-        totalUnreadServices: 0,
-        totalMessages: 0,
-      });
-    }
-
-    // Send native notification if there are unread messages (DND check happens in sendNativeNotification)
-    if (totalMessages > 0) {
-      if (totalMessages > lastNotificationSnapshot) {
-        sendNativeNotification(unreadEntries, totalMessages);
-        lastNotificationSnapshot = totalMessages;
-      }
-    } else {
-      // Reset snapshot when no unread messages
-      lastNotificationSnapshot = 0;
-    }
-  } catch (error) {
-    logger.error('Error updating unread summary:', error);
-  }
-}
 
 // Track last notification time to prevent spam
 let lastNotificationTime = 0;
@@ -91,61 +53,94 @@ function isDoNotDisturbActive(settings) {
   return currentTime >= startTime && currentTime < endTime;
 }
 
-// Send native macOS notification
-function sendNativeNotification(unreadEntries, totalMessages) {
+function updateUnreadSummary() {
   try {
-    // Check Do Not Disturb mode first
-    if (isDoNotDisturbActive(appState.settings)) {
-      return; // DND is active, don't send notification
+    const unreadEntries = Object.entries(unreadState).filter(
+      ([platform, count]) => count > 0 && isNotificationsEnabled(platform)
+    );
+    const hasUnreadServices = unreadEntries.length;
+    const totalMessages = unreadEntries.reduce((sum, [_, count]) => sum + count, 0);
+
+    // Only send badge update if badge is enabled
+    if (appState.settings.badgeDockIcon) {
+      ipcRenderer.send('unread-summary', {
+        ...unreadState,
+        totalUnreadServices: hasUnreadServices,
+        totalMessages: totalMessages,
+      });
+    } else {
+      // Clear badge if disabled
+      ipcRenderer.send('unread-summary', {
+        ...unreadState,
+        totalUnreadServices: 0,
+        totalMessages: 0,
+      });
     }
 
+    // Check if notifications should be sent
+    const shouldNotify =
+      appState.settings.globalNotifications &&
+      !isDoNotDisturbActive(appState.settings) &&
+      totalMessages > 0;
+
+    if (shouldNotify) {
+      if (totalMessages > lastNotificationSnapshot) {
+        sendNativeNotification(unreadEntries, totalMessages);
+        lastNotificationSnapshot = totalMessages;
+      }
+    } else {
+      // Reset snapshot when notifications are disabled or no unread
+      lastNotificationSnapshot = 0;
+    }
+  } catch (error) {
+    logger.error('Error updating unread summary:', error);
+  }
+}
+
+// Send native notification
+function sendNativeNotification(unreadEntries, totalMessages) {
+  try {
     // Check if Notification API is available
-    if ('Notification' in window) {
-      // Request permission if not already granted
-      if (Notification.permission === 'default') {
-        Notification.requestPermission();
-        return;
+    if (!('Notification' in window)) {
+      return;
+    }
+
+    // Request permission if not already granted
+    if (Notification.permission === 'default') {
+      Notification.requestPermission();
+      return;
+    }
+
+    // Only send if permission is granted and cooldown has passed
+    if (Notification.permission === 'granted') {
+      const now = Date.now();
+      if (now - lastNotificationTime < NOTIFICATION_COOLDOWN) {
+        return; // Too soon, skip notification
+      }
+      lastNotificationTime = now;
+
+      const settings = appState.settings || {};
+
+      // Prepare notification body based on preview setting
+      let body;
+      if (settings.notificationPreview !== false) {
+        body =
+          unreadEntries.length === 1
+            ? `${totalMessages} new message${totalMessages > 1 ? 's' : ''} in ${
+                unreadEntries[0][0]
+              }`
+            : `${totalMessages} new messages across ${unreadEntries.length} services`;
+      } else {
+        body = 'You have new messages';
       }
 
-      // Only send if permission is granted and cooldown has passed
-      if (Notification.permission === 'granted') {
-        const now = Date.now();
-        if (now - lastNotificationTime < NOTIFICATION_COOLDOWN) {
-          return; // Too soon, skip notification
-        }
-        lastNotificationTime = now;
-
-        // Prepare notification body with message details
-        const platformNames = unreadEntries.map(([platform]) => {
-          const names = {
-            messenger: 'Messenger',
-            whatsapp: 'WhatsApp',
-            instagram: 'Instagram',
-            linkedin: 'LinkedIn',
-            x: 'X',
-            slack: 'Slack',
-            telegram: 'Telegram',
-            discord: 'Discord',
-            teams: 'Teams',
-          };
-          return names[platform] || platform;
-        });
-
-        let message;
-        if (platformNames.length === 1) {
-          message = `${totalMessages} new ${totalMessages === 1 ? 'message' : 'messages'} in ${platformNames[0]}`;
-        } else {
-          message = `${totalMessages} new messages across ${platformNames.length} services`;
-        }
-
-        new Notification('Chattio', {
-          body: message,
-          icon: '../public/transparent.png',
-          tag: 'chattio-unread',
-          requireInteraction: false,
-          silent: false, // Always play sound (unless DND is active)
-        });
-      }
+      new Notification('Chattio', {
+        body,
+        icon: '../public/transparent.png',
+        tag: 'chattio-unread',
+        requireInteraction: false,
+        silent: settings.notificationSounds === false,
+      });
     }
   } catch (error) {
     logger.error('Error sending native notification:', error);
@@ -180,6 +175,8 @@ function setTabUnread(platform, count, options = {}) {
   const { silent = false, skipPersist = false } = options;
   const unreadCount = Math.max(0, Number(count) || 0);
   unreadState[platform] = unreadCount;
+
+  // Update sidebar button badge
   const tabButton = document.querySelector(`.tablinks[data-platform="${platform}"]`);
   const notificationsEnabled = isNotificationsEnabled(platform);
   if (tabButton) {
@@ -192,6 +189,7 @@ function setTabUnread(platform, count, options = {}) {
       tabButton.removeAttribute('data-unread-count');
     }
   }
+
   if (!skipPersist) {
     saveUnreadState();
   }
@@ -211,7 +209,19 @@ function openTab(evt, platform) {
     tablinks[i].className = tablinks[i].className.replace(' active', '');
   }
 
-  document.getElementById(platform).style.display = 'block';
+  const tabElement = document.getElementById(platform);
+  if (tabElement) {
+    tabElement.style.display = 'block';
+
+    // Lazy-load the webview for this platform the first time the tab is opened
+    const webview = tabElement.querySelector('webview');
+    if (webview && !webview.getAttribute('src')) {
+      const src = webview.getAttribute('data-src');
+      if (src) {
+        webview.setAttribute('src', src);
+      }
+    }
+  }
   evt.currentTarget.className += ' active';
 
   // Do not reset unread count immediately; rely on service title updates
@@ -369,7 +379,10 @@ function createPlatformTab(platform, config) {
 
   const webview = document.createElement('webview');
   webview.id = `${platform}-webview`;
-  webview.src = config.url;
+  // Store URL for lazy loading; actual navigation happens when the tab is first shown
+  if (config.url) {
+    webview.setAttribute('data-src', config.url);
+  }
   webview.style.width = '100%';
   webview.style.height = '100vh';
 
@@ -1588,6 +1601,8 @@ function resetUnreadStateForTests() {
   Object.keys(unreadState).forEach((key) => {
     unreadState[key] = 0;
   });
+  saveUnreadState();
+  updateUnreadSummary();
 }
 
 function resetAppStateForTests() {
