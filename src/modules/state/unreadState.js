@@ -73,7 +73,10 @@ function updateUnreadSummary() {
 
     // Check if notifications should be sent
     const shouldNotify =
-      settings.globalNotifications && !isDoNotDisturbActive(settings) && totalMessages > 0;
+      settings.globalNotifications &&
+      settings.notificationSounds !== false &&
+      !isDoNotDisturbActive(settings) &&
+      totalMessages > 0;
 
     // Send native notification if enabled and there are unread messages
     if (shouldNotify) {

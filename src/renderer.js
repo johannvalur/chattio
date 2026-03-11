@@ -61,8 +61,10 @@ function updateUnreadSummary() {
     const hasUnreadServices = unreadEntries.length;
     const totalMessages = unreadEntries.reduce((sum, [_, count]) => sum + count, 0);
 
+    const settings = appState.settings || {};
+
     // Only send badge update if badge is enabled
-    if (appState.settings.badgeDockIcon) {
+    if (settings.badgeDockIcon) {
       ipcRenderer.send('unread-summary', {
         ...unreadState,
         totalUnreadServices: hasUnreadServices,
@@ -79,8 +81,9 @@ function updateUnreadSummary() {
 
     // Check if notifications should be sent
     const shouldNotify =
-      appState.settings.globalNotifications &&
-      !isDoNotDisturbActive(appState.settings) &&
+      settings.globalNotifications &&
+      settings.notificationSounds !== false &&
+      !isDoNotDisturbActive(settings) &&
       totalMessages > 0;
 
     if (shouldNotify) {
