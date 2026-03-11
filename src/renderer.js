@@ -57,7 +57,9 @@ function updateUnreadSummary() {
   try {
     const unreadEntries = Object.entries(unreadState).filter(([platform, count]) => {
       const appEntry = appState.apps[platform];
-      return count > 0 && appEntry && appEntry.enabled !== false && appEntry.notifications !== false;
+      return (
+        count > 0 && appEntry && appEntry.enabled !== false && appEntry.notifications !== false
+      );
     });
     const hasUnreadServices = unreadEntries.length;
     const totalMessages = unreadEntries.reduce((sum, [_, count]) => sum + count, 0);
@@ -818,7 +820,10 @@ function setupWebviews() {
                 if (
                   count === 0 &&
                   previousCount > 0 &&
-                  (method === 'none' || method === 'error' || method === 'failed' || method === 'exception')
+                  (method === 'none' ||
+                    method === 'error' ||
+                    method === 'failed' ||
+                    method === 'exception')
                 ) {
                   return;
                 }
