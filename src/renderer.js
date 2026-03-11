@@ -55,9 +55,10 @@ function isDoNotDisturbActive(settings) {
 
 function updateUnreadSummary() {
   try {
-    const unreadEntries = Object.entries(unreadState).filter(
-      ([platform, count]) => count > 0 && isNotificationsEnabled(platform)
-    );
+    const unreadEntries = Object.entries(unreadState).filter(([platform, count]) => {
+      const appEntry = appState.apps[platform];
+      return count > 0 && appEntry && appEntry.enabled !== false && appEntry.notifications !== false;
+    });
     const hasUnreadServices = unreadEntries.length;
     const totalMessages = unreadEntries.reduce((sum, [_, count]) => sum + count, 0);
 
@@ -124,6 +125,15 @@ function sendNativeNotification(unreadEntries, totalMessages) {
 
       const settings = appState.settings || {};
 
+      // If none of the unread platforms have soundEnabled, skip sending a native notification
+      const hasAudibleApp = unreadEntries.some(([platform]) => {
+        const appEntry = appState.apps[platform];
+        return appEntry && appEntry.soundEnabled !== false;
+      });
+      if (!hasAudibleApp) {
+        return;
+      }
+
       // Prepare notification body based on preview setting
       let body;
       if (settings.notificationPreview !== false) {
@@ -177,6 +187,13 @@ function restoreUnreadState() {
 function setTabUnread(platform, count, options = {}) {
   const { silent = false, skipPersist = false } = options;
   const unreadCount = Math.max(0, Number(count) || 0);
+  const previousCount = unreadState[platform] || 0;
+
+  // Avoid unnecessary DOM updates when the count hasn't changed
+  if (unreadCount === previousCount) {
+    return;
+  }
+
   unreadState[platform] = unreadCount;
 
   // Update sidebar button badge
@@ -795,6 +812,17 @@ function setupWebviews() {
               const method = result.detectionMethod || 'unknown';
 
               if (!Number.isNaN(count)) {
+                const previousCount = unreadState[platform] || 0;
+
+                // If detection fails or returns "none", avoid clearing a non-zero badge immediately
+                if (
+                  count === 0 &&
+                  previousCount > 0 &&
+                  (method === 'none' || method === 'error' || method === 'failed' || method === 'exception')
+                ) {
+                  return;
+                }
+
                 // Track badge detection for telemetry
                 telemetry.trackBadgeDetection(platform, method, count, {
                   error: result.error,

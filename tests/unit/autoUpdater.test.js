@@ -38,12 +38,18 @@ const mockBrowserWindow = jest.fn().mockImplementation(() => ({
     on: jest.fn(),
     send: jest.fn(),
     openDevTools: jest.fn(),
+    setWindowOpenHandler: jest.fn(),
   },
 }));
 
 // Add static methods
 mockBrowserWindow.getFocusedWindow = jest.fn().mockReturnValue(null);
 mockBrowserWindow.getAllWindows = jest.fn().mockReturnValue([]);
+
+const mockNotification = jest.fn(() => ({
+  show: jest.fn(),
+}));
+mockNotification.isSupported = jest.fn(() => true);
 
 jest.mock('electron', () => ({
   app: mockApp,
@@ -58,10 +64,12 @@ jest.mock('electron', () => ({
   },
   ipcMain: {
     on: jest.fn(),
+    handle: jest.fn(),
   },
   shell: {
     openExternal: jest.fn(),
   },
+  Notification: mockNotification,
 }));
 
 jest.mock('electron-updater', () => ({

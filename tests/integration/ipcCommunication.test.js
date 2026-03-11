@@ -213,9 +213,8 @@ describe('IPC Communication', () => {
       // Call the openExternalLink function
       renderer.openExternalLink(testUrl);
 
-      // Verify shell.openExternal was called
-      const { shell } = require('electron');
-      expect(shell.openExternal).toHaveBeenCalledWith(testUrl);
+      // Verify IPC was used to request opening the URL in main process
+      expect(ipcRenderer.send).toHaveBeenCalledWith('open-external', testUrl);
     });
   });
 });
