@@ -8,12 +8,12 @@ This document outlines a structured plan to review and fix (1) the notification 
 
 ### 1.1 Map all notification-related code paths
 
-| Location | What it does |
-|---------|----------------|
-| **`src/renderer.js`** | Defines `updateUnreadSummary()`, `sendNativeNotification()`, `setTabUnread()`, `isNotificationsEnabled()` (local), DND check `isDoNotDisturbActive()`, and calls from badge detection / title parsing. |
-| **`src/modules/state/appState.js`** | Stores `appState.apps[platform].notifications`, `appState.settings.globalNotifications`, `badgeDockIcon`, `notificationSounds`, `notificationPreview`, DND settings. Exports `isNotificationsEnabled(platform)`. |
-| **`src/modules/state/unreadState.js`** | Own `updateUnreadSummary()`, `sendNativeNotification()`, `setTabUnread()`, DND check, persistence to `chattio-unread-state`. Used by `tabs.js` for title-based unread. |
-| **`src/main.js`** | Listens for `unread-summary` IPC and sets macOS dock badge (`app.dock.setBadge`). |
+| Location                               | What it does                                                                                                                                                                                                     |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`src/renderer.js`**                  | Defines `updateUnreadSummary()`, `sendNativeNotification()`, `setTabUnread()`, `isNotificationsEnabled()` (local), DND check `isDoNotDisturbActive()`, and calls from badge detection / title parsing.           |
+| **`src/modules/state/appState.js`**    | Stores `appState.apps[platform].notifications`, `appState.settings.globalNotifications`, `badgeDockIcon`, `notificationSounds`, `notificationPreview`, DND settings. Exports `isNotificationsEnabled(platform)`. |
+| **`src/modules/state/unreadState.js`** | Own `updateUnreadSummary()`, `sendNativeNotification()`, `setTabUnread()`, DND check, persistence to `chattio-unread-state`. Used by `tabs.js` for title-based unread.                                           |
+| **`src/main.js`**                      | Listens for `unread-summary` IPC and sets macOS dock badge (`app.dock.setBadge`).                                                                                                                                |
 
 **Action:** Confirm which entry point the packaged app uses (renderer.js vs tabs.js). Index loads `renderer.js`; if `tabs.js` is used elsewhere, there are two separate notification/unread flows.
 
@@ -55,14 +55,14 @@ This document outlines a structured plan to review and fix (1) the notification 
 
 ### 2.2 Code locations to review
 
-| File | Relevant behavior |
-|------|-------------------|
-| **`src/main.js`** | `setWindowOpenHandler` (lines 156–165): any `window.open` from the **main** window’s webContents opens in external browser. Usually this is for the renderer UI, not the webview; webview `new-window` is handled inside the renderer. |
-| **`src/main.js`** | `ipcMain.on('open-external', ...)` (lines 404–410): opens the given URL in the default browser. |
-| **`src/renderer.js`** | `createPlatformTab()`: sets `webview.src = config.url` for every platform → all webviews load on startup. |
-| **`src/renderer.js`** | `new-window` handler (lines 487–494): no URL filtering; always `openExternalLink(event.url)`. |
-| **`src/renderer.js`** | `will-navigate` (lines 497–516): uses `getPlatformHost()` and `isInternalHost()`; for Teams, Microsoft auth hosts are internal. |
-| **`src/modules/webviews/webviewManager.js`** | `new-window` (124–129) and `will-navigate` (132–154): same idea — `will-navigate` uses internal host list; `new-window` always sends to `open-external`. |
+| File                                         | Relevant behavior                                                                                                                                                                                                                      |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`src/main.js`**                            | `setWindowOpenHandler` (lines 156–165): any `window.open` from the **main** window’s webContents opens in external browser. Usually this is for the renderer UI, not the webview; webview `new-window` is handled inside the renderer. |
+| **`src/main.js`**                            | `ipcMain.on('open-external', ...)` (lines 404–410): opens the given URL in the default browser.                                                                                                                                        |
+| **`src/renderer.js`**                        | `createPlatformTab()`: sets `webview.src = config.url` for every platform → all webviews load on startup.                                                                                                                              |
+| **`src/renderer.js`**                        | `new-window` handler (lines 487–494): no URL filtering; always `openExternalLink(event.url)`.                                                                                                                                          |
+| **`src/renderer.js`**                        | `will-navigate` (lines 497–516): uses `getPlatformHost()` and `isInternalHost()`; for Teams, Microsoft auth hosts are internal.                                                                                                        |
+| **`src/modules/webviews/webviewManager.js`** | `new-window` (124–129) and `will-navigate` (132–154): same idea — `will-navigate` uses internal host list; `new-window` always sends to `open-external`.                                                                               |
 
 ### 2.3 Recommended changes (to validate during review)
 
@@ -85,16 +85,16 @@ This document outlines a structured plan to review and fix (1) the notification 
 
 ## Part 3: Implementation order
 
-1. **Notification logic**  
-   - Unify unread/notification flow (single source of truth: either renderer or unreadState module).  
+1. **Notification logic**
+   - Unify unread/notification flow (single source of truth: either renderer or unreadState module).
    - Apply the checklist in 1.3 and add/update tests and docs as in 1.4.
 
-2. **Teams external browser**  
-   - Confirm root cause with logging (2.4).  
-   - Implement Option A and/or B/C.  
+2. **Teams external browser**
+   - Confirm root cause with logging (2.4).
+   - Implement Option A and/or B/C.
    - Re-test launch and Teams auth + external links.
 
-3. **Regression**  
+3. **Regression**
    - Full pass: launch, switch platforms, trigger unread counts, toggle notifications and DND, and open external links from multiple platforms (including Teams) to ensure nothing else opens the browser unexpectedly.
 
 ---
