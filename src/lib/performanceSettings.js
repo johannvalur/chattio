@@ -8,8 +8,10 @@ const { ipcRenderer } = require('electron');
 class PerformanceSettings {
   constructor() {
     this.defaults = {
-      maxActiveWebviews: 3,
-      inactivityTimeoutMinutes: 5,
+      // 0 means "no maximum" – all services can stay active
+      maxActiveWebviews: 0,
+      // Default inactivity timeout: 60 minutes (1 hour)
+      inactivityTimeoutMinutes: 60,
       hardwareAcceleration: true,
     };
 

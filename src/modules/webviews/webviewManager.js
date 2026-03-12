@@ -20,7 +20,11 @@ class WebviewManager {
 
   updateSettingsFromConfig() {
     const settings = performanceSettings.getAll();
-    this.MAX_ACTIVE_WEBVIEWS = settings.maxActiveWebviews || 3;
+    // 0 or undefined means "no limit"
+    this.MAX_ACTIVE_WEBVIEWS =
+      typeof settings.maxActiveWebviews === 'number' && settings.maxActiveWebviews > 0
+        ? settings.maxActiveWebviews
+        : Infinity;
     this.INACTIVITY_TIMEOUT = performanceSettings.getInactivityTimeoutMs();
     logger.info('WebView manager settings updated:', {
       maxActive: this.MAX_ACTIVE_WEBVIEWS,

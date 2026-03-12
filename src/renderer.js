@@ -1861,30 +1861,7 @@ function initializePerformanceTab() {
   // Load current settings
   const settings = performanceSettings.getAll();
 
-  // Set input values
-  const maxWebviewsInput = document.getElementById('max-webviews-input');
-  const inactivityTimeoutInput = document.getElementById('inactivity-timeout-input');
   const hardwareAccelToggle = document.getElementById('hardware-accel-toggle');
-
-  if (maxWebviewsInput) {
-    maxWebviewsInput.value = settings.maxActiveWebviews || 3;
-    maxWebviewsInput.addEventListener('change', (e) => {
-      const value = parseInt(e.target.value, 10);
-      if (value >= 2 && value <= 10) {
-        performanceSettings.set('maxActiveWebviews', value);
-      }
-    });
-  }
-
-  if (inactivityTimeoutInput) {
-    inactivityTimeoutInput.value = settings.inactivityTimeoutMinutes || 5;
-    inactivityTimeoutInput.addEventListener('change', (e) => {
-      const value = parseInt(e.target.value, 10);
-      if (value >= 1 && value <= 30) {
-        performanceSettings.set('inactivityTimeoutMinutes', value);
-      }
-    });
-  }
 
   if (hardwareAccelToggle) {
     hardwareAccelToggle.checked = settings.hardwareAcceleration !== false;
