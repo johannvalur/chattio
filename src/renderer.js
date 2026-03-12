@@ -3,7 +3,6 @@ const { applyThemeToDocument } = require('./lib/theme');
 const { CHROME_USER_AGENT, PLATFORMS, IS_DEV } = require('./lib/config');
 const logger = require('./lib/logger');
 const telemetry = require('./lib/telemetry');
-const performanceSettings = require('./lib/performanceSettings');
 
 const { collectButtonRefs, applySidebarState } = require('./lib/sidebarManager');
 
@@ -1858,18 +1857,12 @@ function openSettingsTab(tabId) {
 }
 
 function initializePerformanceTab() {
-  // Load current settings
-  const settings = performanceSettings.getAll();
-
   const hardwareAccelToggle = document.getElementById('hardware-accel-toggle');
 
   if (hardwareAccelToggle) {
-    hardwareAccelToggle.checked = settings.hardwareAcceleration !== false;
-    hardwareAccelToggle.addEventListener('change', (e) => {
-      performanceSettings.set('hardwareAcceleration', e.target.checked);
-      // Show restart required message
-      alert('Hardware acceleration changes require an app restart to take effect.');
-    });
+    // Hardware acceleration is now controlled only at startup via main process config.
+    // Keep the toggle display, but no longer persist changes here.
+    hardwareAccelToggle.disabled = true;
   }
 
   // Update diagnostics stats
@@ -2005,12 +1998,6 @@ function setupSupportDonations() {
 // Make openTab available globally for onclick handlers
 window.openTab = openTab;
 window.openSettingsTab = openSettingsTab;
-
-// Initialize app on load
-(function initializeApp() {
-  // Load performance settings
-  performanceSettings.load();
-})();
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {

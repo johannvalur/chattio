@@ -2,34 +2,16 @@ const { ipcRenderer } = require('electron');
 const { PLATFORMS: _PLATFORMS, CHROME_USER_AGENT } = require('../../lib/config');
 const logger = require('../../lib/logger');
 const telemetry = require('../../lib/telemetry');
-const performanceSettings = require('../../lib/performanceSettings');
 
 class WebviewManager {
   constructor() {
     this.webviews = new Map(); // Stores { instance, lastActive, config }
     this.activeWebview = null;
     this.inactivityTimeouts = new Map();
-    this.updateSettingsFromConfig();
+    // Defaults: no hard limit, 1-hour inactivity timeout
+    this.MAX_ACTIVE_WEBVIEWS = Infinity;
+    this.INACTIVITY_TIMEOUT = 60 * 60 * 1000;
     this.initialize();
-
-    // Listen for performance settings changes
-    performanceSettings.onChange(() => {
-      this.updateSettingsFromConfig();
-    });
-  }
-
-  updateSettingsFromConfig() {
-    const settings = performanceSettings.getAll();
-    // 0 or undefined means "no limit"
-    this.MAX_ACTIVE_WEBVIEWS =
-      typeof settings.maxActiveWebviews === 'number' && settings.maxActiveWebviews > 0
-        ? settings.maxActiveWebviews
-        : Infinity;
-    this.INACTIVITY_TIMEOUT = performanceSettings.getInactivityTimeoutMs();
-    logger.info('WebView manager settings updated:', {
-      maxActive: this.MAX_ACTIVE_WEBVIEWS,
-      timeout: this.INACTIVITY_TIMEOUT,
-    });
   }
 
   initialize() {
