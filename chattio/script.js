@@ -126,6 +126,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
+      // Simple client-side analytics hook for website donations
+      window.__chattioDonationEvents = window.__chattioDonationEvents || [];
+      window.__chattioDonationEvents.push({
+        type: 'donation',
+        stage: 'tier_clicked',
+        tier: button.dataset.tier || button.dataset.amount || 'unknown',
+        provider: 'paypal',
+        amount,
+        surface: 'website',
+        timestamp: Date.now(),
+      });
+
       openModal(donationModal);
     });
   });

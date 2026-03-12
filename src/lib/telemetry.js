@@ -117,6 +117,24 @@ class TelemetryService {
   }
 
   /**
+   * Track a donation interaction
+   * @param {string} tier - Donation tier id (e.g., 'tip-jar', 'servers', 'forward')
+   * @param {string} provider - Payment provider (e.g., 'paypal')
+   * @param {string} surface - Where the event originated (e.g., 'app_settings', 'website')
+   * @param {object} details - Additional details such as amount or link
+   */
+  trackDonationEvent(tier, provider, surface, details = {}) {
+    this.recordEvent({
+      type: 'donation',
+      tier,
+      provider,
+      surface,
+      details,
+      timestamp: Date.now(),
+    });
+  }
+
+  /**
    * Track notification badge detection
    * @param {string} platform - Platform name
    * @param {string} detectionMethod - Method used to detect badge (e.g., 'badge_element', 'unread_rows', 'unread_dots', 'title', 'failed')

@@ -1932,6 +1932,8 @@ function setupSupportDonations() {
         amountLabel.textContent = amount;
       }
 
+      const tier = button.dataset.tier || button.dataset.amount || 'unknown';
+
       paymentOptions.forEach((option) => {
         const provider = option.dataset.paymentProvider;
         if (!provider) return;
@@ -1939,6 +1941,11 @@ function setupSupportDonations() {
         const link = button.dataset[datasetKey] || option.dataset.defaultHref;
         const currentOption = option;
         currentOption.dataset.targetHref = link;
+      });
+
+      telemetry.trackDonationEvent(tier, 'paypal', 'app_settings', {
+        stage: 'tier_clicked',
+        amount,
       });
 
       openModal();
@@ -1949,6 +1956,13 @@ function setupSupportDonations() {
     option.addEventListener('click', () => {
       const link = option.dataset.targetHref || option.dataset.defaultHref;
       if (link) {
+        const provider = option.dataset.paymentProvider || 'paypal';
+        const amount = amountLabel ? amountLabel.textContent : undefined;
+        telemetry.trackDonationEvent(option.dataset.tier || 'unknown', provider, 'app_settings', {
+          stage: 'provider_clicked',
+          link,
+          amount,
+        });
         openExternalLink(link);
       }
     });
