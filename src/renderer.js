@@ -1849,30 +1849,6 @@ function openSettingsTab(tabId) {
   if (activeTab) {
     activeTab.classList.add('active');
   }
-
-  // Initialize performance tab if selected
-  if (tabId === 'performance') {
-    initializePerformanceTab();
-  }
-}
-
-function initializePerformanceTab() {
-  const hardwareAccelToggle = document.getElementById('hardware-accel-toggle');
-
-  if (hardwareAccelToggle) {
-    // Hardware acceleration is now controlled only at startup via main process config.
-    // Keep the toggle display, but no longer persist changes here.
-    hardwareAccelToggle.disabled = true;
-  }
-
-  // Update diagnostics stats
-  updateDiagnosticsStats();
-
-  // Setup export button
-  const exportBtn = document.getElementById('export-diagnostics-btn');
-  if (exportBtn) {
-    exportBtn.addEventListener('click', exportDiagnostics);
-  }
 }
 
 async function updateDiagnosticsStats() {
