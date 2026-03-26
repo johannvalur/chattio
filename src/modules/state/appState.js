@@ -115,7 +115,6 @@ module.exports = {
       appState = { ...appState, ...updater };
     }
     saveAppState();
-    saveAppState();
     return appState;
   },
   isNotificationsEnabled,

@@ -95,6 +95,10 @@ function updateUnreadSummary() {
 }
 
 function sendNativeNotification(unreadEntries, totalMessages) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') {
+    return;
+  }
+
   const now = Date.now();
   if (now - lastNotificationTime < NOTIFICATION_COOLDOWN) {
     return;

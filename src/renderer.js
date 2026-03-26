@@ -126,14 +126,11 @@ function sendNativeNotification(unreadEntries, totalMessages) {
 
       const settings = appState.settings || {};
 
-      // If none of the unread platforms have soundEnabled, skip sending a native notification
+      // Check if any app with unread messages has sound enabled
       const hasAudibleApp = unreadEntries.some(([platform]) => {
         const appEntry = appState.apps[platform];
         return appEntry && appEntry.soundEnabled !== false;
       });
-      if (!hasAudibleApp) {
-        return;
-      }
 
       // Prepare notification body based on preview setting
       let body;
@@ -153,7 +150,7 @@ function sendNativeNotification(unreadEntries, totalMessages) {
         icon: '../public/transparent.png',
         tag: 'chattio-unread',
         requireInteraction: false,
-        silent: settings.notificationSounds === false,
+        silent: !hasAudibleApp || settings.notificationSounds === false,
       });
     }
   } catch (error) {
