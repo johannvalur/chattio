@@ -86,9 +86,7 @@ function updateUnreadSummary() {
     // it must not gate notification delivery entirely (the Notification's silent
     // flag already handles that separately).
     const shouldNotify =
-      settings.globalNotifications &&
-      !isDoNotDisturbActive(settings) &&
-      totalMessages > 0;
+      settings.globalNotifications && !isDoNotDisturbActive(settings) && totalMessages > 0;
 
     if (shouldNotify) {
       if (totalMessages > lastNotificationSnapshot) {
@@ -137,8 +135,7 @@ function sendNativeNotification(unreadEntries, totalMessages) {
       // Prepare notification body based on preview setting
       let body;
       if (settings.notificationPreview !== false) {
-        const platformName =
-          PLATFORMS[unreadEntries[0][0]]?.name || unreadEntries[0][0];
+        const platformName = PLATFORMS[unreadEntries[0][0]]?.name || unreadEntries[0][0];
         body =
           unreadEntries.length === 1
             ? `${totalMessages} new message${totalMessages > 1 ? 's' : ''} in ${platformName}`
