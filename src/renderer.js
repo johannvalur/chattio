@@ -81,10 +81,12 @@ function updateUnreadSummary() {
       });
     }
 
-    // Check if notifications should be sent
+    // Check if notifications should be sent.
+    // Note: notificationSounds only controls whether the notification is silent —
+    // it must not gate notification delivery entirely (the Notification's silent
+    // flag already handles that separately).
     const shouldNotify =
       settings.globalNotifications &&
-      settings.notificationSounds !== false &&
       !isDoNotDisturbActive(settings) &&
       totalMessages > 0;
 
@@ -135,11 +137,11 @@ function sendNativeNotification(unreadEntries, totalMessages) {
       // Prepare notification body based on preview setting
       let body;
       if (settings.notificationPreview !== false) {
+        const platformName =
+          PLATFORMS[unreadEntries[0][0]]?.name || unreadEntries[0][0];
         body =
           unreadEntries.length === 1
-            ? `${totalMessages} new message${totalMessages > 1 ? 's' : ''} in ${
-                unreadEntries[0][0]
-              }`
+            ? `${totalMessages} new message${totalMessages > 1 ? 's' : ''} in ${platformName}`
             : `${totalMessages} new messages across ${unreadEntries.length} services`;
       } else {
         body = 'You have new messages';
@@ -176,6 +178,9 @@ function restoreUnreadState() {
         setTabUnread(platform, count, { silent: true, skipPersist: true });
       }
     });
+    // Prevent firing a notification for counts that were already seen before
+    // the app was restarted — set the snapshot to the restored total first.
+    lastNotificationSnapshot = Object.values(unreadState).reduce((sum, c) => sum + c, 0);
     updateUnreadSummary();
   } catch (error) {
     logger.error('Error restoring unread state:', error);
@@ -686,6 +691,11 @@ function setupWebviews() {
     });
 
     const updateUnreadFromTitle = (title) => {
+      // Messenger uses DOM-based badge polling — skip title-based detection to
+      // avoid the title poll (which never matches Messenger's title format) from
+      // clearing the DOM-detected badge every 5 seconds.
+      if (platform === 'messenger') return;
+
       const trimmedTitle = (title || '').trim();
       const match = trimmedTitle.match(/^\((\d+)\)/);
       const unreadCount = match ? parseInt(match[1], 10) : 0;
@@ -812,14 +822,14 @@ function setupWebviews() {
               if (!Number.isNaN(count)) {
                 const previousCount = unreadState[platform] || 0;
 
-                // If detection fails or returns "none", avoid clearing a non-zero badge immediately
+                // If detection genuinely failed (error/exception), avoid clearing a non-zero
+                // badge immediately — the DOM may not have been ready yet.
+                // Note: 'none' means detection succeeded but found no unread messages,
+                // so we must allow it to clear the badge (otherwise it gets permanently stuck).
                 if (
                   count === 0 &&
                   previousCount > 0 &&
-                  (method === 'none' ||
-                    method === 'error' ||
-                    method === 'failed' ||
-                    method === 'exception')
+                  (method === 'error' || method === 'failed' || method === 'exception')
                 ) {
                   return;
                 }
@@ -973,6 +983,12 @@ const appState = {
   settings: {
     globalNotifications: true,
     badgeDockIcon: true,
+    notificationSounds: true,
+    notificationPreview: true,
+    doNotDisturb: false,
+    doNotDisturbSchedule: false,
+    doNotDisturbStart: '22:00',
+    doNotDisturbEnd: '08:00',
     sidebarDensity: 'comfortable', // 'comfortable' or 'compact'
     telemetry: false,
   },
